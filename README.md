@@ -1,8 +1,8 @@
-# Sistema de Tutorías UPDS
+# Sistema-Tutoriales-UPDS
 
 ## Descripción
 
-**Sistema de Tutorías UPDS** es una plataforma web moderna e interactiva diseñada para conectar a estudiantes con tutores y optimizar el proceso de aprendizaje académico. 
+**Sistema-Tutoriales-UPDS** es una plataforma web moderna e interactiva diseñada para conectar a estudiantes con tutores y optimizar el proceso de aprendizaje académico. 
 
 Entre las funcionalidades que ofrecerá la plataforma se encuentran:
 - **Reserva de Tutorías en Tiempo Real:** Calendario interactivo para programar sesiones de apoyo personalizadas o grupales.
@@ -12,7 +12,7 @@ Entre las funcionalidades que ofrecerá la plataforma se encuentran:
 - **Panel de Seguimiento y Progreso:** Dashboard (panel de control) para hacer seguimiento a las horas de tutoría, asistencias y rendimiento del estudiante.
 - **Notificaciones:** Alertas y recordatorios de próximas clases, cancelaciones y actualizaciones del curso.
 
-## Estudiante
+## Desarrollador
 
 Sammy Marcelo Sivila Sanchez
 
