@@ -1,8 +1,8 @@
-# Sistema de Tutorías y Cursos Universitarios
+# Sistema de Tutorías UPDS
 
 ## Descripción
 
-**Sistema de Tutorías y Cursos Universitarios** es una plataforma web moderna e interactiva diseñada para conectar a estudiantes con tutores y optimizar el proceso de aprendizaje académico. 
+**Sistema de Tutorías UPDS** es una plataforma web moderna e interactiva diseñada para conectar a estudiantes con tutores y optimizar el proceso de aprendizaje académico. 
 
 Entre las funcionalidades que ofrecerá la plataforma se encuentran:
 - **Reserva de Tutorías en Tiempo Real:** Calendario interactivo para programar sesiones de apoyo personalizadas o grupales.
