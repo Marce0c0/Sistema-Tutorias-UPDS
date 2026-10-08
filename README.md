@@ -12,7 +12,7 @@ Entre las funcionalidades que ofrecerá la plataforma se encuentran:
 - **Panel de Seguimiento y Progreso:** Dashboard (panel de control) para hacer seguimiento a las horas de tutoría, asistencias y rendimiento del estudiante.
 - **Notificaciones:** Alertas y recordatorios de próximas clases, cancelaciones y actualizaciones del curso.
 
-## Integrantes
+## Estudiante
 
 Sammy Marcelo Sivila Sanchez
 
