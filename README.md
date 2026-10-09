@@ -16,10 +16,10 @@ Entre las funcionalidades que ofrecerá la plataforma se encuentran:
 
 Sammy Marcelo Sivila Sanchez
 
-## Tecnologías iniciales
+## Arquitectura y Tecnologías
 
-- Node.js
-- Express
-- JavaScript
-- Git
-- GitHub
+- **Frontend:** HTML, CSS y JavaScript Vainilla
+- **Backend:** Node.js con el framework Express
+- **Base de Datos:** PostgreSQL
+- **Alojamiento (Cloud):** Supabase (Base de datos en la nube)
+- **Control de Versiones:** Git y GitHub
