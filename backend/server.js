@@ -18,6 +18,14 @@ app.get("/cursos", (req, res) => {
   res.send("Módulo de cursos");
 });
 
+app.get("/api", (req, res) => {
+  res.json({
+    nombre: "Sistema-Tutoriales-UPDS",
+    version: "1.0",
+    estado: "En desarrollo"
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
 });
