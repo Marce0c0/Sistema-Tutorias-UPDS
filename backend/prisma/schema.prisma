@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  role      Role
+  createdAt DateTime  @default(now()) @map("created_at")
+  courses   Course[]  @relation("TutorCourses")
+  bookings  Booking[]
+
+  @@map("users")
+}
+
+model Course {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  tutorId     String?   @map("tutor_id")
+  tutor       User?     @relation("TutorCourses", fields: [tutorId], references: [id], onDelete: SetNull)
+  bookings    Booking[]
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("courses")
+}
+
+model Booking {
+  id          String        @id @default(uuid())
+  studentId   String        @map("student_id")
+  courseId    String        @map("course_id")
+  scheduledAt DateTime      @map("scheduled_at")
+  status      BookingStatus @default(pending)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  student     User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course      Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("bookings")
+}
+
+enum Role {
+  student
+  tutor
+  admin
+}
+
+enum BookingStatus {
+  pending
+  confirmed
+  cancelled
+}
