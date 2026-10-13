@@ -1,2 +1,12 @@
+# Dependencias de Node
 node_modules/
+
+# Variables de entorno (contienen credenciales secretas)
 .env
+
+# Archivos compilados de TypeScript
+dist/
+
+# Prisma
+*.db
+*.db-journal
