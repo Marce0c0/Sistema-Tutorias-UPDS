@@ -23,7 +23,7 @@ export const getBookings = async (_req: Request, res: Response, next: NextFuncti
 // GET /api/bookings/:id — Obtener una reserva por ID
 export const getBookingById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const booking = await prisma.booking.findUnique({
       where: { id },
       include: {
@@ -74,7 +74,7 @@ export const createBooking = async (req: Request, res: Response, next: NextFunct
 // PUT /api/bookings/:id — Actualizar estado de una reserva
 export const updateBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { status, scheduledAt } = req.body;
 
     const updated = await prisma.booking.update({
@@ -94,7 +94,7 @@ export const updateBooking = async (req: Request, res: Response, next: NextFunct
 // DELETE /api/bookings/:id — Eliminar una reserva
 export const deleteBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     await prisma.booking.delete({ where: { id } });
     res.status(204).send();
   } catch (error) {
