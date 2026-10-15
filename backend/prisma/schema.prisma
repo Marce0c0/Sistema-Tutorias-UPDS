@@ -8,40 +8,91 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  name      String
-  email     String    @unique
-  role      Role
-  createdAt DateTime  @default(now()) @map("created_at")
-  courses   Course[]  @relation("TutorCourses")
-  bookings  Booking[]
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  role          Role
+  createdAt     DateTime       @default(now()) @map("created_at")
+  courses       Course[]       @relation("TutorCourses")
+  bookings      Booking[]
+  forumMessages ForumMessage[]
+  notifications Notification[]
 
   @@map("users")
 }
 
 model Course {
-  id          String    @id @default(uuid())
-  title       String
-  description String?
-  tutorId     String?   @map("tutor_id")
-  tutor       User?     @relation("TutorCourses", fields: [tutorId], references: [id], onDelete: SetNull)
-  bookings    Booking[]
-  createdAt   DateTime  @default(now()) @map("created_at")
+  id            String         @id @default(uuid())
+  title         String
+  description   String?
+  tutorId       String?        @map("tutor_id")
+  tutor         User?          @relation("TutorCourses", fields: [tutorId], references: [id], onDelete: SetNull)
+  tutorias      Tutoria[]
+  bookings      Booking[]
+  forumMessages ForumMessage[]
+  createdAt     DateTime       @default(now()) @map("created_at")
 
   @@map("courses")
+}
+
+model Tutoria {
+  id          String        @id @default(uuid())
+  courseId    String        @map("course_id")
+  title       String
+  description String?
+  date        DateTime
+  maxStudents Int           @default(10) @map("max_students")
+  status      TutoriaStatus @default(active)
+  createdAt   DateTime      @default(now()) @map("created_at")
+
+  course   Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  @@map("tutorias")
 }
 
 model Booking {
   id          String        @id @default(uuid())
   studentId   String        @map("student_id")
   courseId    String        @map("course_id")
+  tutoriaId   String?       @map("tutoria_id")
   scheduledAt DateTime      @map("scheduled_at")
   status      BookingStatus @default(pending)
   createdAt   DateTime      @default(now()) @map("created_at")
-  student     User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  course      Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  student User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tutoria Tutoria? @relation(fields: [tutoriaId], references: [id], onDelete: SetNull)
 
   @@map("bookings")
+}
+
+model ForumMessage {
+  id        String   @id @default(uuid())
+  courseId  String   @map("course_id")
+  userId    String   @map("user_id")
+  title     String
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("forum_messages")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String           @map("user_id")
+  title     String
+  message   String
+  type      NotificationType @default(info)
+  isRead    Boolean          @default(false) @map("is_read")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
 }
 
 enum Role {
@@ -54,4 +105,17 @@ enum BookingStatus {
   pending
   confirmed
   cancelled
+}
+
+enum TutoriaStatus {
+  active
+  completed
+  cancelled
+}
+
+enum NotificationType {
+  info
+  reminder
+  booking_update
+  forum_reply
 }
