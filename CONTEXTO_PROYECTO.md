@@ -60,12 +60,50 @@
 
 > ⚠️ La `DATABASE_URL` completa con la contraseña se guarda SOLO en el archivo `.env` local (protegido por `.gitignore`, nunca en GitHub).
 
+### AWS (Amazon Web Services — Nueva Experiencia)
+| Campo | Valor |
+|---|---|
+| **Proyecto / Cuenta AWS** | `861358180738` |
+| **Región seleccionada** | `us-east-2` (Ohio) |
+| **Perfil CLI** | `default` |
+| **Autenticación** | `aws login` (SSO / Browser OAuth — Rol `AccountFullAccessRole`) |
+| **Herramientas de IA** | Agent Toolkit for AWS (24 skills) + AWS MCP Proxy |
+| **Presupuesto / Límite de Gasto** | **$0.00 - Máx $0.01 USD** (Estrictamente Capa Gratuita / Free Tier) |
+
+#### Recursos Activos en AWS:
+1. **Amazon S3 (Simple Storage Service):**
+   - **Nombre del Bucket:** `sistema-tutorias-upds-861358180738` ✅
+   - **ARN:** `arn:aws:s3:::sistema-tutorias-upds-861358180738`
+   - **Región:** `us-east-2`
+   - **Propósito:** Almacenamiento en la nube para materiales de estudio de las materias (PDFs, diapositivas) y fotos de perfil de tutores y estudiantes.
+   - **Capa Gratuita:** 5 GB de almacenamiento estándar, 20,000 solicitudes GET y 2,000 solicitudes PUT sin costo mensual.
+   - **Integración:** `@aws-sdk/client-s3` y `multer` en el backend Express.
+2. **Amazon RDS (PostgreSQL):**
+   - **Identificador de Instancia:** `tutorias-upds-db` ✅ *(Activa y Sincronizada)*
+   - **Endpoint Público:** `tutorias-upds-db.c1guag0cedu9.us-east-2.rds.amazonaws.com:5432`
+   - **ARN:** `arn:aws:rds:us-east-2:861358180738:db:tutorias-upds-db`
+   - **Tipo de Instancia:** `db.t4g.micro` (AWS Graviton2, Free Tier elegible)
+   - **Motor:** PostgreSQL 16
+   - **Almacenamiento:** 20 GB SSD gp3 (Límite máximo fijo en 20 GB sin autoescalado de costo)
+   - **Security Group:** `sg-0c661a90467974acd` (`rds-postgres-tutorias-sg` - Puerto 5432 abierto)
+   - **Usuario Administrador:** `postgres`
+   - **Sincronización:** Esquema de Prisma (`prisma db push`) y Seed de datos iniciales (`npm run prisma:seed`) aplicados exitosamente.
+   - **Estrategia Multi-Cloud:** 100% transparente con Prisma ORM (permite alternar entre Supabase y AWS RDS cambiando la variable `DATABASE_URL` en `.env`).
+3. **AWS App Runner / EC2 (Planificado):**
+   - **Propósito:** Alojamiento y ejecución del backend en contenedores o máquina virtual Linux.
+4. **AWS CloudFront + S3 (Planificado):**
+   - **Propósito:** Hosting estático para la SPA del frontend con distribución global (CDN) y certificado SSL gratuito (ACM).
+
+> 🛑 **Regla de Oro Presupuestaria de AWS ($0.00 USD):**  
+> Ningún agente o desarrollador puede aprovisionar recursos de pago. Cualquier recurso creado debe ser 100% elegible para el Free Tier o de configuración local. Ante cualquier duda de facturación, se debe solicitar confirmación previa del usuario.
+
 ### GitHub
 | Campo | Valor |
 |---|---|
 | **URL** | https://github.com/Marce0c0/Sistema-Tutorias-UPDS |
 | **Rama principal** | `main` |
 | **Rama de desarrollo** | `develop` |
+| **Rama de feature actual** | `feature/actividad-2-backend-api` |
 
 ---
 
