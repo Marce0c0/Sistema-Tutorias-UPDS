@@ -75,27 +75,42 @@
    - **Nombre del Bucket:** `sistema-tutorias-upds-861358180738` ✅
    - **ARN:** `arn:aws:s3:::sistema-tutorias-upds-861358180738`
    - **Región:** `us-east-2`
-   - **Propósito:** Almacenamiento en la nube para materiales de estudio de las materias (PDFs, diapositivas) y fotos de perfil de tutores y estudiantes.
+   - **Propósito:** Almacenamiento en la nube para materiales de estudio (PDFs, diapositivas) y futuro hosting estático del Frontend SPA.
    - **Capa Gratuita:** 5 GB de almacenamiento estándar, 20,000 solicitudes GET y 2,000 solicitudes PUT sin costo mensual.
-   - **Integración:** `@aws-sdk/client-s3` y `multer` en el backend Express.
+   - **Configuración:** Versionado deshabilitado, tamaño 0 bytes (control total de acumulación).
 2. **Amazon RDS (PostgreSQL):**
-   - **Identificador de Instancia:** `tutorias-upds-db` ✅ *(Activa y Sincronizada)*
+   - **Identificador de Instancia:** `tutorias-upds-db` ✅ *(Sincronizada con Free Tier)*
    - **Endpoint Público:** `tutorias-upds-db.c1guag0cedu9.us-east-2.rds.amazonaws.com:5432`
    - **ARN:** `arn:aws:rds:us-east-2:861358180738:db:tutorias-upds-db`
    - **Tipo de Instancia:** `db.t4g.micro` (AWS Graviton2, Free Tier elegible)
    - **Motor:** PostgreSQL 16
-   - **Almacenamiento:** 20 GB SSD gp3 (Límite máximo fijo en 20 GB sin autoescalado de costo)
-   - **Security Group:** `sg-0c661a90467974acd` (`rds-postgres-tutorias-sg` - Puerto 5432 abierto)
-   - **Usuario Administrador:** `postgres`
-   - **Sincronización:** Esquema de Prisma (`prisma db push`) y Seed de datos iniciales (`npm run prisma:seed`) aplicados exitosamente.
-   - **Estrategia Multi-Cloud:** 100% transparente con Prisma ORM (permite alternar entre Supabase y AWS RDS cambiando la variable `DATABASE_URL` en `.env`).
-3. **AWS App Runner / EC2 (Planificado):**
-   - **Propósito:** Alojamiento y ejecución del backend en contenedores o máquina virtual Linux.
-4. **AWS CloudFront + S3 (Planificado):**
-   - **Propósito:** Hosting estático para la SPA del frontend con distribución global (CDN) y certificado SSL gratuito (ACM).
+   - **Almacenamiento:** 20 GB SSD gp3 fijo (`AllocatedStorage: 20`, `MaxAllocatedStorage: 20`, autoescalado deshabilitado)
+   - **Multi-AZ:** `false` (Instancia única dentro de cuota)
+   - **Estrategia FinOps:** Operación bajo demanda. Puede detenerse temporalmente (`aws rds stop-db-instance`) cuando no se use activamente, utilizando Supabase como DB primaria en `.env`.
 
-> 🛑 **Regla de Oro Presupuestaria de AWS ($0.00 USD):**  
-> Ningún agente o desarrollador puede aprovisionar recursos de pago. Cualquier recurso creado debe ser 100% elegible para el Free Tier o de configuración local. Ante cualquier duda de facturación, se debe solicitar confirmación previa del usuario.
+#### 🚀 Estrategia de Despliegue a Costo $0.00 USD:
+- **Frontend (Actividades 3-6):** Alojamiento estático en el bucket existente **Amazon S3 (`sistema-tutorias-upds-861358180738`)** + **Amazon CloudFront CDN** (Always Free: 1 TB de salida/mes, 10M peticiones/mes y certificado SSL HTTPS gratuito mediante ACM). Costo: **$0.00 USD**.
+- **Backend (API REST):**
+  - *Desarrollo y Presentación Académica:* Ejecución en entorno local (`http://localhost:3001`).
+  - *Cloud Serverless (Opcional):* Despliegue en **AWS Lambda** + **API Gateway HTTP** (Always Free: 1 millón de peticiones gratis/mes, $0.00 cuando no hay tráfico).
+- **Base de Datos Dual Resiliente:**
+  - **Supabase (`ghctgyzvbbxswicgobly`):** PostgreSQL 17 en la nube activo 24/7 sin consumo de cuotas horarias de AWS ni costos de IP pública IPv4.
+  - **Amazon RDS (`tutorias-upds-db`):** PostgreSQL en AWS para sincronización y validación cloud, controlable mediante encendido/apagado programado.
+
+---
+
+> 🛑 **REGLA DE ORO PRESUPUESTARIA DE AWS ($0.00 USD - MÁX $0.01 USD):**  
+> El proyecto tiene una política estricta de **PRESUPUESTO CERO**. Todo recurso debe ser 100% elegible para la Capa Gratuita (Free Tier) o ejecutarse localmente.
+
+> ⛔ **LISTA NEGRA DE SERVICIOS PROHIBIDOS (RIESGO FINANCIERO / COSTOS FIJOS):**  
+> Queda **TERMINANTEMENTE PROHIBIDO** a cualquier agente de IA, desarrollador o script aprovisionar:
+> 1. **AWS App Runner:** NO posee Free Tier. Cobra por vCPU y memoria aprovisionada por segundo incluso con 0 tráfico (además con bloqueo explícito por Service Control Policy de la organización).
+> 2. **AWS Fargate / ECS con IP pública:** Cobro continuo por ejecución de tareas de contenedores.
+> 3. **Application / Network Load Balancers (ALB / NLB):** Cargo base fijo de ~$16 a $22 USD/mes + LCUs.
+> 4. **NAT Gateways:** Cargo base fijo de ~$32 USD/mes + transferencia por GB.
+> 5. **Direcciones IPv4 Públicas / Elastic IPs adicionales o desasociadas:** Cobro de $0.005 USD/hora por IPv4 pública no cubierta por la cuota de EC2.
+> 6. **Amazon RDS Multi-AZ o Autoescalado de Disco:** Duplica el costo de cómputo y genera cargos por almacenamiento superior a 20 GB.
+> 7. **Performance Insights con retención extendida (> 7 días) o Provisioned IOPS (io1/io2).**
 
 ### GitHub
 | Campo | Valor |
