@@ -373,8 +373,8 @@ npm run dev
 |---|---|---|---|
 | **01** | Introducción a Node.js y Express (Rutas básicas) | ✅ Completada | 18/10/2026 |
 | **02** | Backend, Base de Datos y API REST | ✅ Completada | 18/10/2026 |
-| **03** | Frontend SPA (HTML, CSS, JS Vainilla en S3 + CloudFront) | ⏳ Siguiente paso | — |
-| **04** | Autenticación, Seguridad y Roles (JWT / OAuth) | ⏳ Pendiente | — |
+| **03** | Frontend SPA (HTML, CSS, JS Vainilla en S3 + CloudFront) | ✅ Completada | 18/10/2026 |
+| **04** | Autenticación, Seguridad y Roles (JWT / OAuth) | ⏳ Siguiente paso | — |
 | **05** | Integración Fullstack y Almacenamiento S3 | ⏳ Pendiente | — |
 | **06** | Proyecto Final y Despliegue Cloud en Producción | ⏳ Pendiente | — |
 

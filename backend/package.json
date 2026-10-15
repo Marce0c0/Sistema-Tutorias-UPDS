@@ -10,7 +10,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "prisma:seed": "ts-node-dev --transpile-only prisma/seed.ts"
+    "prisma:seed": "ts-node-dev --transpile-only prisma/seed.ts",
+    "deploy:s3": "powershell -ExecutionPolicy Bypass -File ../frontend/deploy-s3.ps1"
   },
   "prisma": {
     "seed": "ts-node-dev --transpile-only prisma/seed.ts"
