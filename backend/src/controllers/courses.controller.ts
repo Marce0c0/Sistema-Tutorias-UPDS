@@ -84,12 +84,11 @@ export const updateCourse = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-// DELETE /api/courses/:id — Eliminar un curso
 export const deleteCourse = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const id = req.params.id as string;
     await prisma.course.delete({ where: { id } });
-    res.status(204).send();
+    res.status(200).json({ success: true, message: 'Curso eliminado exitosamente.' });
   } catch (error) {
     next(error);
   }

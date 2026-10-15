@@ -1,12 +1,12 @@
-// Rutas de Cursos
 import { Router } from 'express';
 import { getCourses, getCourseById, createCourse, updateCourse, deleteCourse } from '../controllers/courses.controller';
-import { validateCourse } from '../middlewares/validate';
+import { validateCourse, validateCourseUpdate, validateId } from '../middlewares/validate';
 
 export const coursesRouter = Router();
 
 coursesRouter.get('/', getCourses);
-coursesRouter.get('/:id', getCourseById);
+coursesRouter.get('/:id', validateId, getCourseById);
 coursesRouter.post('/', validateCourse, createCourse);
-coursesRouter.put('/:id', updateCourse);
-coursesRouter.delete('/:id', deleteCourse);
+coursesRouter.put('/:id', validateId, validateCourseUpdate, updateCourse);
+coursesRouter.delete('/:id', validateId, deleteCourse);
+

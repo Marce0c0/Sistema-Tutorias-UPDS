@@ -1,10 +1,10 @@
-// Punto de entrada principal del servidor
-// Sistema-Tutoriales-UPDS | Backend API REST
-
 import express from 'express';
 import { usersRouter } from './routes/users.routes';
 import { coursesRouter } from './routes/courses.routes';
 import { bookingsRouter } from './routes/bookings.routes';
+import { tutoriasRouter } from './routes/tutorias.routes';
+import { forumsRouter } from './routes/forums.routes';
+import { notificationsRouter } from './routes/notifications.routes';
 import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
@@ -22,7 +22,10 @@ app.get('/', (_req, res) => {
     endpoints: {
       users: '/api/users',
       courses: '/api/courses',
+      tutorias: '/api/tutorias',
       bookings: '/api/bookings',
+      forums: '/api/forums',
+      notifications: '/api/notifications',
     },
   });
 });
@@ -30,7 +33,10 @@ app.get('/', (_req, res) => {
 // ─── Rutas de la API ────────────────────────────────────────────────────────
 app.use('/api/users', usersRouter);
 app.use('/api/courses', coursesRouter);
+app.use('/api/tutorias', tutoriasRouter);
 app.use('/api/bookings', bookingsRouter);
+app.use('/api/forums', forumsRouter);
+app.use('/api/notifications', notificationsRouter);
 
 // ─── Middleware de Manejo de Errores (siempre al final) ─────────────────────
 app.use(errorHandler);
@@ -39,3 +45,4 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
 });
+

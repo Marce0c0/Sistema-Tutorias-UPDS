@@ -113,37 +113,49 @@
 sistema-tutoriales-UPDS/
 ├── backend/
 │   ├── prisma/
-│   │   └── schema.prisma            ← Modelos de la BD (User, Course, Booking)
+│   │   ├── migrations/
+│   │   │   └── 20261015000000_init_full_schema/
+│   │   │       └── migration.sql      ← Script DDL versionado con 6 tablas y 4 enums
+│   │   ├── schema.prisma              ← Modelos (User, Course, Tutoria, Booking, ForumMessage, Notification)
+│   │   └── seed.ts                    ← Población automatizada de datos iniciales
 │   ├── src/
 │   │   ├── controllers/
-│   │   │   ├── users.controller.ts  ← CRUD de usuarios
-│   │   │   ├── courses.controller.ts← CRUD de cursos
-│   │   │   └── bookings.controller.ts← CRUD de reservas
+│   │   │   ├── users.controller.ts    ← CRUD de usuarios
+│   │   │   ├── courses.controller.ts  ← CRUD de cursos
+│   │   │   ├── tutorias.controller.ts ← CRUD de tutorías
+│   │   │   ├── bookings.controller.ts ← CRUD de reservas
+│   │   │   ├── forums.controller.ts   ← CRUD de foro
+│   │   │   └── notifications.controller.ts ← CRUD de notificaciones
 │   │   ├── routes/
 │   │   │   ├── users.routes.ts
 │   │   │   ├── courses.routes.ts
-│   │   │   └── bookings.routes.ts
+│   │   │   ├── tutorias.routes.ts
+│   │   │   ├── bookings.routes.ts
+│   │   │   ├── forums.routes.ts
+│   │   │   └── notifications.routes.ts
 │   │   ├── middlewares/
-│   │   │   ├── validate.ts          ← Validación de datos de entrada
-│   │   │   └── errorHandler.ts      ← Manejo centralizado de errores
+│   │   │   ├── validate.ts            ← Validación de UUIDs, enums y esquemas
+│   │   │   └── errorHandler.ts        ← Manejo centralizado de errores
 │   │   ├── lib/
-│   │   │   └── prisma.ts            ← Cliente Prisma (singleton)
-│   │   └── server.ts                ← Punto de entrada del servidor
-│   ├── .env                         ← ⚠️ NO subir a GitHub (contiene credenciales)
-│   ├── .env.example                 ← Plantilla del .env (sí va a GitHub)
+│   │   │   └── prisma.ts              ← Cliente Prisma (singleton)
+│   │   └── server.ts                  ← Punto de entrada del servidor Express
+│   ├── api.http                       ← Suite de pruebas REST Client (VS Code)
+│   ├── .env                           ← ⚠️ NO subir a GitHub (contiene credenciales)
+│   ├── .env.example                   ← Plantilla del .env (sí va a GitHub)
 │   ├── package.json
 │   └── tsconfig.json
-├── frontend/                        ← Pendiente (Actividades 3-6)
-├── CONTEXTO_PROYECTO.md             ← Este documento de referencia
+├── frontend/                          ← Pendiente (Actividades 3-6)
+├── CONTEXTO_PROYECTO.md               ← Este documento de referencia
+├── Informe_Actividad2.md              ← Informe académico técnico oficial
 ├── .gitignore
 └── README.md
 ```
 
 ---
 
-## 🗃️ Modelo de Base de Datos
+## 🗃️ Modelo de Base de Datos (6 Entidades)
 
-### Tabla `users`
+### 1. `users`
 | Campo | Tipo | Restricciones |
 |---|---|---|
 | `id` | UUID | PK, auto-generado |
@@ -152,7 +164,7 @@ sistema-tutoriales-UPDS/
 | `role` | ENUM | `student`, `tutor`, `admin` |
 | `created_at` | TIMESTAMP | DEFAULT NOW() |
 
-### Tabla `courses`
+### 2. `courses`
 | Campo | Tipo | Restricciones |
 |---|---|---|
 | `id` | UUID | PK, auto-generado |
@@ -161,55 +173,89 @@ sistema-tutoriales-UPDS/
 | `tutor_id` | UUID | FK → `users.id` (SET NULL on delete) |
 | `created_at` | TIMESTAMP | DEFAULT NOW() |
 
-### Tabla `bookings`
+### 3. `tutorias`
+| Campo | Tipo | Restricciones |
+|---|---|---|
+| `id` | UUID | PK, auto-generado |
+| `course_id` | UUID | FK → `courses.id` (CASCADE on delete) |
+| `title` | TEXT | NOT NULL |
+| `description` | TEXT | Opcional |
+| `date` | TIMESTAMP | NOT NULL |
+| `max_students` | INT | NOT NULL DEFAULT 10 |
+| `status` | ENUM | `active`, `completed`, `cancelled` |
+| `created_at` | TIMESTAMP | DEFAULT NOW() |
+
+### 4. `bookings`
 | Campo | Tipo | Restricciones |
 |---|---|---|
 | `id` | UUID | PK, auto-generado |
 | `student_id` | UUID | FK → `users.id` (CASCADE on delete) |
 | `course_id` | UUID | FK → `courses.id` (CASCADE on delete) |
+| `tutoria_id` | UUID | FK → `tutorias.id` (SET NULL on delete, opcional) |
 | `scheduled_at` | TIMESTAMP | NOT NULL |
 | `status` | ENUM | `pending`, `confirmed`, `cancelled` |
 | `created_at` | TIMESTAMP | DEFAULT NOW() |
 
-### Relaciones
-```
-User (tutor) ──── 1:N ──── Course
-User (student) ── 1:N ──── Booking
-Course ─────────── 1:N ──── Booking
-```
+### 5. `forum_messages`
+| Campo | Tipo | Restricciones |
+|---|---|---|
+| `id` | UUID | PK, auto-generado |
+| `course_id` | UUID | FK → `courses.id` (CASCADE on delete) |
+| `user_id` | UUID | FK → `users.id` (CASCADE on delete) |
+| `title` | TEXT | NOT NULL |
+| `content` | TEXT | NOT NULL |
+| `created_at` | TIMESTAMP | DEFAULT NOW() |
+
+### 6. `notifications`
+| Campo | Tipo | Restricciones |
+|---|---|---|
+| `id` | UUID | PK, auto-generado |
+| `user_id` | UUID | FK → `users.id` (CASCADE on delete) |
+| `title` | TEXT | NOT NULL |
+| `message` | TEXT | NOT NULL |
+| `type` | ENUM | `info`, `reminder`, `booking_update`, `forum_reply` |
+| `is_read` | BOOLEAN | NOT NULL DEFAULT false |
+| `created_at` | TIMESTAMP | DEFAULT NOW() |
 
 ---
 
-## 🌐 Endpoints de la API
+## 🌐 Endpoints de la API (30 Endpoints)
 
 **Base URL local:** `http://localhost:3001`
 
-### Usuarios
-| Método | Ruta | Descripción |
-|---|---|---|
-| GET | `/api/users` | Listar todos |
-| GET | `/api/users/:id` | Obtener uno (incluye cursos y reservas) |
-| POST | `/api/users` | Crear (requiere: name, email, role) |
-| PUT | `/api/users/:id` | Actualizar (campos opcionales) |
-| DELETE | `/api/users/:id` | Eliminar |
+| Recurso | Método | Ruta | Descripción |
+|---|---|---|---|
+| **Users** | GET | `/api/users` | Listar todos los usuarios |
+| | GET | `/api/users/:id` | Obtener usuario con cursos y reservas |
+| | POST | `/api/users` | Registrar usuario (student/tutor/admin) |
+| | PUT | `/api/users/:id` | Actualizar datos de usuario |
+| | DELETE | `/api/users/:id` | Eliminar usuario |
+| **Courses** | GET | `/api/courses` | Listar cursos con su tutor |
+| | GET | `/api/courses/:id` | Obtener curso con sus reservas |
+| | POST | `/api/courses` | Crear curso |
+| | PUT | `/api/courses/:id` | Actualizar curso |
+| | DELETE | `/api/courses/:id` | Eliminar curso |
+| **Tutorias** | GET | `/api/tutorias` | Listar tutorías con contador de reservas |
+| | GET | `/api/tutorias/:id` | Obtener tutoría con inscritos |
+| | POST | `/api/tutorias` | Programar tutoría (fecha, cupo) |
+| | PUT | `/api/tutorias/:id` | Actualizar datos o estado de tutoría |
+| | DELETE | `/api/tutorias/:id` | Eliminar tutoría |
+| **Bookings** | GET | `/api/bookings` | Listar reservas con estudiante y curso |
+| | GET | `/api/bookings/:id` | Obtener detalle de reserva |
+| | POST | `/api/bookings` | Registrar reserva |
+| | PUT | `/api/bookings/:id` | Actualizar estado (`pending`, `confirmed`, `cancelled`) |
+| | DELETE | `/api/bookings/:id` | Eliminar reserva |
+| **Forums** | GET | `/api/forums` | Listar dudas (filtro: `?courseId=...`) |
+| | GET | `/api/forums/:id` | Ver consulta de foro específica |
+| | POST | `/api/forums` | Publicar consulta |
+| | PUT | `/api/forums/:id` | Editar duda de foro |
+| | DELETE | `/api/forums/:id` | Eliminar mensaje de foro |
+| **Notifications** | GET | `/api/notifications` | Listar alertas (filtro: `?userId=...`) |
+| | GET | `/api/notifications/:id` | Ver notificación específica |
+| | POST | `/api/notifications` | Crear notificación |
+| | PUT | `/api/notifications/:id` | Marcar como leída (`isRead: true`) |
+| | DELETE | `/api/notifications/:id` | Eliminar notificación |
 
-### Cursos
-| Método | Ruta | Descripción |
-|---|---|---|
-| GET | `/api/courses` | Listar todos (incluye tutor) |
-| GET | `/api/courses/:id` | Obtener uno (incluye tutor y reservas) |
-| POST | `/api/courses` | Crear (requiere: title; opcional: description, tutorId) |
-| PUT | `/api/courses/:id` | Actualizar |
-| DELETE | `/api/courses/:id` | Eliminar |
-
-### Reservas
-| Método | Ruta | Descripción |
-|---|---|---|
-| GET | `/api/bookings` | Listar todas (ordenadas por fecha) |
-| GET | `/api/bookings/:id` | Obtener una (incluye estudiante y curso) |
-| POST | `/api/bookings` | Crear (requiere: studentId, courseId, scheduledAt) |
-| PUT | `/api/bookings/:id` | Actualizar estado (requiere: status) |
-| DELETE | `/api/bookings/:id` | Eliminar |
 
 ---
 
