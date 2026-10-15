@@ -274,6 +274,60 @@ sistema-tutoriales-UPDS/
 
 ---
 
+## 🛠️ Manual Operativo FinOps: Persistencia Dual (Supabase 24/7 vs AWS RDS Bajo Demanda)
+
+Para mantener el proyecto en **estricto costo $0.00 USD**, se adoptó la siguiente operativa:
+
+### 1. Base de Datos Primaria (24/7): Supabase PostgreSQL
+- **Uso:** Desarrollo diario, pruebas continuas y ejecución estándar del backend.
+- **Ventaja:** No consume horas de cómputo en AWS ni genera cobros por IPv4 pública ($0.005/hr).
+- **Configuración en `backend/.env`:**
+  ```env
+  DATABASE_URL="postgresql://postgres.ghctgyzvbbxswicgobly:yw1u5QX7fiqf19Q3@aws-1-sa-east-1.pooler.supabase.com:5432/postgres"
+  ```
+
+### 2. Base de Datos Secundaria: Amazon RDS (`tutorias-upds-db`)
+- **Uso:** Exclusivamente para defensas académicas o validación de infraestructura en AWS.
+- **Estado Habitual:** En frío / Pausada (`stopped`).
+- **Comandos de Gestión (PowerShell):**
+  ```powershell
+  # 🛑 Detener RDS (frena horas de cómputo y libera la IPv4 pública):
+  aws rds stop-db-instance --db-instance-identifier tutorias-upds-db --region us-east-2
+
+  # ▶️ Iniciar RDS (tarda ~2 a 3 minutos en pasar a 'available'):
+  aws rds start-db-instance --db-instance-identifier tutorias-upds-db --region us-east-2
+
+  # 🔍 Verificar Estado Actual:
+  aws rds describe-db-instances --db-instance-identifier tutorias-upds-db --region us-east-2 --query "DBInstances[0].DBInstanceStatus"
+
+  # 💰 Verificar Gastos Acumulados ($0.00 USD):
+  aws ce get-cost-and-usage --time-period Start=2026-10-01,End=2026-10-31 --granularity MONTHLY --metrics "UnblendedCost" --region us-east-1
+  ```
+
+> ⚠️ **Regla de los 7 días de AWS RDS:**  
+> AWS enciende automáticamente las instancias RDS que permanezcan en estado `stopped` por más de 7 días continuos. Si esto ocurre, basta con volver a ejecutar `aws rds stop-db-instance` para devolverla a costo cero.
+
+---
+
+## 🗺️ Mapa de Componentes: Dónde va Cada Cosa
+
+| Tipo de Componente | Ubicación en el Repositorio | Responsabilidad |
+|---|---|---|
+| **Punto de Entrada** | `backend/src/server.ts` | Configura Express, registra las 6 rutas y el middleware de errores. |
+| **Modelos de Datos** | `backend/prisma/schema.prisma` | Define las 6 tablas relacionales y 4 tipos ENUM en PostgreSQL. |
+| **Migración DDL SQL** | `backend/prisma/migrations/20261015000000_init_full_schema/migration.sql` | Script SQL versionado con la creación física de tablas y claves foráneas. |
+| **Poblador Inicial** | `backend/prisma/seed.ts` | Script que inserta usuarios, cursos, tutorías, reservas, foro y notificaciones de prueba. |
+| **Cliente de BD** | `backend/src/lib/prisma.ts` | Patrón Singleton para reutilizar la conexión y evitar fugas de memoria. |
+| **Controladores** | `backend/src/controllers/*.ts` | Funciones asíncronas con lógica de negocio y queries a Prisma (6 archivos). |
+| **Enrutadores** | `backend/src/routes/*.ts` | Declaración de endpoints HTTP (GET, POST, PUT, DELETE) con validadores asociados. |
+| **Validación** | `backend/src/middlewares/validate.ts` | Regex de UUIDs, chequeo de campos obligatorios, longitudes y enums válidos. |
+| **Manejo de Errores** | `backend/src/middlewares/errorHandler.ts` | Captura centralizada de excepciones y traducción de códigos Prisma (P2002, P2025). |
+| **Suite de Pruebas** | `backend/api.http` | 30 peticiones HTTP listas para probar con REST Client en VS Code. |
+| **Configuración Local** | `backend/.env` | Credenciales de base de datos y AWS (nunca se sube a GitHub). |
+| **Informe Académico** | `Informe_Actividad2.md` | Documento académico formal de entrega para el docente. |
+
+---
+
 ## ⚙️ Cómo Levantar el Proyecto
 
 ```bash
@@ -284,30 +338,32 @@ cd sistema-tutoriales-UPDS/backend
 # 2. Instalar dependencias
 npm install
 
-# 3. Crear el archivo .env (copiar de .env.example y poner la contraseña real)
-# En Windows PowerShell:
+# 3. Configurar variables de entorno (usar Supabase por defecto a costo $0)
+# Copiar plantilla si no existe .env:
 Copy-Item .env.example .env
 
 # 4. Generar el cliente de Prisma
 npx prisma generate
 
-# 5. Sincronizar modelos con la base de datos de Supabase
+# 5. Sincronizar modelos y poblar datos iniciales
 npx prisma db push
+npm run prisma:seed
 
 # 6. Iniciar el servidor en modo desarrollo
 npm run dev
 
-# ✅ El servidor está en: http://localhost:3001
+# ✅ El servidor estará escuchando en: http://localhost:3001
 ```
 
-### Scripts disponibles
+### Scripts Disponibles en `backend/package.json`
 | Comando | Descripción |
 |---|---|
-| `npm run dev` | Servidor con recarga automática (ts-node-dev) |
-| `npm run build` | Compila TypeScript → `/dist` |
-| `npm start` | Ejecuta el build compilado |
-| `npx prisma studio` | Interfaz visual interactiva de la BD |
-| `npx prisma db push` | Sincroniza el esquema con Supabase |
+| `npm run dev` | Inicia el servidor con recarga automática (`ts-node-dev`) |
+| `npm run build` | Compila TypeScript a JavaScript estándar en `/dist` (`tsc`) |
+| `npm start` | Inicia el servidor compilado de producción (`node dist/server.js`) |
+| `npm run prisma:seed` | Puebla la base de datos con los datos de prueba de las 6 entidades |
+| `npx prisma studio` | Abre una interfaz web interactiva para ver y editar registros |
+| `npx prisma db push` | Sincroniza el esquema `schema.prisma` con la base de datos activa |
 
 ---
 
@@ -317,11 +373,12 @@ npm run dev
 |---|---|---|---|
 | **01** | Introducción a Node.js y Express (Rutas básicas) | ✅ Completada | 18/10/2026 |
 | **02** | Backend, Base de Datos y API REST | ✅ Completada | 18/10/2026 |
-| **03** | — | ⏳ Pendiente | — |
-| **04** | — | ⏳ Pendiente | — |
-| **05** | — | ⏳ Pendiente | — |
-| **06** | — | ⏳ Pendiente | — |
+| **03** | Frontend SPA (HTML, CSS, JS Vainilla en S3 + CloudFront) | ⏳ Siguiente paso | — |
+| **04** | Autenticación, Seguridad y Roles (JWT / OAuth) | ⏳ Pendiente | — |
+| **05** | Integración Fullstack y Almacenamiento S3 | ⏳ Pendiente | — |
+| **06** | Proyecto Final y Despliegue Cloud en Producción | ⏳ Pendiente | — |
 
 ---
 
 *Documento de contexto — Sistema-Tutoriales-UPDS — UPDS — Octubre 2026*
+
