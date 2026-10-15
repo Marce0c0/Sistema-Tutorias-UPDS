@@ -745,18 +745,19 @@ El repositorio sigue una estrategia basada en **Git Flow**:
 
 ## 16. Integración Multi-Cloud, AWS RDS y Política de Costo Cero ($0.00 USD)
 
-El proyecto cuenta con una arquitectura de persistencia cloud híbrida de alta resiliencia:
+El proyecto cuenta con una arquitectura de persistencia cloud híbrida de alta resiliencia y costo cero:
 
-| Componente Cloud | Proveedor y Región | Especificación Técnica | Estado Operativo | Costo Facturado |
+| Componente Cloud | Proveedor y Región | Especificación Técnica | Rol Arquitectónico | Costo Facturado |
 |---|---|---|---|---|
-| **Base de Datos Principal** | **AWS RDS** (`us-east-2` Ohio) | PostgreSQL 16, `db.t4g.micro` (Graviton2), 20 GB gp3 | ✅ Activa y Sincronizada | **$0.00 USD** (Free Tier 750h/mes) |
-| **Almacenamiento de Archivos** | **Amazon S3** (`us-east-2` Ohio) | Bucket `sistema-tutorias-upds-861358180738` | ✅ Activo | **$0.00 USD** (Free Tier 5 GB/mes) |
-| **Base de Datos Fallback** | **Supabase** (`sa-east-1` São Paulo) | PostgreSQL 17.11 (Session Pooler IPv4) | ✅ Activa (Esquema espejo) | **$0.00 USD** (Capa Gratuita) |
+| **Base de Datos Primaria (24/7)** | **Supabase** (`sa-east-1` São Paulo) | PostgreSQL 17.11 (Session Pooler IPv4 en puerto 5432) | ✅ Persistencia activa continua sin riesgo de cobro por horas ni IPv4 pública | **$0.00 USD** (Capa Gratuita) |
+| **Almacenamiento de Archivos** | **Amazon S3** (`us-east-2` Ohio) | Bucket `sistema-tutorias-upds-861358180738` | ✅ Activo (Materiales de estudio y hosting Frontend) | **$0.00 USD** (Free Tier 5 GB/mes) |
+| **Base de Datos AWS (Bajo Demanda)** | **AWS RDS** (`us-east-2` Ohio) | PostgreSQL 16, `db.t4g.micro` (Graviton2), 20 GB gp3 | ⏸️ Sincronizada y pausada (`stopped`) bajo demanda para eliminar microcargos de IPv4 | **$0.00 USD** (Free Tier 750h/mes + 20 GB) |
 
 ### Cumplimiento del Presupuesto Estricto ($0.00 USD)
-- La instancia RDS `db.t4g.micro` está incluida dentro de las 750 horas mensuales del primer año de cuenta de AWS (cuenta registrada en agosto 2026).
-- El auto-escalado de almacenamiento está deshabilitado para prevenir ampliaciones automáticas de costo.
-- Adicionalmente, la cuenta cuenta con un bono de **$100.00 USD** en créditos promocionales para salvaguarda total.
+- **Desacoplamiento FinOps:** La aplicación utiliza **Supabase** como persistencia predeterminada en `.env`, eliminando cualquier cobro por dirección IPv4 pública de AWS ($0.005/hr).
+- **Amazon RDS Bajo Demanda:** La instancia RDS cuenta con sus modelos y migraciones sincronizados; permanece en estado pausado (`stopped`) y se enciende únicamente cuando se requieran pruebas específicas en AWS.
+- **Límites de Almacenamiento:** El auto-escalado de almacenamiento está deshabilitado (`AllocatedStorage: 20`, `MaxAllocatedStorage: 20`) para prevenir cobros automáticos.
+- **Créditos Promocionales:** La cuenta cuenta con **$100.00 USD** en créditos promocionales como salvaguarda absoluta.
 
 ---
 
