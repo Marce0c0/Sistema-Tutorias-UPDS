@@ -35,8 +35,17 @@ desktop.ini
 # Archivos de configuración de Agentes IA (locales)
 AGENTS.md
 CLAUDE.md
+GEMINI.md
 .agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
+.opencode/
+.github/
+graphify-out/
 
 # Archivos temporales
 *.tmp
 *.bak
+
