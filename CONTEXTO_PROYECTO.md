@@ -75,27 +75,20 @@
    - **Nombre del Bucket:** `sistema-tutorias-upds-861358180738` ✅
    - **ARN:** `arn:aws:s3:::sistema-tutorias-upds-861358180738`
    - **Región:** `us-east-2`
-   - **Propósito:** Almacenamiento en la nube para materiales de estudio (PDFs, diapositivas) y futuro hosting estático del Frontend SPA.
+   - **Propósito:** Almacenamiento en la nube para materiales de estudio (PDFs, diapositivas) y hosting estático del Frontend SPA.
    - **Capa Gratuita:** 5 GB de almacenamiento estándar, 20,000 solicitudes GET y 2,000 solicitudes PUT sin costo mensual.
-   - **Configuración:** Versionado deshabilitado, tamaño 0 bytes (control total de acumulación).
+   - **Configuración:** Versionado deshabilitado, tamaño <1 MB (control total de acumulación, costo real $0.00 USD).
 2. **Amazon RDS (PostgreSQL):**
-   - **Identificador de Instancia:** `tutorias-upds-db` ✅ *(Sincronizada con Free Tier)*
-   - **Endpoint Público:** `tutorias-upds-db.c1guag0cedu9.us-east-2.rds.amazonaws.com:5432`
-   - **ARN:** `arn:aws:rds:us-east-2:861358180738:db:tutorias-upds-db`
-   - **Tipo de Instancia:** `db.t4g.micro` (AWS Graviton2, Free Tier elegible)
-   - **Motor:** PostgreSQL 16
-   - **Almacenamiento:** 20 GB SSD gp3 fijo (`AllocatedStorage: 20`, `MaxAllocatedStorage: 20`, autoescalado deshabilitado)
-   - **Multi-AZ:** `false` (Instancia única dentro de cuota)
-   - **Estrategia FinOps:** Operación bajo demanda. Puede detenerse temporalmente (`aws rds stop-db-instance`) cuando no se use activamente, utilizando Supabase como DB primaria en `.env`.
+   - **Estado:** 🗑️ **Desmantelado y Eliminado** (Octubre 2026).
+   - **Motivo FinOps:** Eliminar costos por IPv4 pública ($0.005/hr) y almacenamiento gp3 para garantizar un gasto permanente de **$0.00 USD**. Toda la persistencia opera de forma nativa y gratuita sobre **Supabase PostgreSQL**.
 
 #### 🚀 Estrategia de Despliegue a Costo $0.00 USD:
 - **Frontend (Actividades 3-6):** Alojamiento estático en el bucket existente **Amazon S3 (`sistema-tutorias-upds-861358180738`)** + **Amazon CloudFront CDN** (Always Free: 1 TB de salida/mes, 10M peticiones/mes y certificado SSL HTTPS gratuito mediante ACM). Costo: **$0.00 USD**.
 - **Backend (API REST):**
   - *Desarrollo y Presentación Académica:* Ejecución en entorno local (`http://localhost:3001`).
   - *Cloud Serverless (Opcional):* Despliegue en **AWS Lambda** + **API Gateway HTTP** (Always Free: 1 millón de peticiones gratis/mes, $0.00 cuando no hay tráfico).
-- **Base de Datos Dual Resiliente:**
-  - **Supabase (`ghctgyzvbbxswicgobly`):** PostgreSQL 17 en la nube activo 24/7 sin consumo de cuotas horarias de AWS ni costos de IP pública IPv4.
-  - **Amazon RDS (`tutorias-upds-db`):** PostgreSQL en AWS para sincronización y validación cloud, controlable mediante encendido/apagado programado.
+- **Base de Datos Única y Gratuita:**
+  - **Supabase (`ghctgyzvbbxswicgobly`):** PostgreSQL 17 en la nube activo 24/7 sin consumo de cuotas horarias de AWS ni costos de IP pública IPv4. Costo: **$0.00 USD**.
 
 ---
 
@@ -286,26 +279,9 @@ Para mantener el proyecto en **estricto costo $0.00 USD**, se adoptó la siguien
   DATABASE_URL="postgresql://postgres.[TU_PROYECTO]:[TU_PASSWORD]@aws-1-sa-east-1.pooler.supabase.com:5432/postgres"
   ```
 
-### 2. Base de Datos Secundaria: Amazon RDS (`tutorias-upds-db`)
-- **Uso:** Exclusivamente para defensas académicas o validación de infraestructura en AWS.
-- **Estado Habitual:** En frío / Pausada (`stopped`).
-- **Comandos de Gestión (PowerShell):**
-  ```powershell
-  # 🛑 Detener RDS (frena horas de cómputo y libera la IPv4 pública):
-  aws rds stop-db-instance --db-instance-identifier tutorias-upds-db --region us-east-2
-
-  # ▶️ Iniciar RDS (tarda ~2 a 3 minutos en pasar a 'available'):
-  aws rds start-db-instance --db-instance-identifier tutorias-upds-db --region us-east-2
-
-  # 🔍 Verificar Estado Actual:
-  aws rds describe-db-instances --db-instance-identifier tutorias-upds-db --region us-east-2 --query "DBInstances[0].DBInstanceStatus"
-
-  # 💰 Verificar Gastos Acumulados ($0.00 USD):
-  aws ce get-cost-and-usage --time-period Start=2026-10-01,End=2026-10-31 --granularity MONTHLY --metrics "UnblendedCost" --region us-east-1
-  ```
-
-> ⚠️ **Regla de los 7 días de AWS RDS:**  
-> AWS enciende automáticamente las instancias RDS que permanezcan en estado `stopped` por más de 7 días continuos. Si esto ocurre, basta con volver a ejecutar `aws rds stop-db-instance` para devolverla a costo cero.
+### 2. Base de Datos en AWS: Amazon RDS (`tutorias-upds-db`) [ELIMINADA]
+- **Estado:** Desmantelada en octubre de 2026.
+- **Razón:** La asignación de IPv4 pública obligatoria y almacenamiento gp3 representaban un riesgo de cobro recurrente ($0.005/hr por IP y reinicio automático cada 7 días). Se unificó toda la persistencia en **Supabase** garantizando costo $0.00 permanente.
 
 ---
 
