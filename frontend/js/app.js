@@ -1,7 +1,7 @@
 // Controlador Principal y Enrutador SPA — Sistema-Tutoriales-UPDS
 import { store } from './state/store.js';
 import { api } from './services/api.js';
-import { Navbar } from './components/Navbar.js';
+import { Navbar } from './components/Navbar.js?v=2';
 import { Toast } from './components/Toast.js';
 import { DashboardView } from './views/DashboardView.js';
 import { UsersView } from './views/UsersView.js';
