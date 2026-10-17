@@ -34,7 +34,7 @@ export const Navbar = {
             <div class="brand-logo">UPDS</div>
             <div class="brand-text">
               <span class="brand-title">Tutorías Universitarias</span>
-              <span class="brand-subtitle">Tecnología Web II · Actividad 3</span>
+              <span class="brand-subtitle">Portal Académico Institucional</span>
             </div>
           </div>
 
