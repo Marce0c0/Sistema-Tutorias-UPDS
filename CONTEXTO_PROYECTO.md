@@ -283,7 +283,7 @@ Para mantener el proyecto en **estricto costo $0.00 USD**, se adoptó la siguien
 - **Ventaja:** No consume horas de cómputo en AWS ni genera cobros por IPv4 pública ($0.005/hr).
 - **Configuración en `backend/.env`:**
   ```env
-  DATABASE_URL="postgresql://postgres.ghctgyzvbbxswicgobly:yw1u5QX7fiqf19Q3@aws-1-sa-east-1.pooler.supabase.com:5432/postgres"
+  DATABASE_URL="postgresql://postgres.[TU_PROYECTO]:[TU_PASSWORD]@aws-1-sa-east-1.pooler.supabase.com:5432/postgres"
   ```
 
 ### 2. Base de Datos Secundaria: Amazon RDS (`tutorias-upds-db`)
