@@ -29,12 +29,14 @@ export const Navbar = {
     container.innerHTML = `
       <header class="app-header">
         <div class="header-container">
-          <!-- Marca UPDS -->
+          <!-- Marca UPDS Oficial -->
           <div class="brand-area" id="brand-home-btn" role="button" tabindex="0">
-            <div class="brand-logo">UPDS</div>
+            <div class="brand-logo-card">
+              <img src="img/upds-logo.png" alt="Universidad Privada Domingo Savio" class="brand-logo-img" />
+            </div>
             <div class="brand-text">
               <span class="brand-title">Tutorías Universitarias</span>
-              <span class="brand-subtitle">Portal Académico Institucional</span>
+              <span class="brand-subtitle">Universidad Privada Domingo Savio</span>
             </div>
           </div>
 

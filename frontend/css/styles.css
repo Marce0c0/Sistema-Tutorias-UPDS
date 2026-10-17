@@ -4,15 +4,23 @@
    ============================================================================== */
 
 :root {
-  /* Paleta Institucional UPDS */
-  --primary-navy: #0f2042;
-  --primary-blue: #1d4ed8;
-  --primary-hover: #1e40af;
-  --primary-light: #eff6ff;
+  /* Paleta Institucional Oficial UPDS */
+  --primary-navy: #002d62;       /* Azul Marino Corporativo UPDS */
+  --primary-blue: #004b93;       /* Azul Rey "DOMINGO SAVIO" */
+  --primary-hover: #003876;
+  --primary-light: #e8f1fa;
 
-  --accent-gold: #f59e0b;
-  --accent-gold-hover: #d97706;
-  --accent-gold-light: #fef3c7;
+  --upds-red: #e30613;           /* Rojo Oficial "UNIVERSIDAD PRIVADA" */
+  --upds-red-hover: #c40510;
+  --upds-red-light: #fde8e9;
+
+  --upds-green: #009640;         /* Verde Esferas Oficial UPDS */
+  --upds-green-hover: #007a33;
+  --upds-green-light: #e6f6ee;
+
+  --accent-gold: #e30613;        /* Acentos principales con Rojo UPDS */
+  --accent-gold-hover: #c40510;
+  --accent-gold-light: #fde8e9;
 
   /* Escala de Neutros */
   --bg-page: #f8fafc;
@@ -26,9 +34,9 @@
   --text-inverse: #ffffff;
 
   /* Colores Semánticos */
-  --success: #10b981;
-  --success-bg: #ecfdf5;
-  --success-border: #a7f3d0;
+  --success: #009640;
+  --success-bg: #e6f6ee;
+  --success-border: #a3e2be;
 
   --warning: #f59e0b;
   --warning-bg: #fffbeb;
@@ -125,15 +133,25 @@ body.modal-open {
   user-select: none;
 }
 
-.brand-logo {
-  background: linear-gradient(135deg, var(--accent-gold), #fbbf24);
-  color: var(--primary-navy);
-  font-weight: 900;
-  font-size: 1.1rem;
-  letter-spacing: 0.05em;
-  padding: 0.35rem 0.6rem;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.brand-logo-card {
+  background: #ffffff;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  height: 48px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.brand-logo-img {
+  height: 40px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
 }
 
 .brand-text {
@@ -142,14 +160,17 @@ body.modal-open {
 }
 
 .brand-title {
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-weight: 800;
+  font-size: 1.15rem;
   line-height: 1.2;
+  color: #ffffff;
+  letter-spacing: -0.01em;
 }
 
 .brand-subtitle {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: #e2e8f0;
+  font-weight: 500;
 }
 
 /* Selector de Usuario Activo en Sesión */
@@ -256,10 +277,10 @@ body.modal-open {
 }
 
 .nav-btn.active {
-  color: var(--accent-gold);
-  border-bottom-color: var(--accent-gold);
+  color: #ffffff;
+  border-bottom-color: var(--upds-red);
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(227, 6, 19, 0.15);
 }
 
 .nav-badge {
@@ -302,7 +323,8 @@ body.modal-open {
 
 /* ─── Banner del Dashboard ────────────────────────────────────────────────── */
 .dashboard-banner {
-  background: linear-gradient(135deg, var(--primary-navy) 0%, #1e3a8a 100%);
+  background: linear-gradient(135deg, var(--primary-navy) 0%, var(--primary-blue) 100%);
+  border-left: 6px solid var(--upds-red);
   color: white;
   padding: 1.5rem 2rem;
   border-radius: var(--radius-lg);
