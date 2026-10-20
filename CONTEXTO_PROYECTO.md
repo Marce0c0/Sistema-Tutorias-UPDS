@@ -63,17 +63,17 @@
 ### AWS (Amazon Web Services — Nueva Experiencia)
 | Campo | Valor |
 |---|---|
-| **Proyecto / Cuenta AWS** | `861358180738` |
+| **Proyecto / Cuenta AWS** | `264425049862` (Cuenta Principal con $100 USD en créditos) |
 | **Región seleccionada** | `us-east-2` (Ohio) |
 | **Perfil CLI** | `default` |
-| **Autenticación** | `aws login` (SSO / Browser OAuth — Rol `AccountFullAccessRole`) |
+| **Autenticación** | IAM User (`marce-dev` con `AdministratorAccess`) |
 | **Herramientas de IA** | Agent Toolkit for AWS (24 skills) + AWS MCP Proxy |
-| **Presupuesto / Límite de Gasto** | **$0.00 - Máx $0.01 USD** (Estrictamente Capa Gratuita / Free Tier) |
+| **Presupuesto / Límite de Gasto** | **$100.00 USD en Créditos Promocionales** + Capa Gratuita / Free Tier |
 
 #### Recursos Activos en AWS:
 1. **Amazon S3 (Simple Storage Service):**
-   - **Nombre del Bucket:** `sistema-tutorias-upds-861358180738` ✅
-   - **ARN:** `arn:aws:s3:::sistema-tutorias-upds-861358180738`
+   - **Nombre del Bucket:** `sistema-tutorias-upds-264425049862` ✅
+   - **ARN:** `arn:aws:s3:::sistema-tutorias-upds-264425049862`
    - **Región:** `us-east-2`
    - **Propósito:** Almacenamiento en la nube para materiales de estudio (PDFs, diapositivas) y hosting estático del Frontend SPA.
    - **Capa Gratuita:** 5 GB de almacenamiento estándar, 20,000 solicitudes GET y 2,000 solicitudes PUT sin costo mensual.
@@ -83,7 +83,7 @@
    - **Motivo FinOps:** Eliminar costos por IPv4 pública ($0.005/hr) y almacenamiento gp3 para garantizar un gasto permanente de **$0.00 USD**. Toda la persistencia opera de forma nativa y gratuita sobre **Supabase PostgreSQL**.
 
 #### 🚀 Estrategia de Despliegue a Costo $0.00 USD:
-- **Frontend (Actividades 3-6):** Alojamiento estático en el bucket existente **Amazon S3 (`sistema-tutorias-upds-861358180738`)** + **Amazon CloudFront CDN** (Always Free: 1 TB de salida/mes, 10M peticiones/mes y certificado SSL HTTPS gratuito mediante ACM). Costo: **$0.00 USD**.
+- **Frontend (Actividades 3-6):** Alojamiento estático en el bucket existente **Amazon S3 (`sistema-tutorias-upds-264425049862`)** + **Amazon CloudFront CDN** (Always Free: 1 TB de salida/mes, 10M peticiones/mes y certificado SSL HTTPS gratuito mediante ACM). Costo: **$0.00 USD**.
 - **Backend (API REST):**
   - *Desarrollo y Presentación Académica:* Ejecución en entorno local (`http://localhost:3001`).
   - *Cloud Serverless (Opcional):* Despliegue en **AWS Lambda** + **API Gateway HTTP** (Always Free: 1 millón de peticiones gratis/mes, $0.00 cuando no hay tráfico).
