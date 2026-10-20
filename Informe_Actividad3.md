@@ -24,7 +24,7 @@
 | **Dominio de la Solución** | Plataforma Full Stack universitaria para gestión de catálogo de materias, programación de tutorías, reservas de estudiantes, foros de dudas académicas y bandeja de notificaciones. |
 | **Arquitectura de Software** | Single Page Application (SPA) desacoplada basada en Vanilla HTML5, CSS3 Institucional y JavaScript Moderno (ES6+ Modules), comunicada vía API REST con backend Node.js + Express 5 + TypeScript + Prisma ORM. |
 | **Persistencia Activa** | PostgreSQL 17 en la nube (Supabase Session Pooler IPv4) + Amazon RDS PostgreSQL bajo demanda. |
-| **Hosting Estático Cloud** | Bucket Amazon S3 (`sistema-tutorias-upds-861358180738/frontend`) en región `us-east-2` (Ohio). |
+| **Hosting Estático Cloud** | Bucket Amazon S3 (`sistema-tutorias-upds-264425049862/frontend`) en región `us-east-2` (Ohio). |
 | **Política de Costos FinOps** | **$0.00 USD** (Estrictamente configurado dentro del AWS Free Tier y Capa Gratuita de Supabase). |
 | **Desarrollador** | Sammy Marcelo Sivila Sanchez |
 
@@ -362,7 +362,7 @@ Se automatizó la publicación en la nube mediante el script `frontend/deploy-s3
 ```powershell
 aws s3 sync "$FrontendPath" "s3://$BucketName/frontend" --region us-east-2 --exclude "deploy-s3.ps1" --cache-control "max-age=300" --delete
 ```
-- **Resultado:** 20 archivos estáticos subidos a `s3://sistema-tutorias-upds-861358180738/frontend/index.html`.
+- **Resultado:** 20 archivos estáticos subidos a `s3://sistema-tutorias-upds-264425049862/frontend/index.html`.
 - **Costo Facturado:** **$0.00 USD** (consumo de ~118 KiB dentro de los 5 GB gratuitos y 20 peticiones PUT dentro de las 2,000 gratuitas mensuales).
 
 ---
