@@ -124,23 +124,27 @@ sistema-tutoriales-UPDS/
 │   │   ├── migrations/
 │   │   │   └── 20261015000000_init_full_schema/
 │   │   │       └── migration.sql      ← Script DDL versionado con 6 tablas y 4 enums
-│   │   ├── schema.prisma              ← Modelos (User, Course, Tutoria, Booking, ForumMessage, Notification)
-│   │   └── seed.ts                    ← Población automatizada de datos iniciales
+│   │   ├── schema.prisma              ← Modelos (User, Course, Tutoria, Booking, ForumMessage, Notification, Review, Material)
+│   │   └── seed.ts                    ← Población automatizada de datos iniciales (8 entidades)
 │   ├── src/
 │   │   ├── controllers/
 │   │   │   ├── users.controller.ts    ← CRUD de usuarios
 │   │   │   ├── courses.controller.ts  ← CRUD de cursos
-│   │   │   ├── tutorias.controller.ts ← CRUD de tutorías
+│   │   │   ├── tutorias.controller.ts ← CRUD de tutorías (modalidad, ubicación, enlace meet)
 │   │   │   ├── bookings.controller.ts ← CRUD de reservas
 │   │   │   ├── forums.controller.ts   ← CRUD de foro
-│   │   │   └── notifications.controller.ts ← CRUD de notificaciones
+│   │   │   ├── notifications.controller.ts ← CRUD de notificaciones
+│   │   │   ├── reviews.controller.ts  ← CRUD de calificaciones y reseñas (estrellas 1-5)
+│   │   │   └── materials.controller.ts← CRUD de materiales académicos en S3
 │   │   ├── routes/
 │   │   │   ├── users.routes.ts
 │   │   │   ├── courses.routes.ts
 │   │   │   ├── tutorias.routes.ts
 │   │   │   ├── bookings.routes.ts
 │   │   │   ├── forums.routes.ts
-│   │   │   └── notifications.routes.ts
+│   │   │   ├── notifications.routes.ts
+│   │   │   ├── reviews.routes.ts
+│   │   │   └── materials.routes.ts
 │   │   ├── middlewares/
 │   │   │   ├── validate.ts            ← Validación de UUIDs, enums y esquemas
 │   │   │   └── errorHandler.ts        ← Manejo centralizado de errores
