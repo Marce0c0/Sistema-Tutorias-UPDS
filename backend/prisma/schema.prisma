@@ -8,15 +8,18 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  name          String
-  email         String         @unique
-  role          Role
-  createdAt     DateTime       @default(now()) @map("created_at")
-  courses       Course[]       @relation("TutorCourses")
-  bookings      Booking[]
-  forumMessages ForumMessage[]
-  notifications Notification[]
+  id                String         @id @default(uuid())
+  name              String
+  email             String         @unique
+  password          String?        // Hasheado con bcrypt para Actividad 4 (Auth/JWT)
+  role              Role
+  createdAt         DateTime       @default(now()) @map("created_at")
+  courses           Course[]       @relation("TutorCourses")
+  bookings          Booking[]
+  forumMessages     ForumMessage[]
+  notifications     Notification[]
+  reviewsGiven      Review[]       @relation("StudentReviews")
+  materialsUploaded Material[]     @relation("TutorMaterials")
 
   @@map("users")
 }
@@ -30,23 +33,28 @@ model Course {
   tutorias      Tutoria[]
   bookings      Booking[]
   forumMessages ForumMessage[]
+  materials     Material[]
   createdAt     DateTime       @default(now()) @map("created_at")
 
   @@map("courses")
 }
 
 model Tutoria {
-  id          String        @id @default(uuid())
-  courseId    String        @map("course_id")
+  id          String          @id @default(uuid())
+  courseId    String          @map("course_id")
   title       String
   description String?
   date        DateTime
-  maxStudents Int           @default(10) @map("max_students")
-  status      TutoriaStatus @default(active)
-  createdAt   DateTime      @default(now()) @map("created_at")
+  maxStudents Int             @default(10) @map("max_students")
+  status      TutoriaStatus   @default(active)
+  modality    TutoriaModality @default(presencial)
+  location    String?         // Ej: "Aula 302 - Campus Central"
+  meetingUrl  String?         @map("meeting_url") // Ej: "https://meet.google.com/xyz"
+  createdAt   DateTime        @default(now()) @map("created_at")
 
   course   Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   bookings Booking[]
+  reviews  Review[]
 
   @@map("tutorias")
 }
@@ -95,6 +103,37 @@ model Notification {
   @@map("notifications")
 }
 
+model Review {
+  id        String   @id @default(uuid())
+  tutoriaId String   @map("tutoria_id")
+  studentId String   @map("student_id")
+  rating    Int      // 1 a 5 estrellas
+  comment   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tutoria Tutoria @relation(fields: [tutoriaId], references: [id], onDelete: Cascade)
+  student User    @relation("StudentReviews", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([tutoriaId, studentId])
+  @@map("reviews")
+}
+
+model Material {
+  id           String   @id @default(uuid())
+  courseId     String   @map("course_id")
+  uploadedById String   @map("uploaded_by_id")
+  title        String
+  description  String?
+  fileUrl      String   @map("file_url")
+  fileType     String   @default("pdf") @map("file_type") // pdf, slide, doc, link
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  course     Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  uploadedBy User   @relation("TutorMaterials", fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  @@map("materials")
+}
+
 enum Role {
   student
   tutor
@@ -119,3 +158,10 @@ enum NotificationType {
   booking_update
   forum_reply
 }
+
+enum TutoriaModality {
+  presencial
+  virtual
+  hibrida
+}
+
