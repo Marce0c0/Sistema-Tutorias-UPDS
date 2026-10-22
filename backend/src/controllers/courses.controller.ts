@@ -22,7 +22,7 @@ export const getCourses = async (_req: Request, res: Response, next: NextFunctio
 // GET /api/courses/:id — Obtener un curso por ID
 export const getCourseById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const course = await prisma.course.findUnique({
       where: { id },
       include: {
@@ -66,7 +66,7 @@ export const createCourse = async (req: Request, res: Response, next: NextFuncti
 // PUT /api/courses/:id — Actualizar un curso
 export const updateCourse = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { title, description, tutorId } = req.body;
 
     const updated = await prisma.course.update({
@@ -84,12 +84,11 @@ export const updateCourse = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-// DELETE /api/courses/:id — Eliminar un curso
 export const deleteCourse = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     await prisma.course.delete({ where: { id } });
-    res.status(204).send();
+    res.status(200).json({ success: true, message: 'Curso eliminado exitosamente.' });
   } catch (error) {
     next(error);
   }

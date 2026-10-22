@@ -12,6 +12,7 @@ export const getBookings = async (_req: Request, res: Response, next: NextFuncti
       include: {
         student: { select: { id: true, name: true, email: true } },
         course: { select: { id: true, title: true } },
+        tutoria: { select: { id: true, title: true, date: true } },
       },
     });
     res.status(200).json(bookings);
@@ -23,7 +24,7 @@ export const getBookings = async (_req: Request, res: Response, next: NextFuncti
 // GET /api/bookings/:id — Obtener una reserva por ID
 export const getBookingById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const booking = await prisma.booking.findUnique({
       where: { id },
       include: {
@@ -33,6 +34,7 @@ export const getBookingById = async (req: Request, res: Response, next: NextFunc
             tutor: { select: { id: true, name: true } },
           },
         },
+        tutoria: true,
       },
     });
 
@@ -50,7 +52,7 @@ export const getBookingById = async (req: Request, res: Response, next: NextFunc
 // POST /api/bookings — Crear una nueva reserva
 export const createBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { studentId, courseId, scheduledAt } = req.body;
+    const { studentId, courseId, scheduledAt, tutoriaId } = req.body;
 
     const newBooking = await prisma.booking.create({
       data: {
@@ -58,10 +60,12 @@ export const createBooking = async (req: Request, res: Response, next: NextFunct
         courseId,
         scheduledAt: new Date(scheduledAt),
         status: 'pending',
+        ...(tutoriaId && { tutoriaId }),
       },
       include: {
         student: { select: { id: true, name: true } },
         course: { select: { id: true, title: true } },
+        tutoria: { select: { id: true, title: true, date: true } },
       },
     });
 
@@ -74,14 +78,15 @@ export const createBooking = async (req: Request, res: Response, next: NextFunct
 // PUT /api/bookings/:id — Actualizar estado de una reserva
 export const updateBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
-    const { status, scheduledAt } = req.body;
+    const id = req.params.id as string;
+    const { status, scheduledAt, tutoriaId } = req.body;
 
     const updated = await prisma.booking.update({
       where: { id },
       data: {
         ...(status && { status }),
         ...(scheduledAt && { scheduledAt: new Date(scheduledAt) }),
+        ...(tutoriaId !== undefined && { tutoriaId }),
       },
     });
 
@@ -94,10 +99,11 @@ export const updateBooking = async (req: Request, res: Response, next: NextFunct
 // DELETE /api/bookings/:id — Eliminar una reserva
 export const deleteBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     await prisma.booking.delete({ where: { id } });
-    res.status(204).send();
+    res.status(200).json({ success: true, message: 'Reserva eliminada exitosamente.' });
   } catch (error) {
     next(error);
   }
 };
+
