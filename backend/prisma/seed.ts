@@ -170,7 +170,7 @@ async function main() {
       uploadedById: tutor.id,
       title: 'Guía Completa de APIs RESTful con Node.js y Express',
       description: 'Documento PDF con buenas prácticas, patrones de diseño y manejo de errores.',
-      fileUrl: 'https://sistema-tutorias-upds-264425049862.s3.us-east-2.amazonaws.com/materials/guia-apis-rest-express.pdf',
+      fileUrl: 'https://sistema-tutorias-upds.s3.us-east-2.amazonaws.com/materials/guia-apis-rest-express.pdf',
       fileType: 'pdf',
     },
   });
@@ -184,7 +184,7 @@ async function main() {
       uploadedById: tutor.id,
       title: 'Formulario y Ejercicios Resueltos de Integrales',
       description: 'Compendio de ejercicios resueltos paso a paso para el examen parcial.',
-      fileUrl: 'https://sistema-tutorias-upds-264425049862.s3.us-east-2.amazonaws.com/materials/formulario-integrales-calculo.pdf',
+      fileUrl: 'https://sistema-tutorias-upds.s3.us-east-2.amazonaws.com/materials/formulario-integrales-calculo.pdf',
       fileType: 'pdf',
     },
   });
