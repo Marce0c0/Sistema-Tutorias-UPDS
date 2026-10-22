@@ -1,0 +1,420 @@
+### ==============================================================================
+### SISTEMA DE TUTORÍAS Y CURSOS UNIVERSITARIOS (UPDS) - REST CLIENT SUITE
+### Base URL: Servidor Express Backend
+### ==============================================================================
+
+@baseUrl = http://localhost:3001
+@contentType = application/json
+
+### ------------------------------------------------------------------------------
+### 0. SALUD DE LA API / ROOT
+### ------------------------------------------------------------------------------
+
+# @name getRoot
+GET {{baseUrl}}/
+Accept: {{contentType}}
+
+
+### ==============================================================================
+### 1. USUARIOS (/api/users)
+### ==============================================================================
+
+# @name getAllUsers
+GET {{baseUrl}}/api/users
+Accept: {{contentType}}
+
+###
+
+# @name getUserById
+# Utiliza el ID generado en el seed para Juan Perez
+@sampleUserId = fbedb367-859b-467b-a1bc-5ec7e37e7206
+GET {{baseUrl}}/api/users/{{sampleUserId}}
+Accept: {{contentType}}
+
+###
+
+# @name createUser
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Ana Rodriguez",
+  "email": "ana.rodriguez@upds.edu.bo",
+  "role": "student"
+}
+
+###
+
+# @name updateUser
+PUT {{baseUrl}}/api/users/{{sampleUserId}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Juan Perez Actualizado",
+  "role": "student"
+}
+
+###
+
+# @name deleteUser
+DELETE {{baseUrl}}/api/users/{{sampleUserId}}
+Accept: {{contentType}}
+
+
+### ==============================================================================
+### 2. CURSOS (/api/courses)
+### ==============================================================================
+
+# @name getAllCourses
+GET {{baseUrl}}/api/courses
+Accept: {{contentType}}
+
+###
+
+# @name getCourseById
+@sampleCourseId = 7602b258-16be-4d49-9160-19d5e2b14422
+GET {{baseUrl}}/api/courses/{{sampleCourseId}}
+Accept: {{contentType}}
+
+###
+
+# @name createCourse
+POST {{baseUrl}}/api/courses
+Content-Type: {{contentType}}
+
+{
+  "title": "Arquitectura de Software y Microservicios",
+  "description": "Patrones de diseño, escalabilidad y buenas prácticas backend.",
+  "tutorId": "dfacc15e-e3ae-4d1c-9a88-f5fc2f464914"
+}
+
+###
+
+# @name updateCourse
+PUT {{baseUrl}}/api/courses/{{sampleCourseId}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Programación Web II - Edición Avanzada",
+  "description": "Curso profundizado de desarrollo web y APIs REST empresariales."
+}
+
+###
+
+# @name deleteCourse
+DELETE {{baseUrl}}/api/courses/{{sampleCourseId}}
+Accept: {{contentType}}
+
+
+### ==============================================================================
+### 3. TUTORÍAS PROGRAMADAS (/api/tutorias)
+### ==============================================================================
+
+# @name getAllTutorias
+GET {{baseUrl}}/api/tutorias
+Accept: {{contentType}}
+
+###
+
+# @name getTutoriaById
+@sampleTutoriaId = a1b2c3d4-e5f6-4a1b-8c2d-3e4f5a6b7c8d
+GET {{baseUrl}}/api/tutorias/{{sampleTutoriaId}}
+Accept: {{contentType}}
+
+###
+
+# @name createTutoria
+POST {{baseUrl}}/api/tutorias
+Content-Type: {{contentType}}
+
+{
+  "courseId": "196842ff-59e6-49d3-bbd0-78bfee97194a",
+  "title": "Clase de Refuerzo: Cálculo Vectorial",
+  "description": "Resolución de ejercicios para el segundo examen parcial.",
+  "date": "2026-10-25T16:00:00.000Z",
+  "maxStudents": 20,
+  "status": "active"
+}
+
+###
+
+# @name updateTutoria
+PUT {{baseUrl}}/api/tutorias/{{sampleTutoriaId}}
+Content-Type: {{contentType}}
+
+{
+  "maxStudents": 25,
+  "status": "active"
+}
+
+###
+
+# @name deleteTutoria
+DELETE {{baseUrl}}/api/tutorias/{{sampleTutoriaId}}
+Accept: {{contentType}}
+
+
+### ==============================================================================
+### 4. RESERVAS (/api/bookings)
+### ==============================================================================
+
+# @name getAllBookings
+GET {{baseUrl}}/api/bookings
+Accept: {{contentType}}
+
+###
+
+# @name getBookingById
+@sampleBookingId = 777ccbc6-4a04-42b7-bdf6-6f7f446ece11
+GET {{baseUrl}}/api/bookings/{{sampleBookingId}}
+Accept: {{contentType}}
+
+###
+
+# @name createBooking
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "studentId": "fbedb367-859b-467b-a1bc-5ec7e37e7206",
+  "courseId": "196842ff-59e6-49d3-bbd0-78bfee97194a",
+  "tutoriaId": "a1b2c3d4-e5f6-4a1b-8c2d-3e4f5a6b7c8d",
+  "scheduledAt": "2026-10-25T16:00:00.000Z"
+}
+
+###
+
+# @name updateBookingStatus
+PUT {{baseUrl}}/api/bookings/{{sampleBookingId}}
+Content-Type: {{contentType}}
+
+{
+  "status": "confirmed"
+}
+
+###
+
+# @name deleteBooking
+DELETE {{baseUrl}}/api/bookings/{{sampleBookingId}}
+Accept: {{contentType}}
+
+
+### ==============================================================================
+### 5. FORO DE DUDAS (/api/forums)
+### ==============================================================================
+
+# @name getAllForumMessages
+GET {{baseUrl}}/api/forums
+Accept: {{contentType}}
+
+###
+
+# @name getForumMessagesByCourse
+GET {{baseUrl}}/api/forums?courseId=7602b258-16be-4d49-9160-19d5e2b14422
+Accept: {{contentType}}
+
+###
+
+# @name getForumMessageById
+@sampleForumId = 550e8400-e29b-41d4-a716-446655440001
+GET {{baseUrl}}/api/forums/{{sampleForumId}}
+Accept: {{contentType}}
+
+###
+
+# @name createForumMessage
+POST {{baseUrl}}/api/forums
+Content-Type: {{contentType}}
+
+{
+  "courseId": "7602b258-16be-4d49-9160-19d5e2b14422",
+  "userId": "dfacc15e-e3ae-4d1c-9a88-f5fc2f464914",
+  "title": "Aclaración sobre entrega de la Actividad 2",
+  "content": "Estimados estudiantes, recuerden incluir el archivo api.http y las migraciones de Prisma en el repositorio."
+}
+
+###
+
+# @name updateForumMessage
+PUT {{baseUrl}}/api/forums/{{sampleForumId}}
+Content-Type: {{contentType}}
+
+{
+  "content": "Consulta actualizada con ejemplos adicionales de código TypeScript."
+}
+
+###
+
+# @name deleteForumMessage
+DELETE {{baseUrl}}/api/forums/{{sampleForumId}}
+Accept: {{contentType}}
+
+
+### ==============================================================================
+### 6. NOTIFICACIONES (/api/notifications)
+### ==============================================================================
+
+# @name getAllNotifications
+GET {{baseUrl}}/api/notifications
+Accept: {{contentType}}
+
+###
+
+# @name getNotificationsByUser
+GET {{baseUrl}}/api/notifications?userId=fbedb367-859b-467b-a1bc-5ec7e37e7206
+Accept: {{contentType}}
+
+###
+
+# @name getNotificationById
+@sampleNotificationId = 550e8400-e29b-41d4-a716-446655440002
+GET {{baseUrl}}/api/notifications/{{sampleNotificationId}}
+Accept: {{contentType}}
+
+###
+
+# @name createNotification
+POST {{baseUrl}}/api/notifications
+Content-Type: {{contentType}}
+
+{
+  "userId": "fbedb367-859b-467b-a1bc-5ec7e37e7206",
+  "title": "Nueva tarea calificada",
+  "message": "Tu entrega para la materia Programación Web II ha sido revisada.",
+  "type": "info"
+}
+
+###
+
+# @name markNotificationAsRead
+PUT {{baseUrl}}/api/notifications/{{sampleNotificationId}}
+Content-Type: {{contentType}}
+
+{
+  "isRead": true
+}
+
+###
+
+# @name deleteNotification
+DELETE {{baseUrl}}/api/notifications/{{sampleNotificationId}}
+Accept: {{contentType}}
+
+
+### ==============================================================================
+### 7. CALIFICACIONES Y RESEÑAS (/api/reviews)
+### ==============================================================================
+
+# @name getAllReviews
+GET {{baseUrl}}/api/reviews
+Accept: {{contentType}}
+
+###
+
+# @name getReviewsByTutoria
+GET {{baseUrl}}/api/reviews?tutoriaId=a1b2c3d4-e5f6-4a1b-8c2d-3e4f5a6b7c8d
+Accept: {{contentType}}
+
+###
+
+# @name createReview
+POST {{baseUrl}}/api/reviews
+Content-Type: {{contentType}}
+
+{
+  "tutoriaId": "b2c3d4e5-f6a1-4b2c-9d3e-4f5a6b7c8d9e",
+  "studentId": "{{sampleUserId}}",
+  "rating": 5,
+  "comment": "La sesión virtual de cálculo fue muy dinámica y resolvió todos los ejercicios de integrales."
+}
+
+###
+
+# @name updateReview
+PUT {{baseUrl}}/api/reviews/990e8400-e29b-41d4-a716-446655440010
+Content-Type: {{contentType}}
+
+{
+  "rating": 5,
+  "comment": "Actualización: Excelente explicación con código en vivo."
+}
+
+###
+
+# @name deleteReview
+DELETE {{baseUrl}}/api/reviews/990e8400-e29b-41d4-a716-446655440010
+Accept: {{contentType}}
+
+
+### ==============================================================================
+### 8. MATERIALES Y RECURSOS EN S3 (/api/materials)
+### ==============================================================================
+
+# @name getAllMaterials
+GET {{baseUrl}}/api/materials
+Accept: {{contentType}}
+
+###
+
+# @name getMaterialsByCourse
+GET {{baseUrl}}/api/materials?courseId=7602b258-16be-4d49-9160-19d5e2b14422
+Accept: {{contentType}}
+
+###
+
+# @name createMaterial
+POST {{baseUrl}}/api/materials
+Content-Type: {{contentType}}
+
+{
+  "courseId": "7602b258-16be-4d49-9160-19d5e2b14422",
+  "uploadedById": "dfacc15e-e3ae-4d1c-9a88-f5fc2f464914",
+  "title": "Diapositivas: Patrones de Arquitectura Backend",
+  "description": "Presentación sobre Clean Architecture, Repositorios y Servicios.",
+  "fileUrl": "https://sistema-tutorias-upds-264425049862.s3.us-east-2.amazonaws.com/materials/arquitectura-backend-upds.pdf",
+  "fileType": "pdf"
+}
+
+###
+
+# @name deleteMaterial
+DELETE {{baseUrl}}/api/materials/880e8400-e29b-41d4-a716-446655440020
+Accept: {{contentType}}
+
+
+### ==============================================================================
+### 9. CASOS DE PRUEBA DE VALIDACIÓN Y MANEJO DE ERRORES (400 / 404 / 409)
+
+### ==============================================================================
+
+# @name testInvalidUuid_Expect400
+GET {{baseUrl}}/api/users/id-no-valido-123
+Accept: {{contentType}}
+
+###
+
+# @name testCreateUserMissingFields_Expect400
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Pedro"
+}
+
+###
+
+# @name testCreateUserInvalidRole_Expect400
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Pedro Fernandez",
+  "email": "pedro@test.com",
+  "role": "superadmin"
+}
+
+###
+
+# @name testGetNonExistentUser_Expect404
+GET {{baseUrl}}/api/users/00000000-0000-0000-0000-000000000000
+Accept: {{contentType}}

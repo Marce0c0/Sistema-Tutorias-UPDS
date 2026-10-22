@@ -19,7 +19,7 @@ export const getUsers = async (_req: Request, res: Response, next: NextFunction)
 // GET /api/users/:id — Obtener un usuario por ID
 export const getUserById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const user = await prisma.user.findUnique({
       where: { id },
       include: {
@@ -55,7 +55,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 // PUT /api/users/:id — Actualizar un usuario
 export const updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { name, email, role } = req.body;
 
     const updated = await prisma.user.update({
@@ -76,9 +76,9 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 // DELETE /api/users/:id — Eliminar un usuario
 export const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     await prisma.user.delete({ where: { id } });
-    res.status(204).send();
+    res.status(200).json({ success: true, message: 'Usuario eliminado exitosamente.' });
   } catch (error) {
     next(error);
   }
