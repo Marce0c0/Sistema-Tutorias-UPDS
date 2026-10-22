@@ -1,22 +1,51 @@
-# Dependencias de Node
+# ─── Documentos internos, informes y reportes académicos (SOLO LOCALES) ──────
+CONTEXTO*.md
+Informe*.md
+Reporte*.md
+*.docx
+*.pdf
+
+# ─── Llaves, Credenciales y Certificados Cloud (NUNCA SUBIR) ────────────────
+.aws/
+*.pem
+*.key
+*.pkcs12
+*.pfx
+*.cer
+*.crt
+*credentials*
+*secret*
+*.token
+
+# ─── Variables de entorno (contienen credenciales secretas) ─────────────────
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+
+# ─── Artefactos de compilación legacy y temporales ──────────────────────────
+backend/server.js
+repomix-output.xml
+*.tmp
+*.bak
+
+# ─── Dependencias de Node ───────────────────────────────────────────────────
 node_modules/
 jspm_packages/
 
-# Variables de entorno (contienen credenciales secretas)
-.env
-.env.*
-!.env.example
-
-# Archivos compilados de TypeScript y builds
+# ─── Archivos compilados de TypeScript y builds ─────────────────────────────
 dist/
 build/
 out/
 
-# Prisma
+# ─── Bases de datos locales / Prisma ────────────────────────────────────────
 *.db
 *.db-journal
 
-# Logs
+# ─── Logs ───────────────────────────────────────────────────────────────────
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -24,7 +53,7 @@ pnpm-debug.log*
 lerna-debug.log*
 *.log
 
-# Archivos y configuraciones de IDE / Sistema Operativo
+# ─── Archivos y configuraciones de IDE / Sistema Operativo ──────────────────
 .vscode/
 .idea/
 .DS_Store
@@ -32,7 +61,7 @@ Thumbs.db
 desktop.ini
 *.lnk
 
-# Archivos de configuración de Agentes IA (locales)
+# ─── Configuraciones de Agentes IA (locales) ────────────────────────────────
 AGENTS.md
 CLAUDE.md
 GEMINI.md
@@ -42,11 +71,4 @@ GEMINI.md
 .cursor/
 .gemini/
 .opencode/
-.github/
 graphify-out/
-
-# Archivos temporales
-*.tmp
-*.bak
-repomix-output.xml
-
