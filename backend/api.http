@@ -371,7 +371,7 @@ Content-Type: {{contentType}}
   "uploadedById": "dfacc15e-e3ae-4d1c-9a88-f5fc2f464914",
   "title": "Diapositivas: Patrones de Arquitectura Backend",
   "description": "Presentación sobre Clean Architecture, Repositorios y Servicios.",
-  "fileUrl": "https://sistema-tutorias-upds-264425049862.s3.us-east-2.amazonaws.com/materials/arquitectura-backend-upds.pdf",
+  "fileUrl": "https://sistema-tutorias-upds.s3.us-east-2.amazonaws.com/materials/arquitectura-backend-upds.pdf",
   "fileType": "pdf"
 }
 

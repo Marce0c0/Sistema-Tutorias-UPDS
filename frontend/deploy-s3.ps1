@@ -1,6 +1,6 @@
 # Script de Despliegue Estatico a Amazon S3 (Free Tier $0.00 USD)
 param (
-  [string]$BucketName = "sistema-tutorias-upds-264425049862",
+  [string]$BucketName = "sistema-tutorias-upds",
   [string]$Region = "us-east-2"
 )
 

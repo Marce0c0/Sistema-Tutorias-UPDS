@@ -30,9 +30,9 @@ El sistema permite:
 | **Backend** | Node.js + TypeScript + Express 5 | API REST con arquitectura en capas (Router → Controller → Prisma) |
 | **ORM** | Prisma 6 | Modelos relacionales + migraciones + seed automatizado |
 | **Base de Datos** | PostgreSQL 17 | Instancia gratuita en **Supabase** (São Paulo, `sa-east-1`) |
-| **Almacenamiento Cloud** | Amazon S3 | Bucket `sistema-tutorias-upds-264425049862` en `us-east-2` (Ohio) |
+| **Almacenamiento Cloud** | Amazon S3 | Bucket en la nube para almacenamiento de recursos y materiales |
 | **Control de versiones** | Git + GitHub | Flujo `main ← develop ← feature/*` |
-| **Despliegue** | Amazon S3 (hosting estático) | Script PowerShell automatizado `frontend/deploy-s3.ps1` |
+| **Despliegue** | Amazon S3 (hosting estático) | Script automatizado `frontend/deploy-s3.ps1` |
 
 ---
 
@@ -160,7 +160,7 @@ Editar `.env` y reemplazar con tus datos de Supabase (o base de datos local):
 PORT=3001
 DATABASE_URL="postgresql://postgres.[PROJECT_ID]:[PASSWORD]@aws-1-sa-east-1.pooler.supabase.com:5432/postgres"
 AWS_REGION="us-east-2"
-AWS_S3_BUCKET_NAME="sistema-tutorias-upds-264425049862"
+AWS_S3_BUCKET_NAME="sistema-tutorias-upds"
 ```
 
 ### 3. Crear las tablas e insertar datos de prueba
@@ -259,11 +259,9 @@ Podés probar todos los endpoints desde VS Code usando el archivo `backend/api.h
 
 | Servicio | Proveedor | Costo | Descripción |
 |---|---|---|---|
-| **PostgreSQL 17** | Supabase (Free Tier) | **$0.00** | 500 MB, cómputo activo 24/7 |
-| **S3 Static Hosting** | Amazon S3 (Free Tier) | **$0.00** | 5 GB/mes, 20K GET/mes, 2K PUT/mes |
-| **IAM User CLI** | AWS (`marce-dev`) | **$0.00** | Acceso programático con `AdministratorAccess` |
-
-> Los $100 USD en créditos promocionales de la cuenta AWS (`264425049862`) están reservados para despliegue productivo en fases posteriores (Actividades 5–6).
+| **PostgreSQL 17** | Supabase (Free Tier) | **$0.00** | Base de datos relacional para desarrollo e integración |
+| **S3 Static Hosting** | Amazon S3 (Free Tier) | **$0.00** | Hosting estático para el cliente SPA y recursos de estudio |
+| **AWS CLI** | AWS SDK / CLI | **$0.00** | Herramientas de despliegue automatizado |
 
 ---
 
