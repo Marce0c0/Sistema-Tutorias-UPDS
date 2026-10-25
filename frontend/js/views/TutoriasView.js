@@ -18,7 +18,13 @@ export const TutoriasView = {
     container.className = 'view-content animate-fade-in';
 
     const renderList = () => {
-      const tutorias = state.tutorias;
+      // Filtrar tutorías académicas regulares (los eventos y hackathons tienen su propia pestaña)
+      const tutorias = state.tutorias.filter(
+        (t) =>
+          !t.title.toLowerCase().includes('hackathon') &&
+          !t.title.toLowerCase().includes('ctf') &&
+          !t.course?.title?.toLowerCase().includes('hackathon')
+      );
       const bodyContainer = container.querySelector('#tutorias-grid-container');
       if (!bodyContainer) return;
 

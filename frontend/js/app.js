@@ -8,6 +8,7 @@ import { DashboardView } from './views/DashboardView.js';
 import { UsersView } from './views/UsersView.js';
 import { CoursesView } from './views/CoursesView.js';
 import { TutoriasView } from './views/TutoriasView.js';
+import { EventsView } from './views/EventsView.js';
 import { BookingsView } from './views/BookingsView.js';
 import { ForumsView } from './views/ForumsView.js';
 import { NotificationsView } from './views/NotificationsView.js';
@@ -133,6 +134,9 @@ class App {
           break;
         case 'tutorias':
           viewElement = TutoriasView.render();
+          break;
+        case 'events':
+          viewElement = EventsView.render();
           break;
         case 'bookings':
           viewElement = BookingsView.render();

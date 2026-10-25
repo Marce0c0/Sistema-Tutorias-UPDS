@@ -6,6 +6,7 @@ const RULES = {
   'view.dashboard': ['admin', 'tutor', 'student'],
   'view.courses': ['admin', 'tutor', 'student', 'guest'],
   'view.tutorias': ['admin', 'tutor', 'student', 'guest'],
+  'view.events': ['admin', 'tutor', 'student', 'guest'],
   'view.bookings': ['admin', 'tutor', 'student'],
   'view.forums': ['admin', 'tutor', 'student'],
   'view.notifications': ['admin', 'tutor', 'student'],

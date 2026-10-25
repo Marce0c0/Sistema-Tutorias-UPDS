@@ -15,7 +15,13 @@ export const CoursesView = {
     container.className = 'view-content animate-fade-in';
 
     const renderList = () => {
-      const courses = state.courses;
+      // Filtrar para mostrar únicamente cursos y talleres (los hackathons y eventos tienen su propia pestaña)
+      const courses = state.courses.filter(
+        (c) =>
+          !c.title.toLowerCase().includes('hackathon') &&
+          !c.title.toLowerCase().includes('torneo') &&
+          !c.title.toLowerCase().includes('ctf')
+      );
       const bodyContainer = container.querySelector('#courses-grid-container');
       if (!bodyContainer) return;
 
@@ -24,8 +30,8 @@ export const CoursesView = {
         bodyContainer.appendChild(
           EmptyState({
             icon: '📚',
-            title: 'No hay cursos registrados',
-            description: 'Comienza creando la primera materia académica.',
+            title: 'No hay cursos extracurriculares registrados',
+            description: 'Comienza creando el primer taller o programa de extensión.',
             actionText: canManage ? '+ Crear Curso' : undefined,
             onAction: canManage ? () => this.openCourseModal() : undefined,
           })
@@ -36,12 +42,9 @@ export const CoursesView = {
       bodyContainer.innerHTML = `
         <div class="cards-grid">
           ${courses.map((c) => `
+            <div class="card course-card">
               <div class="course-card-header">
-                ${
-                  c.title.toLowerCase().includes('hackathon') || c.title.toLowerCase().includes('torneo') || c.title.toLowerCase().includes('ctf')
-                    ? `<span class="course-tag" style="background:#6d28d9;color:#fff;font-weight:700;">🏆 Evento Tech · Cochabamba</span>`
-                    : `<span class="course-tag">Curso Extracurricular / Taller</span>`
-                }
+                <span class="course-tag">Curso Extracurricular / Taller</span>
                 ${canManage ? `
                   <div class="course-actions">
                     <button class="btn btn-xs btn-outline btn-edit-course" data-id="${c.id}" title="Editar">✏️</button>

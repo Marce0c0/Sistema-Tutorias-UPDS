@@ -26,8 +26,9 @@ export const Navbar = {
       : [
           { id: 'dashboard', label: 'Dashboard', icon: '📊', permission: 'view.dashboard' },
           { id: 'users', label: 'Usuarios', icon: '👥', permission: 'view.users' },
-          { id: 'courses', label: 'Cursos', icon: '📚', permission: 'view.courses' },
+          { id: 'courses', label: 'Cursos & Talleres', icon: '📚', permission: 'view.courses' },
           { id: 'tutorias', label: 'Tutorías', icon: '🎓', permission: 'view.tutorias' },
+          { id: 'events', label: 'Eventos & Hackathons', icon: '🏆', permission: 'view.events' },
           { id: 'bookings', label: 'Reservas', icon: '📅', permission: 'view.bookings' },
           { id: 'forums', label: 'Foro de Dudas', icon: '💬', permission: 'view.forums' },
           {
