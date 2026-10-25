@@ -81,6 +81,34 @@ async function main() {
     },
   });
 
+  const course3 = await prisma.course.upsert({
+    where: { id: '8a123b45-67c8-49de-b123-456789abcdef' },
+    update: {
+      title: 'Hackathon Cochabamba Innova Tech 2026',
+      description: 'Desafío de desarrollo tecnológico y soluciones Smart City para la llajta, auspiciado por la Alcaldía de Cochabamba y el Hub Tecnológico.',
+    },
+    create: {
+      id: '8a123b45-67c8-49de-b123-456789abcdef',
+      title: 'Hackathon Cochabamba Innova Tech 2026',
+      description: 'Desafío de desarrollo tecnológico y soluciones Smart City para la llajta, auspiciado por la Alcaldía de Cochabamba y el Hub Tecnológico.',
+      tutorId: admin.id,
+    },
+  });
+
+  const course4 = await prisma.course.upsert({
+    where: { id: '9b234c56-78d9-40ef-c234-567890abcdef' },
+    update: {
+      title: 'Torneo de Ciberseguridad & CTF Cochabamba',
+      description: 'Competencia externa de ethical hacking y seguridad defensiva en redes para talentos universitarios de Cochabamba.',
+    },
+    create: {
+      id: '9b234c56-78d9-40ef-c234-567890abcdef',
+      title: 'Torneo de Ciberseguridad & CTF Cochabamba',
+      description: 'Competencia externa de ethical hacking y seguridad defensiva en redes para talentos universitarios de Cochabamba.',
+      tutorId: tutor.id,
+    },
+  });
+
   // 3. Tutorías (con modalidad, aula física y enlace virtual)
   const tutoria1 = await prisma.tutoria.upsert({
     where: { id: 'a1b2c3d4-e5f6-4a1b-8c2d-3e4f5a6b7c8d' },
@@ -117,6 +145,46 @@ async function main() {
       modality: 'virtual',
       location: 'En línea vía Google Meet',
       meetingUrl: 'https://meet.google.com/calc1-upds-repaso',
+    },
+  });
+
+  const tutoria3 = await prisma.tutoria.upsert({
+    where: { id: 'c3d4e5f6-a1b2-4c3d-0e4f-5a6b7c8d9e0f' },
+    update: {
+      location: 'Recinto Ferial Alalay - Pabellón Cochabamba Tech',
+      meetingUrl: 'https://cochabamba.bo/innova-tech-2026',
+    },
+    create: {
+      id: 'c3d4e5f6-a1b2-4c3d-0e4f-5a6b7c8d9e0f',
+      courseId: course3.id,
+      title: 'Presentación de Proyectos: Hackathon Cochabamba 2026',
+      description: 'Demoday y evaluación presencial de prototipos Smart City ante jurados de la Alcaldía y empresas patrocinadoras.',
+      date: new Date('2026-11-05T09:00:00.000Z'),
+      maxStudents: 50,
+      status: 'active',
+      modality: 'presencial',
+      location: 'Recinto Ferial Alalay - Pabellón Cochabamba Tech',
+      meetingUrl: 'https://cochabamba.bo/innova-tech-2026',
+    },
+  });
+
+  const tutoria4 = await prisma.tutoria.upsert({
+    where: { id: 'd4e5f6a1-b2c3-4d4e-1f5a-6b7c8d9e0f1a' },
+    update: {
+      location: 'Discord Oficial de Comunidades Tech Cochabamba',
+      meetingUrl: 'https://discord.gg/tech-cochabamba',
+    },
+    create: {
+      id: 'd4e5f6a1-b2c3-4d4e-1f5a-6b7c8d9e0f1a',
+      courseId: course4.id,
+      title: 'Workshop de Preparación CTF & Hacking Ético',
+      description: 'Entrenamiento previo para la competencia de seguridad ofensiva y defensiva en Cochabamba.',
+      date: new Date('2026-11-12T19:00:00.000Z'),
+      maxStudents: 35,
+      status: 'active',
+      modality: 'virtual',
+      location: 'Discord Oficial de Comunidades Tech Cochabamba',
+      meetingUrl: 'https://discord.gg/tech-cochabamba',
     },
   });
 
@@ -211,8 +279,8 @@ async function main() {
   console.log('✅ Seed completado con éxito para las 8 entidades universitarias:');
   console.log({
     usersCount: 3,
-    coursesCount: 2,
-    tutoriasCount: 2,
+    coursesCount: 4,
+    tutoriasCount: 4,
     bookingsCount: 1,
     forumMessagesCount: 1,
     notificationsCount: 1,

@@ -59,8 +59,12 @@ export const TutoriasView = {
                     <span class="meta-val">${Badge.formatDate(t.date)}</span>
                   </div>
                   <div class="meta-row">
-                    <span class="meta-label">👨‍🏫 Tutor Docente:</span>
+                    <span class="meta-label">👨‍🏫 Tutor / Organizador:</span>
                     <span class="meta-val">${t.course?.tutor?.name || 'No asignado'}</span>
+                  </div>
+                  <div class="meta-row">
+                    <span class="meta-label">📍 Ubicación / Enlace:</span>
+                    <span class="meta-val">${t.location || (t.meetingUrl ? `<a href="${t.meetingUrl}" target="_blank">Enlace Virtual</a>` : 'Campus Central')}</span>
                   </div>
                 </div>
 

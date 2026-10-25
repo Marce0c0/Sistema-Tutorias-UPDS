@@ -36,9 +36,12 @@ export const CoursesView = {
       bodyContainer.innerHTML = `
         <div class="cards-grid">
           ${courses.map((c) => `
-            <div class="card course-card">
               <div class="course-card-header">
-                <span class="course-tag">Curso Extracurricular / Taller</span>
+                ${
+                  c.title.toLowerCase().includes('hackathon') || c.title.toLowerCase().includes('torneo') || c.title.toLowerCase().includes('ctf')
+                    ? `<span class="course-tag" style="background:#6d28d9;color:#fff;font-weight:700;">🏆 Evento Tech · Cochabamba</span>`
+                    : `<span class="course-tag">Curso Extracurricular / Taller</span>`
+                }
                 ${canManage ? `
                   <div class="course-actions">
                     <button class="btn btn-xs btn-outline btn-edit-course" data-id="${c.id}" title="Editar">✏️</button>
