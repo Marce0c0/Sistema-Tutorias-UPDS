@@ -64,15 +64,13 @@ export const EventsView = {
         </div>
       </div>
 
-      <div class="events-disclaimer-card" style="background:#f5f3ff;border:1px solid #ddd6fe;border-left:5px solid #7c3aed;padding:14px 18px;border-radius:6px;margin-bottom:1.5rem;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <span style="font-size:1.8rem;">🏛️</span>
-          <div>
-            <strong style="color:#5b21b6;font-size:0.95rem;">Vinculación con el Ecosistema Tecnológico de Cochabamba</strong>
-            <p style="margin:2px 0 0;font-size:0.86rem;color:#4b5563;">
-              Estos eventos son organizados por entidades públicas y aliadas (como la <strong>Alcaldía de Cochabamba</strong> y comunidades tecnológicas locales). La UPDS actúa como difusora y facilitadora académica para que estudiantes y participantes externos puedan formarse, armar equipos y competir.
-            </p>
-          </div>
+      <div class="events-disclaimer-card">
+        <span class="events-disclaimer-icon">🏛️</span>
+        <div>
+          <h3 class="events-disclaimer-title">Vinculación con el Ecosistema Tecnológico de Cochabamba</h3>
+          <p class="events-disclaimer-desc">
+            Iniciativas co-organizadas con la <strong>Alcaldía de Cochabamba</strong>, empresas y comunidades tech. La UPDS promueve la participación activa de sus estudiantes y postulantes externos en hackathons y competencias departamentales.
+          </p>
         </div>
       </div>
 
@@ -80,48 +78,48 @@ export const EventsView = {
         ${eventsData
           .map(
             (ev) => `
-          <div class="card event-card" style="display:flex;flex-direction:column;justify-content:space-between;">
+          <div class="card event-card">
             <div>
-              <div class="course-card-header" style="margin-bottom:0.75rem;">
-                <span class="course-tag" style="background:#6d28d9;color:#fff;font-weight:700;">${ev.badge}</span>
-                <span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.75rem;">Cochabamba</span>
+              <div class="event-card-header">
+                <span class="event-badge-status">${ev.badge}</span>
+                <span class="event-badge-location">📍 Cochabamba</span>
               </div>
 
-              <h3 class="course-title" style="margin-bottom:0.5rem;color:#002855;">${ev.title}</h3>
-              <p class="course-desc" style="margin-bottom:1rem;">${ev.description}</p>
+              <h3 class="event-title">${ev.title}</h3>
+              <p class="event-desc">${ev.description}</p>
 
-              <div class="tutoria-meta" style="margin-bottom:1rem;background:#f8fafc;padding:10px;border-radius:6px;font-size:0.85rem;">
-                <div class="meta-row" style="margin-bottom:4px;">
-                  <span class="meta-label">🏛️ <strong>Organizador:</strong></span>
-                  <span class="meta-val">${ev.organizer}</span>
+              <div class="event-meta-box">
+                <div class="event-meta-row">
+                  <span class="event-meta-label">🏛️ Organizador:</span>
+                  <span class="event-meta-val">${ev.organizer}</span>
                 </div>
-                <div class="meta-row" style="margin-bottom:4px;">
-                  <span class="meta-label">📅 <strong>Fechas:</strong></span>
-                  <span class="meta-val">${ev.date}</span>
+                <div class="event-meta-row">
+                  <span class="event-meta-label">📅 Fechas:</span>
+                  <span class="event-meta-val">${ev.date}</span>
                 </div>
-                <div class="meta-row" style="margin-bottom:4px;">
-                  <span class="meta-label">📍 <strong>Lugar:</strong></span>
-                  <span class="meta-val">${ev.location}</span>
+                <div class="event-meta-row">
+                  <span class="event-meta-label">📍 Sede:</span>
+                  <span class="event-meta-val">${ev.location}</span>
                 </div>
-                <div class="meta-row">
-                  <span class="meta-label">👥 <strong>Modalidad:</strong></span>
-                  <span class="meta-val">${ev.modality}</span>
+                <div class="event-meta-row">
+                  <span class="event-meta-label">👥 Modalidad:</span>
+                  <span class="event-meta-val">${ev.modality}</span>
                 </div>
               </div>
 
-              <div style="margin-bottom:1rem;">
-                <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#64748b;display:block;margin-bottom:4px;">Temáticas Clave:</span>
-                <div style="display:flex;flex-wrap:wrap;gap:4px;">
-                  ${ev.topics.map((t) => `<span style="background:#f1f5f9;color:#334155;padding:2px 8px;border-radius:12px;font-size:0.75rem;border:1px solid #e2e8f0;">${t}</span>`).join('')}
+              <div class="event-topics-container">
+                <span class="event-topics-label">Ejes Temáticos:</span>
+                <div class="event-topics-pills">
+                  ${ev.topics.map((t) => `<span class="event-topic-pill">${t}</span>`).join('')}
                 </div>
               </div>
             </div>
 
-            <div class="course-footer" style="padding-top:1rem;border-top:1px solid #e2e8f0;display:flex;gap:8px;">
-              <button class="btn btn-sm btn-primary btn-event-details" data-id="${ev.id}" style="flex:1;justify-content:center;background:#002855;border-color:#002855;">
-                📋 Ver Bases del Concurso
+            <div class="event-card-footer">
+              <button class="btn btn-sm btn-primary btn-event-details" data-id="${ev.id}">
+                📋 Ver Bases
               </button>
-              <button class="btn btn-sm btn-outline btn-event-register" data-id="${ev.id}" style="border-color:#6d28d9;color:#6d28d9;">
+              <button class="btn btn-sm btn-outline btn-event-register" data-id="${ev.id}">
                 🚀 Participar
               </button>
             </div>
