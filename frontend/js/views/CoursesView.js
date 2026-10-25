@@ -38,7 +38,7 @@ export const CoursesView = {
           ${courses.map((c) => `
             <div class="card course-card">
               <div class="course-card-header">
-                <span class="course-tag">Materia UPDS</span>
+                <span class="course-tag">Curso Extracurricular / Taller</span>
                 ${canManage ? `
                   <div class="course-actions">
                     <button class="btn btn-xs btn-outline btn-edit-course" data-id="${c.id}" title="Editar">✏️</button>
@@ -52,7 +52,7 @@ export const CoursesView = {
                 <div class="course-tutor">
                   <span class="tutor-avatar">👨‍🏫</span>
                   <div class="tutor-info">
-                    <span class="tutor-label">Docente Tutor:</span>
+                    <span class="tutor-label">Instructor / Tutor:</span>
                     <span class="tutor-name">${c.tutor?.name || 'No asignado'}</span>
                   </div>
                 </div>
@@ -83,11 +83,11 @@ export const CoursesView = {
     container.innerHTML = `
       <div class="view-header">
         <div>
-          <h2 class="view-title">Catálogo de Cursos y Materias</h2>
-          <p class="view-subtitle">Materias curriculares habilitadas para sesiones de tutoría universitaria.</p>
+          <h2 class="view-title">Catálogo de Cursos Extracurriculares y Talleres</h2>
+          <p class="view-subtitle">Programas de formación complementaria, talleres prácticos y tutorías externos a las clases regulares.</p>
         </div>
         <div class="view-actions">
-          ${canManage ? '<button id="btn-create-course" class="btn btn-primary">+ Nuevo Curso</button>' : ''}
+          ${canManage ? '<button id="btn-create-course" class="btn btn-primary">+ Nuevo Curso Extracurricular</button>' : ''}
         </div>
       </div>
 

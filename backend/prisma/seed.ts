@@ -52,25 +52,31 @@ async function main() {
     },
   });
 
-  // 2. Cursos
+  // 2. Cursos Extracurriculares y Talleres de Extensión
   const course1 = await prisma.course.upsert({
     where: { id: '196842ff-59e6-49d3-bbd0-78bfee97194a' },
-    update: {},
+    update: {
+      title: 'Taller de Nivelación en Matemáticas Aplicadas',
+      description: 'Taller extracurricular de apoyo académico y nivelación práctica en cálculo y álgebra lineal.',
+    },
     create: {
       id: '196842ff-59e6-49d3-bbd0-78bfee97194a',
-      title: 'Matemáticas Aplicadas',
-      description: 'Curso de apoyo de cálculo y álgebra lineal para ingeniería.',
+      title: 'Taller de Nivelación en Matemáticas Aplicadas',
+      description: 'Taller extracurricular de apoyo académico y nivelación práctica en cálculo y álgebra lineal.',
       tutorId: tutor.id,
     },
   });
 
   const course2 = await prisma.course.upsert({
     where: { id: '7602b258-16be-4d49-9160-19d5e2b14422' },
-    update: {},
+    update: {
+      title: 'Bootcamp Práctico: Programación Web II & Cloud',
+      description: 'Curso intensivo de extensión universitaria en Node.js, Express, TypeScript, Docker y Despliegue Cloud.',
+    },
     create: {
       id: '7602b258-16be-4d49-9160-19d5e2b14422',
-      title: 'Programación Web II',
-      description: 'Arquitectura Backend con Node.js, Express, TypeScript, ORM y PostgreSQL.',
+      title: 'Bootcamp Práctico: Programación Web II & Cloud',
+      description: 'Curso intensivo de extensión universitaria en Node.js, Express, TypeScript, Docker y Despliegue Cloud.',
       tutorId: tutor.id,
     },
   });

@@ -19,8 +19,8 @@ export const WelcomeView = {
           <div class="welcome-logo-badge">
             <img src="img/upds-logo.png" alt="UPDS" class="welcome-logo-img" />
           </div>
-          <h1 class="welcome-title">Portal de Tutorías y Cursos Universitarios</h1>
-          <p class="welcome-subtitle">Universidad Privada Domingo Savio — Plataforma de Apoyo Académico</p>
+          <h1 class="welcome-title">Portal de Tutorías y Cursos Extracurriculares</h1>
+          <p class="welcome-subtitle">Universidad Privada Domingo Savio — Extensión Universitaria y Apoyo Académico</p>
         </div>
 
         <div class="welcome-grid">
@@ -72,19 +72,19 @@ export const WelcomeView = {
               <span class="panel-icon">🌐</span>
               <div>
                 <h2 class="panel-title">Modo Invitado</h2>
-                <p class="panel-desc">Observa el catálogo de materias y tutorías sin iniciar sesión</p>
+                <p class="panel-desc">Explora cursos extracurriculares y tutorías sin iniciar sesión</p>
               </div>
             </div>
 
             <div class="guest-info-body">
               <p class="guest-text">
-                ¿Aún no tienes cuenta o solo deseas consultar qué cursos y tutorías se encuentran disponibles en este semestre?
+                Programas de formación complementaria, talleres prácticos y tutorías especializadas externos a las materias regulares del plan de estudios.
               </p>
 
               <div class="guest-metrics-row">
                 <div class="guest-metric-pill">
                   <span class="pill-number">${coursesCount}</span>
-                  <span class="pill-label">Materias Disponibles</span>
+                  <span class="pill-label">Cursos / Talleres</span>
                 </div>
                 <div class="guest-metric-pill">
                   <span class="pill-number">${tutoriasCount}</span>
@@ -93,13 +93,13 @@ export const WelcomeView = {
               </div>
 
               <ul class="guest-features-list">
-                <li> Explora todo el catálogo de materias universitarias.</li>
-                <li> Consulta fechas, horarios y docentes tutores asignados.</li>
-                <li> Conexión directa y segura con la API REST en la nube.</li>
+                <li> Explora talleres técnicos, bootcamps y cursos de extensión.</li>
+                <li> Consulta fechas, horarios y tutores docentes asignados.</li>
+                <li> Abierto para estudiantes, egresados e invitados interesados.</li>
               </ul>
 
               <button type="button" id="enter-guest-btn" class="btn btn-outline-primary btn-block btn-lg" style="width:100%; justify-content:center; margin-top:1.5rem;">
-                👀 Continuar en Modo Invitado
+                👀 Explorar Cursos en Modo Invitado
               </button>
             </div>
           </div>
