@@ -80,7 +80,6 @@ export const Navbar = {
                 </button>
               `
             }
-            <button id="config-api-btn" class="btn-icon" title="Configuración de Servidor API">⚙️</button>
           </div>
 
           <!-- Botón Menú Móvil -->
@@ -181,27 +180,12 @@ export const Navbar = {
       });
     }
 
-    // Configurar Endpoint API
-    container.querySelector('#config-api-btn').addEventListener('click', () => {
-      const currentUrl = ENV.getApiUrl();
-      Modal.open({
-        title: 'Configuración de Conexión API',
-        content: `
-          <div class="form-group">
-            <label class="form-label" for="api-url-input">URL Base del Servidor Backend:</label>
-            <input type="url" id="api-url-input" class="form-control" value="${currentUrl}" placeholder="http://localhost:3001" required />
-            <small class="form-help">Por defecto apunta a <code>http://localhost:3001</code>. Puede configurarse hacia una IP de red local o DNS en la nube.</small>
-          </div>
-        `,
-        confirmText: 'Guardar y Recargar',
-        onConfirm: (dialog) => {
-          const input = dialog.querySelector('#api-url-input');
-          if (input && input.value.trim()) {
-            ENV.setApiUrl(input.value.trim());
-          }
-        },
-      });
-    });
+    // Utilitario silencioso para consola de desarrollo si se necesita cambiar URL
+    window.setBackendUrl = (url) => {
+      if (url && typeof url === 'string') {
+        ENV.setApiUrl(url.trim());
+      }
+    };
   },
 
   openLoginModal() {
