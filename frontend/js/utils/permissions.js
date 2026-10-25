@@ -1,11 +1,11 @@
-// Matriz de permisos por rol (demo sin autenticación real)
-// Admin: control total · Tutor: gestiona tutorías, reservas y modera el foro · Estudiante: consulta y reserva
+// Matriz de permisos por rol — Sistema-Tutoriales-UPDS
+// Admin: control total · Tutor: gestiona tutorías, reservas y modera el foro · Estudiante: consulta y reserva · Invitado: solo lectura de catálogo y tutorías
 
 const RULES = {
   // Navegación
   'view.dashboard': ['admin', 'tutor', 'student'],
-  'view.courses': ['admin', 'tutor', 'student'],
-  'view.tutorias': ['admin', 'tutor', 'student'],
+  'view.courses': ['admin', 'tutor', 'student', 'guest'],
+  'view.tutorias': ['admin', 'tutor', 'student', 'guest'],
   'view.bookings': ['admin', 'tutor', 'student'],
   'view.forums': ['admin', 'tutor', 'student'],
   'view.notifications': ['admin', 'tutor', 'student'],
@@ -34,5 +34,5 @@ const RULES = {
   'notifications.send': ['admin', 'tutor'],
 };
 
-// Sin rol asignado se asume el de menor privilegio
-export const can = (role, action) => (RULES[action] || []).includes(role || 'student');
+// Sin rol asignado se asume 'guest' (modo invitado sin privilegios de modificación)
+export const can = (role, action) => (RULES[action] || []).includes(role || 'guest');

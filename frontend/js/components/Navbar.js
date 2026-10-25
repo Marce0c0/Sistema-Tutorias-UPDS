@@ -17,22 +17,27 @@ export const Navbar = {
     const state = store.getState();
     const activeUser = state.activeUser;
     const token = localStorage.getItem('token');
-    const isAuthenticated = !!(token && activeUser);
+    const isAuthenticated = !!(token && activeUser && activeUser.role !== 'guest');
+    const isGuest = activeUser?.role === 'guest';
+    const isWelcome = !activeUser;
 
-    const navItems = [
-      { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-      { id: 'users', label: 'Usuarios', icon: '👥', permission: 'view.users' },
-      { id: 'courses', label: 'Cursos', icon: '📚' },
-      { id: 'tutorias', label: 'Tutorías', icon: '🎓' },
-      { id: 'bookings', label: 'Reservas', icon: '📅' },
-      { id: 'forums', label: 'Foro de Dudas', icon: '💬' },
-      {
-        id: 'notifications',
-        label: 'Notificaciones',
-        icon: '🔔',
-        badge: state.stats.unreadNotifications > 0 ? state.stats.unreadNotifications : null,
-      },
-    ].filter((item) => !item.permission || can(activeUser?.role, item.permission));
+    const navItems = isWelcome
+      ? []
+      : [
+          { id: 'dashboard', label: 'Dashboard', icon: '📊', permission: 'view.dashboard' },
+          { id: 'users', label: 'Usuarios', icon: '👥', permission: 'view.users' },
+          { id: 'courses', label: 'Cursos', icon: '📚', permission: 'view.courses' },
+          { id: 'tutorias', label: 'Tutorías', icon: '🎓', permission: 'view.tutorias' },
+          { id: 'bookings', label: 'Reservas', icon: '📅', permission: 'view.bookings' },
+          { id: 'forums', label: 'Foro de Dudas', icon: '💬', permission: 'view.forums' },
+          {
+            id: 'notifications',
+            label: 'Notificaciones',
+            icon: '🔔',
+            permission: 'view.notifications',
+            badge: state.stats.unreadNotifications > 0 ? state.stats.unreadNotifications : null,
+          },
+        ].filter((item) => !item.permission || can(activeUser?.role, item.permission));
 
     const currentView = state.currentView;
 
@@ -61,6 +66,16 @@ export const Navbar = {
                   <button id="logout-btn" class="btn btn-sm btn-secondary" title="Cerrar Sesión JWT">Salir</button>
                 </div>
               `
+                : isGuest
+                ? `
+                <div class="auth-user-badge">
+                  <span class="role-tag" style="background:#475569;color:#fff;">MODO INVITADO</span>
+                  <button id="open-login-btn" class="btn btn-sm btn-primary" style="background:#002855;border-color:#002855;color:#fff;">
+                    🔑 Iniciar Sesión
+                  </button>
+                  <button id="logout-btn" class="btn btn-sm btn-secondary" title="Volver al Inicio">Inicio</button>
+                </div>
+              `
                 : `
                 <button id="open-login-btn" class="btn btn-sm btn-primary" style="background:#002855;border-color:#002855;color:#fff;">
                   🔑 Iniciar Sesión (JWT)
@@ -71,10 +86,13 @@ export const Navbar = {
           </div>
 
           <!-- Botón Menú Móvil -->
-          <button id="mobile-menu-toggle" class="mobile-toggle" aria-label="Abrir menú">☰</button>
+          ${navItems.length > 0 ? `<button id="mobile-menu-toggle" class="mobile-toggle" aria-label="Abrir menú">☰</button>` : ''}
         </div>
 
         <!-- Barra de Navegación por Pestañas -->
+        ${
+          navItems.length > 0
+            ? `
         <nav class="nav-bar" id="app-nav-bar">
           <ul class="nav-list">
             ${navItems
@@ -92,12 +110,21 @@ export const Navbar = {
               .join('')}
           </ul>
         </nav>
+        `
+            : ''
+        }
       </header>
     `;
 
     // ─── Eventos ─────────────────────────────────────────────────────────────
     container.querySelector('#brand-home-btn').addEventListener('click', () => {
-      store.setView('dashboard');
+      if (activeUser && activeUser.role !== 'guest') {
+        store.setView('dashboard');
+      } else if (isGuest) {
+        store.setView('courses');
+      } else {
+        store.setView('welcome');
+      }
     });
 
     // Pestañas
@@ -105,20 +132,21 @@ export const Navbar = {
       btn.addEventListener('click', () => {
         const view = btn.getAttribute('data-view');
         store.setView(view);
-        container.querySelector('#app-nav-bar').classList.remove('open');
+        const navBar = container.querySelector('#app-nav-bar');
+        if (navBar) navBar.classList.remove('open');
       });
     });
 
-    // Logout
+    // Logout / Salir
     const logoutBtn = container.querySelector('#logout-btn');
     if (logoutBtn) {
       logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('token');
         localStorage.removeItem('authUser');
+        localStorage.removeItem('guestMode');
         store.setActiveUser(null);
-        Toast.info('Sesión JWT finalizada.');
-        // Recargar vista pública
-        window.location.reload();
+        store.setView('welcome');
+        Toast.info('Has vuelto a la pantalla de inicio.');
       });
     }
 
@@ -132,10 +160,12 @@ export const Navbar = {
 
     // Toggle menú móvil
     const mobileToggle = container.querySelector('#mobile-menu-toggle');
-    const navBar = container.querySelector('#app-nav-bar');
-    mobileToggle.addEventListener('click', () => {
-      navBar.classList.toggle('open');
-    });
+    if (mobileToggle) {
+      const navBar = container.querySelector('#app-nav-bar');
+      mobileToggle.addEventListener('click', () => {
+        if (navBar) navBar.classList.toggle('open');
+      });
+    }
 
     // Configurar Endpoint API
     container.querySelector('#config-api-btn').addEventListener('click', () => {
@@ -175,7 +205,7 @@ export const Navbar = {
           </div>
 
           <div style="background:#f0f4f8;border-left:4px solid #002855;padding:10px;border-radius:4px;margin-bottom:12px;font-size:0.85rem;">
-            <strong>Cuentas Semilla de Prueba (Clave: <code>Upds2026!</code>):</strong><br/>
+            <strong>Cuentas Semilla de Prueba (Clave: <code>Upds2026</code>):</strong><br/>
             • <a href="#" class="quick-fill-auth" data-email="admin@upds.edu.bo">admin@upds.edu.bo</a> (Admin)<br/>
             • <a href="#" class="quick-fill-auth" data-email="maria@tutor.com">maria@tutor.com</a> (Tutor)<br/>
             • <a href="#" class="quick-fill-auth" data-email="juan@estudiante.com">juan@estudiante.com</a> (Estudiante)
@@ -200,7 +230,9 @@ export const Navbar = {
           if (res.token && res.user) {
             localStorage.setItem('token', res.token);
             localStorage.setItem('authUser', JSON.stringify(res.user));
+            localStorage.removeItem('guestMode');
             store.setActiveUser(res.user);
+            store.setView('dashboard');
             Toast.success(`Bienvenido/a ${res.user.name} (${res.user.role})`);
             // Recargar datos protegidos
             api.users.getAll().then((list) => store.setUsers(list)).catch(() => {});
@@ -212,7 +244,7 @@ export const Navbar = {
       },
     });
 
-    // Enlazar autofill para cuentas rápidas
+    // Enlazar autofill para cuentas rápidas con Upds2026
     setTimeout(() => {
       document.querySelectorAll('.quick-fill-auth').forEach((link) => {
         link.addEventListener('click', (e) => {
@@ -221,7 +253,7 @@ export const Navbar = {
           const passInput = document.getElementById('login-password');
           if (emailInput && passInput) {
             emailInput.value = link.getAttribute('data-email');
-            passInput.value = 'Upds2026!';
+            passInput.value = 'Upds2026';
           }
         });
       });

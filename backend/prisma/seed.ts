@@ -6,8 +6,8 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Iniciando carga de datos iniciales (Seed) para las 8 entidades universitarias...');
 
-  // Generar hash seguro para contraseñas de prueba (Upds2026!)
-  const defaultPasswordHash = await bcrypt.hash('Upds2026!', 10);
+  // Generar hash seguro para contraseñas de prueba (Upds2026)
+  const defaultPasswordHash = await bcrypt.hash('Upds2026', 10);
 
   // 1. Usuarios (Estudiante, Tutor, Admin)
   const student = await prisma.user.upsert({

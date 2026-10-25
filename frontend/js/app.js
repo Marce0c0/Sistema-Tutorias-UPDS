@@ -1,8 +1,9 @@
 // Controlador Principal y Enrutador SPA — Sistema-Tutoriales-UPDS
 import { store } from './state/store.js';
 import { api } from './services/api.js';
-import { Navbar } from './components/Navbar.js?v=3';
+import { Navbar } from './components/Navbar.js';
 import { Toast } from './components/Toast.js';
+import { WelcomeView } from './views/WelcomeView.js';
 import { DashboardView } from './views/DashboardView.js';
 import { UsersView } from './views/UsersView.js';
 import { CoursesView } from './views/CoursesView.js';
@@ -19,9 +20,9 @@ class App {
   }
 
   async init() {
-    console.log('🚀 Inicializando frontend del Sistema-Tutoriales-UPDS...');
+    console.log('🚀 Inicializando frontend del Sistema-Tutoriales-UPDS (Seguridad & Modo Invitado)...');
 
-    // Suscribir renderizador al Store
+    // Suscribir renderizador al Store reactivo
     store.subscribe((state) => {
       this.render(state);
     });
@@ -42,19 +43,31 @@ class App {
         api.notifications.getAll().catch(() => []),
       ]);
 
-      // Verificar sesión autenticada previa mediante token JWT
-      let authenticatedUser = null;
+      // 1. Verificar si existe token JWT activo guardado
+      let initialUser = null;
+      let initialView = 'welcome';
       const storedToken = localStorage.getItem('token');
+      const isGuest = localStorage.getItem('guestMode') === 'true';
+
       if (storedToken) {
         try {
           const authRes = await api.auth.getMe();
           if (authRes?.user) {
-            authenticatedUser = authRes.user;
+            initialUser = authRes.user;
+            initialView = 'dashboard';
           }
         } catch (_err) {
           localStorage.removeItem('token');
           localStorage.removeItem('authUser');
         }
+      } else if (isGuest) {
+        initialUser = {
+          id: 'guest',
+          name: 'Invitado',
+          email: 'invitado@upds.edu.bo',
+          role: 'guest',
+        };
+        initialView = 'courses';
       }
 
       store.setState({
@@ -64,7 +77,8 @@ class App {
         bookings,
         forums,
         notifications,
-        activeUser: authenticatedUser,
+        activeUser: initialUser,
+        currentView: initialView,
         isLoading: false,
       });
 
@@ -97,8 +111,17 @@ class App {
     if (this.mainContainer) {
       this.mainContainer.innerHTML = '';
 
+      // Si no hay usuario ni modo invitado activo, mostrar la pantalla de bienvenida / login
+      if (!state.activeUser) {
+        this.mainContainer.appendChild(WelcomeView.render());
+        return;
+      }
+
       let viewElement = null;
       switch (state.currentView) {
+        case 'welcome':
+          viewElement = WelcomeView.render();
+          break;
         case 'dashboard':
           viewElement = DashboardView.render();
           break;
@@ -121,7 +144,7 @@ class App {
           viewElement = NotificationsView.render();
           break;
         default:
-          viewElement = DashboardView.render();
+          viewElement = state.activeUser?.role === 'guest' ? CoursesView.render() : DashboardView.render();
       }
 
       if (viewElement) {
