@@ -6,15 +6,22 @@ import { Modal } from '../components/Modal.js';
 import { Toast } from '../components/Toast.js';
 import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
+import { can } from '../utils/permissions.js';
 
 export const BookingsView = {
   render() {
     const state = store.getState();
+    const role = state.activeUser?.role;
+    const canManage = can(role, 'bookings.manage');
+    const canCreate = can(role, 'bookings.create');
     const container = document.createElement('div');
     container.className = 'view-content animate-fade-in';
 
     const renderList = () => {
-      const bookings = state.bookings;
+      // Un estudiante solo ve y opera sobre sus propias reservas
+      const bookings = canManage
+        ? state.bookings
+        : state.bookings.filter((b) => b.studentId === state.activeUser?.id);
       const bodyContainer = container.querySelector('#bookings-table-container');
       if (!bodyContainer) return;
 
@@ -24,9 +31,11 @@ export const BookingsView = {
           EmptyState({
             icon: '📅',
             title: 'No hay reservas registradas',
-            description: 'Los estudiantes pueden agendar sesiones de apoyo académico.',
-            actionText: '+ Agendar Reserva',
-            onAction: () => this.openBookingModal(),
+            description: canManage
+              ? 'Los estudiantes pueden agendar sesiones de apoyo académico.'
+              : 'Aún no has reservado ninguna sesión de tutoría.',
+            actionText: canCreate ? '+ Agendar Reserva' : undefined,
+            onAction: canCreate ? () => this.openBookingModal() : undefined,
           })
         );
         return;
@@ -46,7 +55,9 @@ export const BookingsView = {
               </tr>
             </thead>
             <tbody>
-              ${bookings.map((b) => `
+              ${bookings.map((b) => {
+                const isOwn = b.studentId === state.activeUser?.id;
+                return `
                 <tr>
                   <td>
                     <div class="font-semibold">${b.student?.name || 'Estudiante'}</div>
@@ -60,17 +71,20 @@ export const BookingsView = {
                   <td>${Badge.bookingStatus(b.status)}</td>
                   <td class="text-right">
                     <div class="action-btn-group">
-                      ${b.status !== 'confirmed' ? `
+                      ${canManage && b.status !== 'confirmed' ? `
                         <button class="btn btn-xs btn-success-outline btn-status-booking" data-id="${b.id}" data-status="confirmed" title="Confirmar">✓</button>
                       ` : ''}
-                      ${b.status !== 'cancelled' ? `
+                      ${(canManage || isOwn) && b.status !== 'cancelled' ? `
                         <button class="btn btn-xs btn-warning-outline btn-status-booking" data-id="${b.id}" data-status="cancelled" title="Cancelar">✕</button>
                       ` : ''}
-                      <button class="btn btn-xs btn-danger-outline btn-delete-booking" data-id="${b.id}" title="Eliminar">🗑️</button>
+                      ${canManage ? `
+                        <button class="btn btn-xs btn-danger-outline btn-delete-booking" data-id="${b.id}" title="Eliminar">🗑️</button>
+                      ` : ''}
                     </div>
                   </td>
                 </tr>
-              `).join('')}
+              `;
+              }).join('')}
             </tbody>
           </table>
         </div>
@@ -102,14 +116,14 @@ export const BookingsView = {
           <p class="view-subtitle">Supervisión y control del agendamiento de sesiones entre estudiantes y materias.</p>
         </div>
         <div class="view-actions">
-          <button id="btn-create-booking" class="btn btn-primary">+ Nueva Reserva</button>
+          ${canCreate ? '<button id="btn-create-booking" class="btn btn-primary">+ Nueva Reserva</button>' : ''}
         </div>
       </div>
 
       <div id="bookings-table-container"></div>
     `;
 
-    container.querySelector('#btn-create-booking').addEventListener('click', () => {
+    container.querySelector('#btn-create-booking')?.addEventListener('click', () => {
       this.openBookingModal();
     });
 
@@ -130,7 +144,10 @@ export const BookingsView = {
 
   openBookingModal() {
     const state = store.getState();
-    const students = state.users.filter((u) => u.role === 'student');
+    const canManage = can(state.activeUser?.role, 'bookings.manage');
+    const students = canManage
+      ? state.users.filter((u) => u.role === 'student')
+      : [state.activeUser].filter(Boolean);
     const courses = state.courses;
     const tutorias = state.tutorias;
 
@@ -150,13 +167,14 @@ export const BookingsView = {
         <form id="booking-modal-form" class="modal-form">
           <div class="form-group">
             <label class="form-label" for="booking-student-select">Estudiante Solicitante *</label>
-            <select id="booking-student-select" class="form-control" required>
+            <select id="booking-student-select" class="form-control" required ${canManage ? '' : 'disabled'}>
               ${students.map((s) => `
                 <option value="${s.id}" ${state.activeUser?.id === s.id ? 'selected' : ''}>
                   ${s.name} (${s.email})
                 </option>
               `).join('')}
             </select>
+            ${canManage ? '' : '<small class="form-help">Solo puedes agendar reservas para tu propio usuario.</small>'}
           </div>
 
           <div class="form-group">

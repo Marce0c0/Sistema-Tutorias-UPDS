@@ -6,10 +6,14 @@ import { Modal } from '../components/Modal.js';
 import { Toast } from '../components/Toast.js';
 import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
+import { can } from '../utils/permissions.js';
 
 export const TutoriasView = {
   render() {
     const state = store.getState();
+    const role = state.activeUser?.role;
+    const canManage = can(role, 'tutorias.manage');
+    const canBook = can(role, 'tutorias.book');
     const container = document.createElement('div');
     container.className = 'view-content animate-fade-in';
 
@@ -25,8 +29,8 @@ export const TutoriasView = {
             icon: '🎓',
             title: 'No hay tutorías programadas',
             description: 'Programa una nueva sesión de apoyo académico para los estudiantes.',
-            actionText: '+ Programar Tutoría',
-            onAction: () => this.openTutoriaModal(),
+            actionText: canManage ? '+ Programar Tutoría' : undefined,
+            onAction: canManage ? () => this.openTutoriaModal() : undefined,
           })
         );
         return;
@@ -71,13 +75,17 @@ export const TutoriasView = {
                 </div>
 
                 <div class="tutoria-footer">
-                  <button class="btn btn-sm btn-primary btn-book-tutoria" data-id="${t.id}" data-course-id="${t.courseId}" data-date="${t.date}" ${isFull || t.status !== 'active' ? 'disabled' : ''}>
-                    📅 Reservar Cupo
-                  </button>
-                  <div class="footer-actions">
-                    <button class="btn btn-xs btn-outline btn-edit-tutoria" data-id="${t.id}">✏️</button>
-                    <button class="btn btn-xs btn-danger-outline btn-delete-tutoria" data-id="${t.id}">🗑️</button>
-                  </div>
+                  ${canBook ? `
+                    <button class="btn btn-sm btn-primary btn-book-tutoria" data-id="${t.id}" data-course-id="${t.courseId}" data-date="${t.date}" ${isFull || t.status !== 'active' ? 'disabled' : ''}>
+                      📅 Reservar Cupo
+                    </button>
+                  ` : ''}
+                  ${canManage ? `
+                    <div class="footer-actions">
+                      <button class="btn btn-xs btn-outline btn-edit-tutoria" data-id="${t.id}">✏️</button>
+                      <button class="btn btn-xs btn-danger-outline btn-delete-tutoria" data-id="${t.id}">🗑️</button>
+                    </div>
+                  ` : ''}
                 </div>
               </div>
             `;
@@ -119,14 +127,14 @@ export const TutoriasView = {
           <p class="view-subtitle">Organización, cupos y estado de sesiones grupales o individuales.</p>
         </div>
         <div class="view-actions">
-          <button id="btn-create-tutoria" class="btn btn-primary">+ Programar Tutoría</button>
+          ${canManage ? '<button id="btn-create-tutoria" class="btn btn-primary">+ Programar Tutoría</button>' : ''}
         </div>
       </div>
 
       <div id="tutorias-grid-container"></div>
     `;
 
-    container.querySelector('#btn-create-tutoria').addEventListener('click', () => {
+    container.querySelector('#btn-create-tutoria')?.addEventListener('click', () => {
       this.openTutoriaModal();
     });
 

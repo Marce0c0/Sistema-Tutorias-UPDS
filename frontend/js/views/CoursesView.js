@@ -5,10 +5,12 @@ import { Modal } from '../components/Modal.js';
 import { Toast } from '../components/Toast.js';
 import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
+import { can } from '../utils/permissions.js';
 
 export const CoursesView = {
   render() {
     const state = store.getState();
+    const canManage = can(state.activeUser?.role, 'courses.manage');
     const container = document.createElement('div');
     container.className = 'view-content animate-fade-in';
 
@@ -24,8 +26,8 @@ export const CoursesView = {
             icon: '📚',
             title: 'No hay cursos registrados',
             description: 'Comienza creando la primera materia académica.',
-            actionText: '+ Crear Curso',
-            onAction: () => this.openCourseModal(),
+            actionText: canManage ? '+ Crear Curso' : undefined,
+            onAction: canManage ? () => this.openCourseModal() : undefined,
           })
         );
         return;
@@ -37,10 +39,12 @@ export const CoursesView = {
             <div class="card course-card">
               <div class="course-card-header">
                 <span class="course-tag">Materia UPDS</span>
-                <div class="course-actions">
-                  <button class="btn btn-xs btn-outline btn-edit-course" data-id="${c.id}" title="Editar">✏️</button>
-                  <button class="btn btn-xs btn-danger-outline btn-delete-course" data-id="${c.id}" title="Eliminar">🗑️</button>
-                </div>
+                ${canManage ? `
+                  <div class="course-actions">
+                    <button class="btn btn-xs btn-outline btn-edit-course" data-id="${c.id}" title="Editar">✏️</button>
+                    <button class="btn btn-xs btn-danger-outline btn-delete-course" data-id="${c.id}" title="Eliminar">🗑️</button>
+                  </div>
+                ` : ''}
               </div>
               <h3 class="course-title">${c.title}</h3>
               <p class="course-desc">${c.description || 'Sin descripción detallada disponible.'}</p>
@@ -83,14 +87,14 @@ export const CoursesView = {
           <p class="view-subtitle">Materias curriculares habilitadas para sesiones de tutoría universitaria.</p>
         </div>
         <div class="view-actions">
-          <button id="btn-create-course" class="btn btn-primary">+ Nuevo Curso</button>
+          ${canManage ? '<button id="btn-create-course" class="btn btn-primary">+ Nuevo Curso</button>' : ''}
         </div>
       </div>
 
       <div id="courses-grid-container"></div>
     `;
 
-    container.querySelector('#btn-create-course').addEventListener('click', () => {
+    container.querySelector('#btn-create-course')?.addEventListener('click', () => {
       this.openCourseModal();
     });
 

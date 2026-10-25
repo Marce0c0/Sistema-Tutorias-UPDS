@@ -2,11 +2,15 @@
 import { store } from '../state/store.js';
 import { StatCard } from '../components/StatCard.js';
 import { Badge } from '../components/Badge.js';
+import { can } from '../utils/permissions.js';
 
 export const DashboardView = {
   render() {
     const state = store.getState();
     const { stats, activeUser, tutorias, bookings, courses } = state;
+    const role = activeUser?.role;
+    const seesAllBookings = can(role, 'bookings.manage');
+    const visibleBookings = seesAllBookings ? bookings : bookings.filter((b) => b.studentId === activeUser?.id);
 
     const container = document.createElement('div');
     container.className = 'view-content animate-fade-in';
@@ -32,16 +36,19 @@ export const DashboardView = {
     const kpiGrid = document.createElement('div');
     kpiGrid.className = 'kpi-grid';
 
-    kpiGrid.appendChild(
-      StatCard({
-        title: 'Estudiantes y Tutores',
-        value: stats.totalUsers,
-        icon: '👥',
-        subtitle: 'Usuarios en plataforma',
-        color: 'blue',
-        onClick: () => store.setView('users'),
-      })
-    );
+    // El directorio de usuarios solo existe para quien puede administrarlo
+    if (can(role, 'view.users')) {
+      kpiGrid.appendChild(
+        StatCard({
+          title: 'Estudiantes y Tutores',
+          value: stats.totalUsers,
+          icon: '👥',
+          subtitle: 'Usuarios en plataforma',
+          color: 'blue',
+          onClick: () => store.setView('users'),
+        })
+      );
+    }
 
     kpiGrid.appendChild(
       StatCard({
@@ -68,9 +75,9 @@ export const DashboardView = {
     kpiGrid.appendChild(
       StatCard({
         title: 'Reservas Realizadas',
-        value: stats.totalBookings,
+        value: visibleBookings.length,
         icon: '📅',
-        subtitle: 'Citas agendadas',
+        subtitle: seesAllBookings ? 'Citas agendadas' : 'Mis citas agendadas',
         color: 'amber',
         onClick: () => store.setView('bookings'),
       })
@@ -115,12 +122,12 @@ export const DashboardView = {
     `;
 
     // Columna 2: Últimas Reservas
-    const recentBookings = bookings.slice(0, 4);
+    const recentBookings = visibleBookings.slice(0, 4);
     const bookingsBox = document.createElement('div');
     bookingsBox.className = 'card';
     bookingsBox.innerHTML = `
       <div class="card-header">
-        <h3 class="card-title">Últimas Reservas de Estudiantes</h3>
+        <h3 class="card-title">${seesAllBookings ? 'Últimas Reservas de Estudiantes' : 'Mis Reservas'}</h3>
         <button class="btn btn-sm btn-outline" id="dash-view-all-bookings">Ver todas</button>
       </div>
       <div class="card-body">

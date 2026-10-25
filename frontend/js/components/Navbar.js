@@ -1,15 +1,26 @@
 // Componente de Navegación Principal — Sistema-Tutoriales-UPDS
 import { store } from '../state/store.js';
+import { api } from '../services/api.js';
 import { ENV } from '../config/env.js';
 import { Modal } from './Modal.js';
 import { Toast } from './Toast.js';
+import { can } from '../utils/permissions.js';
+
+const ROLES = [
+  { id: 'student', label: 'Estudiante' },
+  { id: 'tutor', label: 'Tutor Docente' },
+  { id: 'admin', label: 'Administrador' },
+];
 
 export const Navbar = {
   render(container) {
     const state = store.getState();
+    const activeUser = state.activeUser;
+    const users = state.users;
+
     const navItems = [
       { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-      { id: 'users', label: 'Usuarios', icon: '👥' },
+      { id: 'users', label: 'Usuarios', icon: '👥', permission: 'view.users' },
       { id: 'courses', label: 'Cursos', icon: '📚' },
       { id: 'tutorias', label: 'Tutorías', icon: '🎓' },
       { id: 'bookings', label: 'Reservas', icon: '📅' },
@@ -20,11 +31,9 @@ export const Navbar = {
         icon: '🔔',
         badge: state.stats.unreadNotifications > 0 ? state.stats.unreadNotifications : null,
       },
-    ];
+    ].filter((item) => !item.permission || can(activeUser?.role, item.permission));
 
     const currentView = state.currentView;
-    const activeUser = state.activeUser;
-    const users = state.users;
 
     container.innerHTML = `
       <header class="app-header">
@@ -40,16 +49,16 @@ export const Navbar = {
             </div>
           </div>
 
-          <!-- Selector de Usuario Activo en Sesión -->
+          <!-- Selector de Rol para la Sesión de Demostración -->
           <div class="user-session-box">
-            <span class="session-label">Sesión Activa:</span>
-            <select id="session-user-select" class="session-select" aria-label="Seleccionar usuario activo">
-              ${users.map((u) => `
-                <option value="${u.id}" ${activeUser?.id === u.id ? 'selected' : ''}>
-                  ${u.name} (${u.role.toUpperCase()})
-                </option>
-              `).join('')}
+            <span class="session-label">Vista como:</span>
+            <select id="session-role-select" class="session-select" aria-label="Seleccionar rol de la sesión">
+              ${ROLES.map((r) => {
+                const available = users.some((u) => u.role === r.id);
+                return `<option value="${r.id}" ${activeUser?.role === r.id ? 'selected' : ''} ${available ? '' : 'disabled'}>${r.label}</option>`;
+              }).join('')}
             </select>
+            <span class="session-label" title="Usuario de demostración asociado al rol">${activeUser?.name || 'Sin sesión'}</span>
             <button id="config-api-btn" class="btn-icon" title="Configuración de Servidor API">⚙️</button>
           </div>
 
@@ -89,15 +98,19 @@ export const Navbar = {
       });
     });
 
-    // Cambio de usuario activo
-    const userSelect = container.querySelector('#session-user-select');
-    userSelect.addEventListener('change', (e) => {
-      const selectedId = e.target.value;
-      const found = users.find((u) => u.id === selectedId);
-      if (found) {
-        store.setActiveUser(found);
-        Toast.info(`Sesión cambiada a: ${found.name} (${found.role})`);
+    // Cambio de rol (toma un usuario representativo de ese rol)
+    const roleSelect = container.querySelector('#session-role-select');
+    roleSelect.addEventListener('change', (e) => {
+      const role = e.target.value;
+      const found = users.find((u) => u.role === role);
+      if (!found) {
+        Toast.warning(`No hay usuarios con rol ${role} registrados.`);
+        return;
       }
+      store.setActiveUser(found);
+      // La bandeja pudo quedar filtrada por otro usuario: recargar sin filtro
+      api.notifications.getAll().then((list) => store.setNotifications(list)).catch(() => {});
+      Toast.info(`Vista cambiada a: ${ROLES.find((r) => r.id === role).label} — ${found.name}`);
     });
 
     // Toggle menú móvil

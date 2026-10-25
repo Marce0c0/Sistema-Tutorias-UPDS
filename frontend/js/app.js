@@ -49,6 +49,8 @@ class App {
         bookings,
         forums,
         notifications,
+        // Identidad de demostración por defecto (primer usuario del seed)
+        activeUser: store.getState().activeUser || users[0] || null,
         isLoading: false,
       });
 

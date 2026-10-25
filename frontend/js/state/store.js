@@ -1,5 +1,6 @@
 // Gestor de Estado Global (Store) Reactivo — Sistema-Tutoriales-UPDS
 // Maneja el estado en memoria para las 6 entidades, usuario activo y suscriptores de eventos
+import { can } from '../utils/permissions.js';
 
 class Store {
   constructor() {
@@ -58,13 +59,20 @@ class Store {
     this.notify();
   }
 
+  // Punto único de control de navegación: rechaza vistas no permitidas por el rol
   setView(viewName) {
+    if (!can(this.state.activeUser?.role, `view.${viewName}`)) return false;
     this.state.currentView = viewName;
     this.notify();
+    return true;
   }
 
   setActiveUser(user) {
     this.state.activeUser = user;
+    this.state.filters.notificationUserId = '';
+    if (!can(user?.role, `view.${this.state.currentView}`)) {
+      this.state.currentView = 'dashboard';
+    }
     this.notify();
   }
 
@@ -75,22 +83,26 @@ class Store {
 
   // Recalcular métricas de dashboard
   recalculateStats() {
-    const { users, courses, tutorias, bookings, notifications } = this.state;
+    const { users, courses, tutorias, bookings, notifications, activeUser } = this.state;
+    const seesAllNotifications = can(activeUser?.role, 'notifications.viewAll');
     this.state.stats = {
       totalUsers: users.length,
       totalCourses: courses.length,
       activeTutorias: tutorias.filter((t) => t.status === 'active').length,
       totalBookings: bookings.length,
-      unreadNotifications: notifications.filter((n) => !n.isRead).length,
+      unreadNotifications: notifications.filter(
+        (n) => !n.isRead && (seesAllNotifications || n.userId === activeUser?.id)
+      ).length,
     };
   }
 
   // Mutaciones atómicas para cada entidad
   setUsers(users) {
     this.state.users = users;
-    // Si no hay activeUser o el activeUser actual ya no existe, asignar el primero
-    if (!this.state.activeUser && users.length > 0) {
-      this.state.activeUser = users[0];
+    // Resincronizar identidad activa: su rol pudo cambiar al editarla
+    this.state.activeUser = users.find((u) => u.id === this.state.activeUser?.id) || users[0] || null;
+    if (!can(this.state.activeUser?.role, `view.${this.state.currentView}`)) {
+      this.state.currentView = 'dashboard';
     }
     this.notify();
   }

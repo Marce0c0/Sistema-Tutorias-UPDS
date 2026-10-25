@@ -6,17 +6,24 @@ import { Modal } from '../components/Modal.js';
 import { Toast } from '../components/Toast.js';
 import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
+import { can } from '../utils/permissions.js';
 
 export const NotificationsView = {
   render() {
     const state = store.getState();
+    const role = state.activeUser?.role;
+    const seesAll = can(role, 'notifications.viewAll');
+    const canSend = can(role, 'notifications.send');
     const container = document.createElement('div');
     container.className = 'view-content animate-fade-in';
 
     let selectedUserId = state.filters.notificationUserId || '';
 
     const renderNotifications = () => {
-      const notifications = state.notifications;
+      // Un estudiante solo ve sus propios avisos
+      const notifications = seesAll
+        ? state.notifications
+        : state.notifications.filter((n) => n.userId === state.activeUser?.id);
       const bodyContainer = container.querySelector('#notifications-list-container');
       if (!bodyContainer) return;
 
@@ -27,8 +34,8 @@ export const NotificationsView = {
             icon: '🔔',
             title: 'No hay notificaciones',
             description: selectedUserId ? 'El usuario seleccionado no tiene alertas pendientes.' : 'No existen avisos o recordatorios en el sistema.',
-            actionText: '+ Enviar Notificación',
-            onAction: () => this.openNotificationModal(),
+            actionText: canSend ? '+ Enviar Notificación' : undefined,
+            onAction: canSend ? () => this.openNotificationModal() : undefined,
           })
         );
         return;
@@ -50,7 +57,7 @@ export const NotificationsView = {
                     <button class="btn btn-xs ${n.isRead ? 'btn-outline' : 'btn-primary-outline'} btn-toggle-read" data-id="${n.id}" data-read="${n.isRead}">
                       ${n.isRead ? 'Marcar no leída' : '✓ Marcar leída'}
                     </button>
-                    <button class="btn btn-xs btn-danger-outline btn-delete-notification" data-id="${n.id}" title="Eliminar">🗑️</button>
+                    ${canSend ? `<button class="btn btn-xs btn-danger-outline btn-delete-notification" data-id="${n.id}" title="Eliminar">🗑️</button>` : ''}
                   </div>
                 </div>
                 <h4 class="notification-title">${n.title}</h4>
@@ -86,15 +93,17 @@ export const NotificationsView = {
           <p class="view-subtitle">Avisos del sistema, confirmaciones de reserva y respuestas académicas.</p>
         </div>
         <div class="view-actions">
-          <select id="notification-user-filter" class="form-control" style="width: auto;">
-            <option value="">Todos los usuarios</option>
-            ${state.users.map((u) => `
-              <option value="${u.id}" ${selectedUserId === u.id ? 'selected' : ''}>
-                ${u.name} (${u.role})
-              </option>
-            `).join('')}
-          </select>
-          <button id="btn-create-notification" class="btn btn-primary">+ Enviar Notificación</button>
+          ${seesAll ? `
+            <select id="notification-user-filter" class="form-control" style="width: auto;">
+              <option value="">Todos los usuarios</option>
+              ${state.users.map((u) => `
+                <option value="${u.id}" ${selectedUserId === u.id ? 'selected' : ''}>
+                  ${u.name} (${u.role})
+                </option>
+              `).join('')}
+            </select>
+          ` : ''}
+          ${canSend ? '<button id="btn-create-notification" class="btn btn-primary">+ Enviar Notificación</button>' : ''}
         </div>
       </div>
 
@@ -102,7 +111,7 @@ export const NotificationsView = {
     `;
 
     // Filtro por Usuario
-    container.querySelector('#notification-user-filter').addEventListener('change', async (e) => {
+    container.querySelector('#notification-user-filter')?.addEventListener('change', async (e) => {
       selectedUserId = e.target.value;
       store.state.filters.notificationUserId = selectedUserId;
       try {
@@ -113,7 +122,7 @@ export const NotificationsView = {
       }
     });
 
-    container.querySelector('#btn-create-notification').addEventListener('click', () => {
+    container.querySelector('#btn-create-notification')?.addEventListener('click', () => {
       this.openNotificationModal();
     });
 

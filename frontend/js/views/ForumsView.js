@@ -6,10 +6,13 @@ import { Modal } from '../components/Modal.js';
 import { Toast } from '../components/Toast.js';
 import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
+import { can } from '../utils/permissions.js';
 
 export const ForumsView = {
   render() {
     const state = store.getState();
+    const role = state.activeUser?.role;
+    const canModerate = can(role, 'forums.moderate');
     const container = document.createElement('div');
     container.className = 'view-content animate-fade-in';
 
@@ -48,10 +51,12 @@ export const ForumsView = {
                 </div>
                 <div class="forum-header-right">
                   <span class="course-pill">${m.course?.title || 'Materia'}</span>
-                  <div class="forum-actions">
-                    <button class="btn btn-xs btn-outline btn-edit-forum" data-id="${m.id}" title="Editar">✏️</button>
-                    <button class="btn btn-xs btn-danger-outline btn-delete-forum" data-id="${m.id}" title="Eliminar">🗑️</button>
-                  </div>
+                  ${canModerate || m.userId === state.activeUser?.id ? `
+                    <div class="forum-actions">
+                      <button class="btn btn-xs btn-outline btn-edit-forum" data-id="${m.id}" title="Editar">✏️</button>
+                      <button class="btn btn-xs btn-danger-outline btn-delete-forum" data-id="${m.id}" title="Eliminar">🗑️</button>
+                    </div>
+                  ` : ''}
                 </div>
               </div>
               <h3 class="forum-post-title">${m.title}</h3>
@@ -146,13 +151,14 @@ export const ForumsView = {
 
           <div class="form-group">
             <label class="form-label" for="forum-user-select">Autor de la Consulta *</label>
-            <select id="forum-user-select" class="form-control" required ${isEdit ? 'disabled' : ''}>
+            <select id="forum-user-select" class="form-control" required disabled>
               ${users.map((u) => `
                 <option value="${u.id}" ${(message?.userId || state.activeUser?.id) === u.id ? 'selected' : ''}>
                   ${u.name} (${u.role})
                 </option>
               `).join('')}
             </select>
+            <small class="form-help">Se publica siempre a nombre del usuario en sesión.</small>
           </div>
 
           <div class="form-group">
