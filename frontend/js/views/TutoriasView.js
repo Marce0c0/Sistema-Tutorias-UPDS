@@ -7,6 +7,7 @@ import { Toast } from '../components/Toast.js';
 import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
 import { can } from '../utils/permissions.js';
+import { Navbar } from '../components/Navbar.js';
 
 export const TutoriasView = {
   render() {
@@ -156,6 +157,11 @@ export const TutoriasView = {
                       ${pricing.btnLabel}
                     </button>
                   ` : ''}
+                  ${!state.activeUser || state.activeUser.role === 'guest' ? `
+                    <button class="btn btn-sm btn-outline-primary btn-guest-book" data-id="${t.id}" style="flex:1; border-color:#004b93; color:#004b93; font-weight:600;" ${isFull || t.status !== 'active' ? 'disabled' : ''}>
+                      🔒 Iniciar sesión para reservar (${pricing.isFree ? 'Gratis' : pricing.studentPrice})
+                    </button>
+                  ` : ''}
                   ${canManage ? `
                     <div class="footer-actions">
                       <button class="btn btn-xs btn-outline btn-edit-tutoria" data-id="${t.id}" title="Editar sesión">✏️</button>
@@ -170,6 +176,12 @@ export const TutoriasView = {
       `;
 
       // Eventos
+      bodyContainer.querySelectorAll('.btn-guest-book').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          Navbar.openLoginModal('tutorias');
+        });
+      });
+
       bodyContainer.querySelectorAll('.btn-book-tutoria').forEach((btn) => {
         btn.addEventListener('click', async () => {
           const tutoriaId = btn.getAttribute('data-id');

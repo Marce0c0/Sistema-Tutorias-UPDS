@@ -202,7 +202,7 @@ export const Navbar = {
     };
   },
 
-  openLoginModal() {
+  openLoginModal(targetView = null) {
     Modal.open({
       title: 'Iniciar Sesión — Autenticación JWT',
       content: `
@@ -244,7 +244,7 @@ export const Navbar = {
             localStorage.setItem('authUser', JSON.stringify(res.user));
             localStorage.removeItem('guestMode');
             store.setActiveUser(res.user);
-            store.setView('dashboard');
+            store.setView(targetView || 'dashboard');
             Toast.success(`Bienvenido/a ${res.user.name} (${res.user.role})`);
             // Recargar datos protegidos
             api.users.getAll().then((list) => store.setUsers(list)).catch(() => {});

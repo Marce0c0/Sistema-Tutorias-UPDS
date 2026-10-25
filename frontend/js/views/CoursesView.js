@@ -97,31 +97,11 @@ export const CoursesView = {
         </div>
       </div>
 
-      ${
-        state.activeUser?.role === 'guest'
-          ? `
-        <div style="background:#f0f9ff;border-left:4px solid #0284c7;padding:12px 16px;border-radius:6px;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
-          <div>
-            <strong style="color:#0369a1;">👀 Modo Invitado Activo</strong>
-            <p style="margin:2px 0 0;font-size:0.88rem;color:#334155;">Estás explorando el catálogo académico sin autenticación. Inicia sesión para reservar tutorías.</p>
-          </div>
-          <button id="guest-login-cta-btn" class="btn btn-sm btn-primary" style="background:#002855;border-color:#002855;color:#fff;">
-            🔑 Iniciar Sesión
-          </button>
-        </div>
-      `
-          : ''
-      }
-
       <div id="courses-grid-container"></div>
     `;
 
     container.querySelector('#btn-create-course')?.addEventListener('click', () => {
       this.openCourseModal();
-    });
-
-    container.querySelector('#guest-login-cta-btn')?.addEventListener('click', () => {
-      store.setView('welcome');
     });
 
     setTimeout(renderList, 0);
