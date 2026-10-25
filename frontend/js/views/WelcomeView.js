@@ -15,23 +15,15 @@ export const WelcomeView = {
 
     container.innerHTML = `
       <div class="welcome-hero-card">
-        <div class="welcome-header text-center">
-          <div class="welcome-logo-badge">
-            <img src="img/upds-logo.png" alt="UPDS" class="welcome-logo-img" />
-          </div>
-          <h1 class="welcome-title">Portal de Tutorías y Cursos Extracurriculares</h1>
-          <p class="welcome-subtitle">Universidad Privada Domingo Savio — Extensión Universitaria y Clases Extra con Docentes</p>
-        </div>
-
         <div class="welcome-grid">
-          <!-- Tarjeta 1: Autenticación con JWT -->
+          <!-- Tarjeta 1: Autenticación con JWT (con Logo UPDS en su interior) -->
           <div class="welcome-panel auth-panel">
-            <div class="panel-header">
-              <span class="panel-icon">🔐</span>
-              <div>
-                <h2 class="panel-title">Iniciar Sesión</h2>
-                <p class="panel-desc">Accede con tu cuenta institucional protegida con JWT</p>
+            <div class="auth-panel-logo-box" style="text-align:center; margin-bottom:1.25rem;">
+              <div style="display:inline-flex; align-items:center; justify-content:center; background:#ffffff; padding:6px 14px; border-radius:10px; border:1px solid #e2e8f0; box-shadow:var(--shadow-sm); margin-bottom:0.65rem;">
+                <img src="img/upds-logo.png" alt="Universidad Privada Domingo Savio" style="height:46px; width:auto; object-fit:contain; display:block;" />
               </div>
+              <h2 class="panel-title" style="font-size:1.35rem; color:var(--primary-navy); margin-bottom:0.2rem;">Iniciar Sesión</h2>
+              <p class="panel-desc">Accede con tu cuenta institucional protegida con JWT</p>
             </div>
 
             <form id="welcome-login-form" class="welcome-form" onsubmit="return false;">
@@ -68,11 +60,11 @@ export const WelcomeView = {
 
           <!-- Tarjeta 2: Modo Invitado (Explorar Cursos sin Login) -->
           <div class="welcome-panel guest-panel">
-            <div class="panel-header">
+            <div class="panel-header" style="margin-bottom:1.25rem;">
               <span class="panel-icon">🌐</span>
               <div>
                 <h2 class="panel-title">Modo Invitado</h2>
-                <p class="panel-desc">Explora cursos extracurriculares y tutorías sin iniciar sesión</p>
+                <p class="panel-desc">Explora cursos extracurriculares y clases extra sin iniciar sesión</p>
               </div>
             </div>
 

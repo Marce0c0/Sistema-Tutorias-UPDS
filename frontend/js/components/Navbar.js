@@ -71,15 +71,12 @@ export const Navbar = {
                 ? `
                 <div class="auth-user-badge">
                   <span class="role-tag" style="background:#475569;color:#fff;">MODO INVITADO</span>
-                  <button id="open-login-btn" class="btn btn-sm btn-primary" style="background:#002855;border-color:#002855;color:#fff;">
-                    🔑 Iniciar Sesión
-                  </button>
                   <button id="logout-btn" class="btn btn-sm btn-secondary" title="Volver al Inicio">Inicio</button>
                 </div>
               `
                 : `
-                <button id="open-login-btn" class="btn btn-sm btn-primary" style="background:#002855;border-color:#002855;color:#fff;">
-                  🔑 Iniciar Sesión (JWT)
+                <button id="headbar-guest-btn" class="btn btn-sm btn-outline" style="color:#ffffff;border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.1);">
+                  🌐 Modo Invitado
                 </button>
               `
             }
@@ -148,6 +145,22 @@ export const Navbar = {
         store.setActiveUser(null);
         store.setView('welcome');
         Toast.info('Has vuelto a la pantalla de inicio.');
+      });
+    }
+
+    // Botón de acceso a Modo Invitado desde el headbar
+    const headbarGuestBtn = container.querySelector('#headbar-guest-btn');
+    if (headbarGuestBtn) {
+      headbarGuestBtn.addEventListener('click', () => {
+        localStorage.setItem('guestMode', 'true');
+        store.setActiveUser({
+          id: 'guest',
+          name: 'Invitado UPDS',
+          email: 'invitado@upds.net',
+          role: 'guest',
+        });
+        store.setView('courses');
+        Toast.info('Explorando el catálogo en Modo Invitado.');
       });
     }
 
