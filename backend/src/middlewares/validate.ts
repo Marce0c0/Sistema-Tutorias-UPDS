@@ -9,6 +9,21 @@ const VALID_TUTORIA_STATUSES = ['active', 'completed', 'cancelled'];
 const VALID_NOTIFICATION_TYPES = ['info', 'reminder', 'booking_update', 'forum_reply'];
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// ─── Middleware de Sanitización contra XSS e Inyecciones ──────────────────────
+export const sanitizeInput = (req: Request, _res: Response, next: NextFunction): void => {
+  if (req.body && typeof req.body === 'object') {
+    for (const key of Object.keys(req.body)) {
+      if (typeof req.body[key] === 'string') {
+        // Remover etiquetas script y tags maliciosos
+        req.body[key] = req.body[key]
+          .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+          .replace(/javascript:/gi, '');
+      }
+    }
+  }
+  next();
+};
+
 // ─── Validar ID de Parámetros (:id) ─────────────────────────────────────────
 export const validateId = (req: Request, res: Response, next: NextFunction): void => {
   const id = req.params.id;

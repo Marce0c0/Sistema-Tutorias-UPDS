@@ -42,6 +42,21 @@ class App {
         api.notifications.getAll().catch(() => []),
       ]);
 
+      // Verificar sesión autenticada previa mediante token JWT
+      let authenticatedUser = null;
+      const storedToken = localStorage.getItem('token');
+      if (storedToken) {
+        try {
+          const authRes = await api.auth.getMe();
+          if (authRes?.user) {
+            authenticatedUser = authRes.user;
+          }
+        } catch (_err) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('authUser');
+        }
+      }
+
       store.setState({
         users,
         courses,
@@ -49,8 +64,7 @@ class App {
         bookings,
         forums,
         notifications,
-        // Identidad de demostración por defecto (primer usuario del seed)
-        activeUser: store.getState().activeUser || users[0] || null,
+        activeUser: authenticatedUser,
         isLoading: false,
       });
 

@@ -1,13 +1,23 @@
-// Controlador de Usuarios — CRUD completo
+// Controlador de Usuarios — CRUD completo (Seguridad & Exclusión de passwordHash)
 // Gestiona estudiantes, tutores y administradores de la plataforma
 
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../lib/prisma';
 
-// GET /api/users — Obtener todos los usuarios
+// Selector público seguro que previene la fuga de credenciales
+const userPublicSelect = {
+  id: true,
+  name: true,
+  email: true,
+  role: true,
+  createdAt: true,
+};
+
+// GET /api/users — Obtener todos los usuarios (sin passwordHash)
 export const getUsers = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const users = await prisma.user.findMany({
+      select: userPublicSelect,
       orderBy: { createdAt: 'desc' },
     });
     res.status(200).json(users);
@@ -22,7 +32,8 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
     const id = req.params.id as string;
     const user = await prisma.user.findUnique({
       where: { id },
-      include: {
+      select: {
+        ...userPublicSelect,
         courses: true,   // Incluye los cursos que imparte (si es tutor)
         bookings: true,  // Incluye las reservas que tiene (si es estudiante)
       },
@@ -45,6 +56,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     const { name, email, role } = req.body;
     const newUser = await prisma.user.create({
       data: { name: name.trim(), email: email.toLowerCase().trim(), role },
+      select: userPublicSelect,
     });
     res.status(201).json(newUser);
   } catch (error) {
@@ -65,6 +77,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
         ...(email && { email: email.toLowerCase().trim() }),
         ...(role && { role }),
       },
+      select: userPublicSelect,
     });
 
     res.status(200).json(updated);

@@ -1282,3 +1282,49 @@ body.modal-open {
     gap: 0;
   }
 }
+
+/* ─── Autenticación & RBAC (Actividad 4) ─────────────────────────────────── */
+.auth-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.role-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.role-tag.role-admin {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.role-tag.role-tutor {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.role-tag.role-student {
+  background-color: #059669;
+  color: #ffffff;
+}
+
+.quick-fill-auth {
+  color: var(--primary-navy);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.quick-fill-auth:hover {
+  color: var(--accent-gold);
+}

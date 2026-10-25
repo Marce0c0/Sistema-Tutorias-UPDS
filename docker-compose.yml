@@ -1,0 +1,76 @@
+# ==============================================================================
+# Orquestación de Servicios con Docker Compose — Sistema-Tutoriales-UPDS
+# Entorno completo contenerizado: BD PostgreSQL + Backend API + Frontend Nginx
+# Puntos 11 y 12 del Entregable 4
+# ==============================================================================
+
+services:
+  # ─── 1. Base de Datos Relacional (PostgreSQL 17) ───────────────────────────
+  db:
+    image: postgres:17-alpine
+    container_name: tutorias-upds-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres123}
+      POSTGRES_DB: ${DB_NAME:-tutorias_upds}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-tutorias_upds}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - upds-network
+
+  # ─── 2. Backend API REST (Node.js + Express + Prisma) ──────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tutorias-upds-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      # Conexión por defecto a la base de datos local contenerizada o inyectada por .env
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres123@db:5432/tutorias_upds}
+      JWT_SECRET: ${JWT_SECRET:-upds_jwt_super_secret_key_2026_enterprise_grade_auth}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-8h}
+      CORS_ORIGIN: "*"
+      AWS_REGION: ${AWS_REGION:-us-east-2}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-sistema-tutorias-upds-264425049862}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - upds-network
+
+  # ─── 3. Frontend Web SPA (Nginx Alpine) ────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tutorias-upds-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - upds-network
+
+# ─── Red Aislada y Volúmenes Persistentes ─────────────────────────────────────
+networks:
+  upds-network:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local

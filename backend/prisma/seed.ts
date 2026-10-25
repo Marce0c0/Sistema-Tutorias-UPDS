@@ -1,40 +1,53 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Iniciando carga de datos iniciales (Seed) para las 8 entidades universitarias...');
 
+  // Generar hash seguro para contraseñas de prueba (Upds2026!)
+  const defaultPasswordHash = await bcrypt.hash('Upds2026!', 10);
+
   // 1. Usuarios (Estudiante, Tutor, Admin)
   const student = await prisma.user.upsert({
     where: { email: 'juan@estudiante.com' },
-    update: {},
+    update: {
+      passwordHash: defaultPasswordHash,
+    },
     create: {
       id: 'fbedb367-859b-467b-a1bc-5ec7e37e7206',
       name: 'Juan Perez',
       email: 'juan@estudiante.com',
+      passwordHash: defaultPasswordHash,
       role: 'student',
     },
   });
 
   const tutor = await prisma.user.upsert({
     where: { email: 'maria@tutor.com' },
-    update: {},
+    update: {
+      passwordHash: defaultPasswordHash,
+    },
     create: {
       id: 'dfacc15e-e3ae-4d1c-9a88-f5fc2f464914',
       name: 'Maria Gomez',
       email: 'maria@tutor.com',
+      passwordHash: defaultPasswordHash,
       role: 'tutor',
     },
   });
 
   const admin = await prisma.user.upsert({
     where: { email: 'admin@upds.edu.bo' },
-    update: {},
+    update: {
+      passwordHash: defaultPasswordHash,
+    },
     create: {
       id: '3b593672-04b3-469b-9ffb-149eb0f317b9',
       name: 'Coordinación Académica UPDS',
       email: 'admin@upds.edu.bo',
+      passwordHash: defaultPasswordHash,
       role: 'admin',
     },
   });

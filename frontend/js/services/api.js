@@ -11,9 +11,11 @@ class ApiService {
   // Wrapper genérico de petición fetch
   async request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
+    const token = localStorage.getItem('token');
     const defaultHeaders = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
     const config = {
@@ -54,6 +56,13 @@ class ApiService {
       throw err;
     }
   }
+
+  // ─── 0. MÓDULO DE AUTENTICACIÓN JWT (/api/auth) ─────────────────────────
+  auth = {
+    login: (credentials) => this.request('/api/auth/login', { method: 'POST', body: credentials }),
+    register: (userData) => this.request('/api/auth/register', { method: 'POST', body: userData }),
+    getMe: () => this.request('/api/auth/me'),
+  };
 
   // ─── 1. MÓDULO DE USUARIOS (/api/users) ──────────────────────────────────
   users = {
