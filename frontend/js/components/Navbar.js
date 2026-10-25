@@ -45,53 +45,61 @@ export const Navbar = {
     container.innerHTML = `
       <header class="app-header">
         <div class="header-container">
-          <!-- Marca UPDS Oficial -->
-          <div class="brand-area" id="brand-home-btn" role="button" tabindex="0">
-            <div class="brand-logo-card">
-              <img src="img/upds-logo.png" alt="Universidad Privada Domingo Savio" class="brand-logo-img" />
+          <!-- Bloque Superior Izquierdo: Marca UPDS, Modo Activo e Iniciar Sesión -->
+          <div class="header-left-cluster" style="display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap;">
+            <!-- Logo Institucional UPDS (Clic para volver al Inicio) -->
+            <div class="brand-area" id="brand-home-btn" role="button" tabindex="0" title="Volver al Inicio UPDS">
+              <div class="brand-logo-card">
+                <img src="img/upds-logo.png" alt="Universidad Privada Domingo Savio" class="brand-logo-img" />
+              </div>
+              <div class="brand-text">
+                <span class="brand-title">Tutorías Universitarias</span>
+                <span class="brand-subtitle">Universidad Privada Domingo Savio</span>
+              </div>
             </div>
-            <div class="brand-text">
-              <span class="brand-title">Tutorías Universitarias</span>
-              <span class="brand-subtitle">Universidad Privada Domingo Savio</span>
+
+            <!-- Modo Activo e Iniciar Sesión (Arriba a la Izquierda) -->
+            <div class="header-status-box" style="display:flex; align-items:center; gap:0.45rem;">
+              ${
+                isGuest
+                  ? `
+                  <span class="role-tag" style="background:#475569;color:#ffffff;font-size:0.72rem;font-weight:700;">MODO INVITADO</span>
+                  <button id="headbar-login-btn" class="btn btn-sm btn-primary" style="background:#004b93;border-color:#004b93;color:#ffffff;font-size:0.78rem;">
+                    🔑 Iniciar Sesión
+                  </button>
+                `
+                  : isAuthenticated
+                  ? `
+                  <div class="auth-user-badge">
+                    <span class="role-tag role-${activeUser.role}">${ROLES.find((r) => r.id === activeUser.role)?.label || activeUser.role}</span>
+                    <span class="session-label" title="${activeUser.email}">👤 ${activeUser.name}</span>
+                  </div>
+                `
+                  : ''
+              }
             </div>
           </div>
 
-          <!-- Área de Autenticación y Sesión JWT -->
-          <div class="user-session-box">
+          <!-- Bloque Superior Derecho: Controles y Salir -->
+          <div class="header-right-cluster" style="display:flex; align-items:center; gap:0.5rem;">
             ${
               isAuthenticated
-                ? `
-                <div class="auth-user-badge">
-                  <span class="role-tag role-${activeUser.role}">${ROLES.find((r) => r.id === activeUser.role)?.label || activeUser.role}</span>
-                  <span class="session-label" title="${activeUser.email}">👤 ${activeUser.name}</span>
-                  <button id="logout-btn" class="btn btn-sm btn-secondary" title="Cerrar Sesión JWT">Salir</button>
-                </div>
-              `
-                : isGuest
-                ? `
-                <div class="auth-user-badge">
-                  <span class="role-tag" style="background:#475569;color:#fff;">MODO INVITADO</span>
-                  <button id="logout-btn" class="btn btn-sm btn-secondary" title="Volver al Inicio">Inicio</button>
-                </div>
-              `
-                : `
-                <button id="headbar-guest-btn" class="btn btn-sm btn-outline" style="color:#ffffff;border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.1);">
-                  🌐 Modo Invitado
-                </button>
-              `
+                ? `<button id="logout-btn" class="btn btn-sm btn-secondary" title="Cerrar Sesión JWT">Salir</button>`
+                : isWelcome
+                ? `<button id="headbar-guest-btn" class="btn btn-sm btn-outline" style="color:#ffffff;border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.1);">🌐 Modo Invitado</button>`
+                : ''
             }
+            <!-- Botón Menú Móvil -->
+            ${navItems.length > 0 ? `<button id="mobile-menu-toggle" class="mobile-toggle" aria-label="Abrir menú">☰</button>` : ''}
           </div>
-
-          <!-- Botón Menú Móvil -->
-          ${navItems.length > 0 ? `<button id="mobile-menu-toggle" class="mobile-toggle" aria-label="Abrir menú">☰</button>` : ''}
         </div>
 
-        <!-- Barra de Navegación por Pestañas -->
+        <!-- Barra de Navegación por Pestañas (Centrada Arriba al Medio) -->
         ${
           navItems.length > 0
             ? `
         <nav class="nav-bar" id="app-nav-bar">
-          <ul class="nav-list">
+          <ul class="nav-list" style="justify-content:center;">
             ${navItems
               .map(
                 (item) => `
@@ -114,11 +122,10 @@ export const Navbar = {
     `;
 
     // ─── Eventos ─────────────────────────────────────────────────────────────
+    // Clic en Logo Superior Izquierdo: Volver al Inicio
     container.querySelector('#brand-home-btn').addEventListener('click', () => {
       if (activeUser && activeUser.role !== 'guest') {
         store.setView('dashboard');
-      } else if (isGuest) {
-        store.setView('courses');
       } else {
         store.setView('welcome');
       }
@@ -163,7 +170,14 @@ export const Navbar = {
       });
     }
 
-    // Login Modal
+    // Login Modal desde el headbar (Modo Invitado)
+    const headbarLoginBtn = container.querySelector('#headbar-login-btn');
+    if (headbarLoginBtn) {
+      headbarLoginBtn.addEventListener('click', () => {
+        this.openLoginModal();
+      });
+    }
+
     const openLoginBtn = container.querySelector('#open-login-btn');
     if (openLoginBtn) {
       openLoginBtn.addEventListener('click', () => {
