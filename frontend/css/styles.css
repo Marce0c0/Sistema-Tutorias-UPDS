@@ -769,15 +769,56 @@ body.modal-open {
 .course-card, .tutoria-card {
   display: flex;
   flex-direction: column;
-  padding: 1.25rem;
+  justify-content: space-between;
+  padding: 1.35rem;
   border-radius: var(--radius-md);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.course-card:hover, .tutoria-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: #cbd5e1;
 }
 
 .course-card-header, .tutoria-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.tutoria-badges-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.tutoria-modality-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.modality-presencial {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.modality-virtual {
+  background-color: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
 }
 
 .course-tag {
@@ -791,59 +832,165 @@ body.modal-open {
 }
 
 .course-title, .tutoria-title {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.15rem;
+  font-weight: 800;
   color: var(--primary-navy);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.45rem;
+  line-height: 1.3;
 }
 
 .course-desc, .tutoria-desc {
-  font-size: 0.85rem;
+  font-size: 0.86rem;
   color: var(--text-secondary);
-  flex: 1;
+  line-height: 1.5;
   margin-bottom: 1rem;
 }
 
-.course-footer {
-  border-top: 1px solid var(--border-light);
-  padding-top: 0.75rem;
-}
-
-.course-tutor {
+/* ─── Banner Informativo de Precios y Subvención Académica ──────────────── */
+.tutorias-pricing-banner {
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+  border: 1px solid #bfdbfe;
+  border-left: 5px solid var(--primary-blue);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
+  gap: 1rem;
+}
+
+.pricing-banner-icon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+}
+
+.pricing-banner-title {
+  color: var(--primary-navy);
+  font-size: 0.96rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.pricing-banner-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ─── Caja de Precios de Tutoría (Gratis vs Descuento Estudiantil) ────────── */
+.tutoria-pricing-box {
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tutoria-pricing-box.pricing-free {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid #86efac;
+}
+
+.tutoria-pricing-box.pricing-discount {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #cbd5e1;
+}
+
+.pricing-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
 }
 
-.tutor-avatar {
-  font-size: 1.25rem;
+.pricing-badge-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.tutor-label {
-  display: block;
-  font-size: 0.7rem;
-  color: var(--text-muted);
+.pricing-free .pricing-badge-label {
+  color: #166534;
 }
 
-.tutor-name {
-  font-size: 0.85rem;
+.pricing-discount .pricing-badge-label {
+  color: #1e3a8a;
+}
+
+.pricing-amount-badge {
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.pricing-free .pricing-amount-badge {
+  color: #15803d;
+}
+
+.pricing-strikethrough-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.price-strikethrough {
+  text-decoration: line-through;
+  color: #94a3b8;
   font-weight: 600;
-  color: var(--text-primary);
+}
+
+.pricing-student-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 0.3rem;
+  border-top: 1px dashed rgba(203, 213, 225, 0.8);
+}
+
+.price-student-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--primary-navy);
+}
+
+.price-discount-tag {
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.03em;
+}
+
+.pricing-legend {
+  font-size: 0.72rem;
+  color: var(--text-muted);
 }
 
 /* Metadatos y Barra de Capacidad en Tutoría */
 .tutoria-meta {
   background-color: var(--bg-page);
-  padding: 0.65rem 0.75rem;
+  padding: 0.75rem 0.85rem;
   border-radius: var(--radius-sm);
-  margin-bottom: 0.75rem;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 0.85rem;
 }
 
 .meta-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.8rem;
-  margin-bottom: 0.25rem;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  margin-bottom: 0.35rem;
 }
 
 .meta-row:last-child {
@@ -852,11 +999,14 @@ body.modal-open {
 
 .meta-label {
   color: var(--text-muted);
+  font-weight: 500;
+  flex-shrink: 0;
 }
 
 .meta-val {
   font-weight: 600;
   color: var(--text-primary);
+  text-align: right;
 }
 
 .capacity-box {
@@ -867,12 +1017,13 @@ body.modal-open {
   display: flex;
   justify-content: space-between;
   font-size: 0.75rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
 }
 
 .progress-bar {
   width: 100%;
-  height: 6px;
+  height: 7px;
   background-color: #e2e8f0;
   border-radius: var(--radius-full);
   overflow: hidden;
@@ -892,8 +1043,9 @@ body.modal-open {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.65rem;
   border-top: 1px solid var(--border-light);
-  padding-top: 0.75rem;
+  padding-top: 0.85rem;
 }
 
 /* ─── Feed de Foro ────────────────────────────────────────────────────────── */

@@ -17,6 +17,37 @@ export const TutoriasView = {
     const container = document.createElement('div');
     container.className = 'view-content animate-fade-in';
 
+    // Helper para determinar el esquema de precios y descuentos de la tutoría
+    const getTutoriaPricing = (t) => {
+      const text = `${t.title} ${t.description || ''} ${t.course?.title || ''}`.toLowerCase();
+      if (text.includes('[tarifa: cert]')) {
+        return {
+          isFree: false,
+          normalPrice: '120 Bs',
+          studentPrice: '50 Bs',
+          discountTag: '58% DCTO. UPDS',
+          btnLabel: '📅 Reservar con Descuento (50 Bs)',
+        };
+      }
+      if (text.includes('[tarifa: discount]') || text.includes('apis rest') || text.includes('bootcamp') || text.includes('cloud') || text.includes('inteligencia artificial') || text.includes('docker')) {
+        return {
+          isFree: false,
+          normalPrice: '70 Bs',
+          studentPrice: '35 Bs',
+          discountTag: '50% DCTO. UPDS',
+          btnLabel: '📅 Reservar con Descuento (35 Bs)',
+        };
+      }
+      // Por defecto para materias de nivelación y refuerzo curricular
+      return {
+        isFree: true,
+        normalPrice: '0 Bs',
+        studentPrice: '0 Bs',
+        discountTag: '100% BECA',
+        btnLabel: '📅 Reservar Cupo Gratis (0 Bs)',
+      };
+    };
+
     const renderList = () => {
       // Filtrar tutorías académicas regulares (los eventos y hackathons tienen su propia pestaña)
       const tutorias = state.tutorias.filter(
@@ -48,52 +79,87 @@ export const TutoriasView = {
             const bookingsCount = t._count?.bookings ?? (t.bookings?.length || 0);
             const isFull = bookingsCount >= t.maxStudents;
             const percent = Math.min(100, Math.round((bookingsCount / t.maxStudents) * 100));
+            const pricing = getTutoriaPricing(t);
+            const isPresencial = (t.modality || 'presencial').toLowerCase().includes('presencial');
 
             return `
               <div class="card tutoria-card">
-                <div class="tutoria-card-header">
-                  <span class="course-pill">${t.course?.title || 'Materia'}</span>
-                  ${Badge.tutoriaStatus(t.status)}
-                </div>
+                <div>
+                  <div class="tutoria-card-header">
+                    <span class="course-pill">${t.course?.title || 'Materia'}</span>
+                    <div class="tutoria-badges-cluster">
+                      <span class="tutoria-modality-badge ${isPresencial ? 'modality-presencial' : 'modality-virtual'}">
+                        ${isPresencial ? '🏢 Presencial' : '💻 Virtual'}
+                      </span>
+                      ${Badge.tutoriaStatus(t.status)}
+                    </div>
+                  </div>
 
-                <h3 class="tutoria-title">${t.title}</h3>
-                <p class="tutoria-desc">${t.description || 'Sin temario detallado.'}</p>
+                  <h3 class="tutoria-title">${t.title}</h3>
+                  <p class="tutoria-desc">${(t.description || 'Sin temario detallado.').replace(/\[tarifa: [a-z]+\]/gi, '').trim()}</p>
 
-                <div class="tutoria-meta">
-                  <div class="meta-row">
-                    <span class="meta-label">📅 Fecha y Hora:</span>
-                    <span class="meta-val">${Badge.formatDate(t.date)}</span>
-                  </div>
-                  <div class="meta-row">
-                    <span class="meta-label">👨‍🏫 Tutor / Organizador:</span>
-                    <span class="meta-val">${t.course?.tutor?.name || 'No asignado'}</span>
-                  </div>
-                  <div class="meta-row">
-                    <span class="meta-label">📍 Ubicación / Enlace:</span>
-                    <span class="meta-val">${t.location || (t.meetingUrl ? `<a href="${t.meetingUrl}" target="_blank">Enlace Virtual</a>` : 'Campus Central')}</span>
-                  </div>
-                </div>
+                  <!-- Componente Visual de Precios (Gratis vs Descuento Estudiantil vs Normal) -->
+                  ${pricing.isFree ? `
+                    <div class="tutoria-pricing-box pricing-free">
+                      <div class="pricing-top-row">
+                        <span class="pricing-badge-label">🎉 100% Gratuito</span>
+                        <span class="pricing-amount-badge">0 Bs</span>
+                      </div>
+                      <span class="pricing-legend">Beca de Apoyo Académico UPDS (Sin costo para alumnos ni invitados)</span>
+                    </div>
+                  ` : `
+                    <div class="tutoria-pricing-box pricing-discount">
+                      <div class="pricing-strikethrough-row">
+                        <span>Público General / Externos:</span>
+                        <span class="price-strikethrough">${pricing.normalPrice}</span>
+                      </div>
+                      <div class="pricing-student-row">
+                        <div>
+                          <span style="font-size:0.75rem;font-weight:700;color:#1e3a8a;display:block;">Estudiantes UPDS:</span>
+                          <span class="price-student-val">${pricing.studentPrice}</span>
+                        </div>
+                        <span class="price-discount-tag">${pricing.discountTag}</span>
+                      </div>
+                      <span class="pricing-legend">🎓 Tarifa preferencial válida con credencial o correo @upds.edu.bo</span>
+                    </div>
+                  `}
 
-                <div class="capacity-box">
-                  <div class="capacity-labels">
-                    <span>Capacidad: ${bookingsCount} / ${t.maxStudents} estudiantes</span>
-                    <span class="${isFull ? 'text-danger font-semibold' : 'text-muted'}">${isFull ? '¡Lleno!' : `${t.maxStudents - bookingsCount} disp.`}</span>
+                  <div class="tutoria-meta">
+                    <div class="meta-row">
+                      <span class="meta-label">📅 Fecha y Hora:</span>
+                      <span class="meta-val">${Badge.formatDate(t.date)}</span>
+                    </div>
+                    <div class="meta-row">
+                      <span class="meta-label">👨‍🏫 Tutor Docente:</span>
+                      <span class="meta-val">${t.course?.tutor?.name || 'No asignado'}</span>
+                    </div>
+                    <div class="meta-row">
+                      <span class="meta-label">📍 Ubicación:</span>
+                      <span class="meta-val">${t.location || (t.meetingUrl ? `<a href="${t.meetingUrl}" target="_blank" rel="noreferrer">Enlace a Google Meet</a>` : 'Campus Central UPDS')}</span>
+                    </div>
                   </div>
-                  <div class="progress-bar">
-                    <div class="progress-fill ${isFull ? 'progress-full' : ''}" style="width: ${percent}%;"></div>
+
+                  <div class="capacity-box">
+                    <div class="capacity-labels">
+                      <span>Aforo: ${bookingsCount} / ${t.maxStudents} estudiantes</span>
+                      <span class="${isFull ? 'text-danger font-semibold' : 'text-muted'}">${isFull ? '¡Cupos Agotados!' : `${t.maxStudents - bookingsCount} disp.`}</span>
+                    </div>
+                    <div class="progress-bar">
+                      <div class="progress-fill ${isFull ? 'progress-full' : ''}" style="width: ${percent}%;"></div>
+                    </div>
                   </div>
                 </div>
 
                 <div class="tutoria-footer">
                   ${canBook ? `
-                    <button class="btn btn-sm btn-primary btn-book-tutoria" data-id="${t.id}" data-course-id="${t.courseId}" data-date="${t.date}" ${isFull || t.status !== 'active' ? 'disabled' : ''}>
-                      📅 Reservar Cupo
+                    <button class="btn btn-sm btn-primary btn-book-tutoria" data-id="${t.id}" data-course-id="${t.courseId}" data-date="${t.date}" style="flex:1;" ${isFull || t.status !== 'active' ? 'disabled' : ''}>
+                      ${pricing.btnLabel}
                     </button>
                   ` : ''}
                   ${canManage ? `
                     <div class="footer-actions">
-                      <button class="btn btn-xs btn-outline btn-edit-tutoria" data-id="${t.id}">✏️</button>
-                      <button class="btn btn-xs btn-danger-outline btn-delete-tutoria" data-id="${t.id}">🗑️</button>
+                      <button class="btn btn-xs btn-outline btn-edit-tutoria" data-id="${t.id}" title="Editar sesión">✏️</button>
+                      <button class="btn btn-xs btn-danger-outline btn-delete-tutoria" data-id="${t.id}" title="Eliminar sesión">🗑️</button>
                     </div>
                   ` : ''}
                 </div>
@@ -133,11 +199,22 @@ export const TutoriasView = {
     container.innerHTML = `
       <div class="view-header">
         <div>
-          <h2 class="view-title">Sesiones de Tutoría Programadas</h2>
-          <p class="view-subtitle">Organización, cupos y estado de sesiones grupales o individuales.</p>
+          <h2 class="view-title">🎓 Sesiones de Tutoría & Nivelación Académica</h2>
+          <p class="view-subtitle">Sesiones prácticas, refuerzo curricular y talleres con tarifas subvencionadas para la comunidad UPDS.</p>
         </div>
         <div class="view-actions">
           ${canManage ? '<button id="btn-create-tutoria" class="btn btn-primary">+ Programar Tutoría</button>' : ''}
+        </div>
+      </div>
+
+      <!-- Banner Institucional de Política de Precios y Subvención -->
+      <div class="tutorias-pricing-banner">
+        <span class="pricing-banner-icon">🎓</span>
+        <div>
+          <h3 class="pricing-banner-title">Sistema de Tarifas & Subvención Académica UPDS</h3>
+          <p class="pricing-banner-desc">
+            Las sesiones de <strong>nivelación curricular y refuerzo</strong> son <strong>100% Gratuitas</strong> para toda la comunidad universitaria. Los <strong>talleres prácticos avanzados y bootcamps</strong> cuentan con un <strong>50% de Descuento Subsidiado</strong> para estudiantes y egresados de la Universidad Privada Domingo Savio.
+          </p>
         </div>
       </div>
 
@@ -234,16 +311,33 @@ export const TutoriasView = {
 
           <div class="form-row">
             <div class="form-group col-6">
+              <label class="form-label" for="tutoria-pricing-select">Modalidad de Tarifa / Costo *</label>
+              <select id="tutoria-pricing-select" class="form-control">
+                <option value="free" ${!tutoria?.description || tutoria?.description?.includes('[tarifa: free]') ? 'selected' : ''}>
+                  🎉 100% Gratuita (Beca de Refuerzo Académico UPDS — 0 Bs)
+                </option>
+                <option value="discount" ${tutoria?.description?.includes('[tarifa: discount]') ? 'selected' : ''}>
+                  🏷️ Taller Especializado con Descuento (Normal: 70 Bs | Estudiantes UPDS: 35 Bs)
+                </option>
+                <option value="cert" ${tutoria?.description?.includes('[tarifa: cert]') ? 'selected' : ''}>
+                  🏆 Certificación Técnica (Normal: 120 Bs | Estudiantes UPDS: 50 Bs)
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group col-6">
               <label class="form-label" for="tutoria-date-input">Fecha y Hora Programada *</label>
               <input type="datetime-local" id="tutoria-date-input" class="form-control" value="${defaultDate}" required />
             </div>
+          </div>
 
-            <div class="form-group col-3">
+          <div class="form-row">
+            <div class="form-group col-6">
               <label class="form-label" for="tutoria-max-input">Cupo Máximo *</label>
               <input type="number" id="tutoria-max-input" class="form-control" value="${tutoria?.maxStudents || 10}" min="1" max="100" required />
             </div>
 
-            <div class="form-group col-3">
+            <div class="form-group col-6">
               <label class="form-label" for="tutoria-status-select">Estado</label>
               <select id="tutoria-status-select" class="form-control">
                 <option value="active" ${tutoria?.status === 'active' ? 'selected' : ''}>Activa</option>
@@ -258,10 +352,15 @@ export const TutoriasView = {
       onConfirm: async (dialog) => {
         const courseId = dialog.querySelector('#tutoria-course-select').value;
         const titleVal = dialog.querySelector('#tutoria-title-input').value.trim();
-        const descVal = dialog.querySelector('#tutoria-desc-input').value.trim();
+        let descVal = dialog.querySelector('#tutoria-desc-input').value.trim();
+        const pricingType = dialog.querySelector('#tutoria-pricing-select').value;
         const dateVal = dialog.querySelector('#tutoria-date-input').value;
         const maxStudents = Number(dialog.querySelector('#tutoria-max-input').value);
         const status = dialog.querySelector('#tutoria-status-select').value;
+
+        // Limpiar tags anteriores y anexar nuevo tag de tarifa
+        descVal = descVal.replace(/\[tarifa: [a-z]+\]/gi, '').trim();
+        const finalDescription = pricingType !== 'free' ? `${descVal} [tarifa: ${pricingType}]`.trim() : descVal;
 
         const validation = Validators.validateTutoria({
           courseId,
@@ -280,7 +379,7 @@ export const TutoriasView = {
           const payload = {
             courseId,
             title: titleVal,
-            description: descVal || null,
+            description: finalDescription || null,
             date: new Date(dateVal).toISOString(),
             maxStudents,
             status,
