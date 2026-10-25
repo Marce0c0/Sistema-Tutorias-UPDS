@@ -20,7 +20,7 @@ export const WelcomeView = {
             <img src="img/upds-logo.png" alt="UPDS" class="welcome-logo-img" />
           </div>
           <h1 class="welcome-title">Portal de Tutorías y Cursos Extracurriculares</h1>
-          <p class="welcome-subtitle">Universidad Privada Domingo Savio — Extensión Universitaria y Apoyo Académico</p>
+          <p class="welcome-subtitle">Universidad Privada Domingo Savio — Extensión Universitaria y Clases Extra con Docentes</p>
         </div>
 
         <div class="welcome-grid">
@@ -78,7 +78,7 @@ export const WelcomeView = {
 
             <div class="guest-info-body">
               <p class="guest-text">
-                Programas de formación complementaria, talleres prácticos y tutorías especializadas externos a las materias regulares del plan de estudios.
+                Programas de formación complementaria, talleres prácticos y clases extra especializadas impartidas por docentes universitarios, independientes a las materias regulares.
               </p>
 
               <div class="guest-metrics-row">

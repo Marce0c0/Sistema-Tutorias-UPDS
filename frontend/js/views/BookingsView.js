@@ -32,8 +32,8 @@ export const BookingsView = {
             icon: '📅',
             title: 'No hay reservas registradas',
             description: canManage
-              ? 'Los estudiantes pueden agendar sesiones de apoyo académico.'
-              : 'Aún no has reservado ninguna sesión de tutoría.',
+              ? 'Los estudiantes pueden agendar clases extra y sesiones con docentes universitarios.'
+              : 'Aún no has reservado ninguna clase extra o sesión docente.',
             actionText: canCreate ? '+ Agendar Reserva' : undefined,
             onAction: canCreate ? () => this.openBookingModal() : undefined,
           })

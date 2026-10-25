@@ -38,18 +38,18 @@ export const TutoriasView = {
           btnLabel: '📅 Reservar con Descuento (35 Bs)',
         };
       }
-      // Por defecto para materias de nivelación y refuerzo curricular
+      // Por defecto para clases extra introductorias y magistrales ofrecidas por docentes
       return {
         isFree: true,
         normalPrice: '0 Bs',
         studentPrice: '0 Bs',
-        discountTag: '100% BECA',
+        discountTag: '100% SUBVENCIONADA',
         btnLabel: '📅 Reservar Cupo Gratis (0 Bs)',
       };
     };
 
     const renderList = () => {
-      // Filtrar tutorías académicas regulares (los eventos y hackathons tienen su propia pestaña)
+      // Filtrar tutorías y clases extra regulares (los eventos y hackathons tienen su propia pestaña)
       const tutorias = state.tutorias.filter(
         (t) =>
           !t.title.toLowerCase().includes('hackathon') &&
@@ -64,9 +64,9 @@ export const TutoriasView = {
         bodyContainer.appendChild(
           EmptyState({
             icon: '🎓',
-            title: 'No hay tutorías programadas',
-            description: 'Programa una nueva sesión de apoyo académico para los estudiantes.',
-            actionText: canManage ? '+ Programar Tutoría' : undefined,
+            title: 'No hay clases extra programadas',
+            description: 'Programa una nueva clase extra o sesión de tutoría con docentes para los estudiantes.',
+            actionText: canManage ? '+ Programar Clase Extra' : undefined,
             onAction: canManage ? () => this.openTutoriaModal() : undefined,
           })
         );
@@ -105,7 +105,7 @@ export const TutoriasView = {
                         <span class="pricing-badge-label">🎉 100% Gratuito</span>
                         <span class="pricing-amount-badge">0 Bs</span>
                       </div>
-                      <span class="pricing-legend">Beca de Apoyo Académico UPDS (Sin costo para alumnos ni invitados)</span>
+                      <span class="pricing-legend">Clase Extra Universitaria (Subvencionada por UPDS sin costo)</span>
                     </div>
                   ` : `
                     <div class="tutoria-pricing-box pricing-discount">
@@ -199,11 +199,11 @@ export const TutoriasView = {
     container.innerHTML = `
       <div class="view-header">
         <div>
-          <h2 class="view-title">🎓 Sesiones de Tutoría & Nivelación Académica</h2>
-          <p class="view-subtitle">Sesiones prácticas, refuerzo curricular y talleres con tarifas subvencionadas para la comunidad UPDS.</p>
+          <h2 class="view-title">🎓 Clases Extra & Tutorías Docentes UPDS</h2>
+          <p class="view-subtitle">Clases complementarias, talleres prácticos y sesiones extra impartidas por docentes universitarios, independientes al plan regular de materias.</p>
         </div>
         <div class="view-actions">
-          ${canManage ? '<button id="btn-create-tutoria" class="btn btn-primary">+ Programar Tutoría</button>' : ''}
+          ${canManage ? '<button id="btn-create-tutoria" class="btn btn-primary">+ Programar Clase Extra</button>' : ''}
         </div>
       </div>
 
@@ -211,9 +211,9 @@ export const TutoriasView = {
       <div class="tutorias-pricing-banner">
         <span class="pricing-banner-icon">🎓</span>
         <div>
-          <h3 class="pricing-banner-title">Sistema de Tarifas & Subvención Académica UPDS</h3>
+          <h3 class="pricing-banner-title">Clases Extra Universitarias & Tarifas Preferenciales UPDS</h3>
           <p class="pricing-banner-desc">
-            Las sesiones de <strong>nivelación curricular y refuerzo</strong> son <strong>100% Gratuitas</strong> para toda la comunidad universitaria. Los <strong>talleres prácticos avanzados y bootcamps</strong> cuentan con un <strong>50% de Descuento Subsidiado</strong> para estudiantes y egresados de la Universidad Privada Domingo Savio.
+            La universidad junto con sus docentes organiza <strong>clases extra y sesiones de tutoría docente</strong> para profundizar conocimientos prácticos. Las <strong>clases magistrales extra</strong> son <strong>100% Gratuitas</strong>, mientras que los <strong>talleres especializados y bootcamps intensivos</strong> disponen de un <strong>50% de Descuento Subsidiado</strong> para estudiantes y egresados de la UPDS.
           </p>
         </div>
       </div>
@@ -314,13 +314,13 @@ export const TutoriasView = {
               <label class="form-label" for="tutoria-pricing-select">Modalidad de Tarifa / Costo *</label>
               <select id="tutoria-pricing-select" class="form-control">
                 <option value="free" ${!tutoria?.description || tutoria?.description?.includes('[tarifa: free]') ? 'selected' : ''}>
-                  🎉 100% Gratuita (Beca de Refuerzo Académico UPDS — 0 Bs)
+                  🎉 100% Gratuita (Clase Extra Subvencionada por UPDS — 0 Bs)
                 </option>
                 <option value="discount" ${tutoria?.description?.includes('[tarifa: discount]') ? 'selected' : ''}>
-                  🏷️ Taller Especializado con Descuento (Normal: 70 Bs | Estudiantes UPDS: 35 Bs)
+                  🏷️ Clase Extra Práctica con Descuento (Normal: 70 Bs | Estudiantes UPDS: 35 Bs)
                 </option>
                 <option value="cert" ${tutoria?.description?.includes('[tarifa: cert]') ? 'selected' : ''}>
-                  🏆 Certificación Técnica (Normal: 120 Bs | Estudiantes UPDS: 50 Bs)
+                  🏆 Certificación Técnica Extra (Normal: 120 Bs | Estudiantes UPDS: 50 Bs)
                 </option>
               </select>
             </div>
