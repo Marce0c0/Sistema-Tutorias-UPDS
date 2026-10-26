@@ -140,7 +140,7 @@ export const DashboardView = {
                 <div class="activity-content">
                   <div class="activity-title">${b.student?.name || 'Estudiante'}</div>
                   <div class="activity-meta">
-                    <span>${b.course?.title || 'Materia'}</span> ·
+                    <span>${b.course?.title || 'Curso / Taller'}</span> ·
                     <span>${Badge.formatDate(b.scheduledAt)}</span>
                   </div>
                 </div>

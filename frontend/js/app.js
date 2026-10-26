@@ -12,6 +12,7 @@ import { EventsView, getStoredEvents } from './views/EventsView.js';
 import { BookingsView } from './views/BookingsView.js';
 import { ForumsView } from './views/ForumsView.js';
 import { NotificationsView } from './views/NotificationsView.js';
+import { NotFoundView } from './views/NotFoundView.js';
 
 class App {
   constructor() {
@@ -23,6 +24,11 @@ class App {
   async init() {
     console.log('🚀 Inicializando frontend del Sistema-Tutoriales-UPDS (Seguridad & Modo Invitado)...');
 
+    // Manejar cambios de ruta / hash en el navegador
+    window.addEventListener('hashchange', () => {
+      this.handleHashChange();
+    });
+
     // Suscribir renderizador al Store reactivo
     store.subscribe((state) => {
       this.render(state);
@@ -30,6 +36,17 @@ class App {
 
     // Cargar datos iniciales desde el backend REST
     await this.loadInitialData();
+  }
+
+  handleHashChange() {
+    const raw = window.location.hash.replace(/^#\/?/, '').trim();
+    if (!raw) return;
+    const knownViews = ['welcome', 'dashboard', 'users', 'courses', 'tutorias', 'events', 'bookings', 'forums', 'notifications'];
+    if (knownViews.includes(raw)) {
+      store.setView(raw);
+    } else {
+      store.setState({ currentView: '404', lastInvalidRoute: raw });
+    }
   }
 
   async loadInitialData() {
@@ -113,6 +130,12 @@ class App {
     if (this.mainContainer) {
       this.mainContainer.innerHTML = '';
 
+      // Si la vista solicitada es 404, mostrarla directamente dando feedback interactivo
+      if (state.currentView === '404') {
+        this.mainContainer.appendChild(NotFoundView.render(state.lastInvalidRoute));
+        return;
+      }
+
       // Si no hay usuario ni modo invitado activo, mostrar la pantalla de bienvenida / login
       if (!state.activeUser) {
         this.mainContainer.appendChild(WelcomeView.render());
@@ -148,8 +171,12 @@ class App {
         case 'notifications':
           viewElement = NotificationsView.render();
           break;
+        case '404':
+          viewElement = NotFoundView.render(state.lastInvalidRoute);
+          break;
         default:
-          viewElement = state.activeUser?.role === 'guest' ? CoursesView.render() : DashboardView.render();
+          viewElement = NotFoundView.render(state.currentView);
+          break;
       }
 
       if (viewElement) {

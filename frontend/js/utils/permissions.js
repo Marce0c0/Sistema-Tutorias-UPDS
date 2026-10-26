@@ -11,6 +11,7 @@ const RULES = {
   'view.forums': ['admin', 'tutor', 'student'],
   'view.notifications': ['admin', 'tutor', 'student'],
   'view.users': ['admin'],
+  'view.404': ['admin', 'tutor', 'student', 'guest'],
 
   // Usuarios
   'users.manage': ['admin'],

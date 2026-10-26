@@ -30,7 +30,7 @@ export const ForumsView = {
           EmptyState({
             icon: Icons.chat('', 36),
             title: 'No hay consultas en el foro',
-            description: selectedCourseId ? 'No hay preguntas publicadas para esta materia aún.' : 'Sé el primero en iniciar una consulta académica.',
+            description: selectedCourseId ? 'No hay preguntas publicadas para este curso o taller aún.' : 'Sé el primero en iniciar una consulta académica.',
             actionText: '+ Publicar Consulta',
             onAction: () => this.openForumModal(),
           })
@@ -51,7 +51,7 @@ export const ForumsView = {
                   </div>
                 </div>
                 <div class="forum-header-right">
-                  <span class="course-pill">${m.course?.title || 'Materia'}</span>
+                  <span class="course-pill">${m.course?.title || 'Curso / Taller'}</span>
                   ${canModerate || m.userId === state.activeUser?.id ? `
                     <div class="forum-actions">
                       <button class="btn btn-xs btn-outline btn-edit-forum" data-id="${m.id}" title="Editar" style="display:inline-flex; align-items:center; justify-content:center;">${Icons.edit('', 12)}</button>

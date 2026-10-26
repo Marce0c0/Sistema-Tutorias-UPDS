@@ -214,7 +214,7 @@ export const TutoriasView = {
       <div class="view-header">
         <div>
           <h2 class="view-title" style="display:flex;align-items:center;gap:0.5rem;">${Icons.cap('', 22)} <span>Clases Extra & Tutorías Docentes UPDS</span></h2>
-          <p class="view-subtitle">Clases complementarias, talleres prácticos y sesiones extra impartidas por docentes universitarios, independientes al plan regular de materias.</p>
+          <p class="view-subtitle">Clases complementarias, talleres prácticos y sesiones extra impartidas por docentes universitarios, enfocadas en tecnologías y habilidades de alta demanda.</p>
         </div>
         <div class="view-actions">
           ${canManage ? '<button id="btn-create-tutoria" class="btn btn-primary">+ Programar Clase Extra</button>' : ''}

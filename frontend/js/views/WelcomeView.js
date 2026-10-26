@@ -82,7 +82,7 @@ export const WelcomeView = {
 
             <div class="guest-info-body">
               <p class="guest-text">
-                Programas de formación complementaria, talleres prácticos y clases extra especializadas impartidas por docentes universitarios, independientes a las materias regulares.
+                Programas de formación complementaria, bootcamps prácticos y clases extra especializadas impartidas por docentes universitarios, enfocadas en tecnologías y habilidades de alta demanda.
               </p>
 
               <!-- Métricas Reales Actualizadas (Cursos, Tutorías y Eventos) -->
@@ -187,7 +187,7 @@ export const WelcomeView = {
         role: 'guest',
       });
       store.setView('courses');
-      Toast.info('Accediendo en Modo Invitado: puedes consultar el catálogo de materias.');
+      Toast.info('Accediendo en Modo Invitado: puedes explorar el catálogo de cursos y talleres.');
     });
 
     return container;

@@ -28,6 +28,7 @@ model Course {
   id            String         @id @default(uuid())
   title         String
   description   String?
+  activo        Boolean        @default(true)
   tutorId       String?        @map("tutor_id")
   tutor         User?          @relation("TutorCourses", fields: [tutorId], references: [id], onDelete: SetNull)
   tutorias      Tutoria[]

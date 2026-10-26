@@ -115,7 +115,7 @@ export const BookingsView = {
       <div class="view-header">
         <div>
           <h2 class="view-title">Reservas de Tutoría</h2>
-          <p class="view-subtitle">Supervisión y control del agendamiento de sesiones entre estudiantes y materias.</p>
+          <p class="view-subtitle">Supervisión y control del agendamiento de clases extra y sesiones entre estudiantes y docentes.</p>
         </div>
         <div class="view-actions">
           ${canCreate ? '<button id="btn-create-booking" class="btn btn-primary">+ Nueva Reserva</button>' : ''}
@@ -244,7 +244,7 @@ export const BookingsView = {
   confirmDelete(booking) {
     Modal.confirm({
       title: '¿Eliminar Reserva?',
-      message: `¿Estás seguro de eliminar la reserva de <strong>${booking.student?.name || 'Estudiante'}</strong> para la materia <strong>${booking.course?.title || 'Materia'}</strong>?`,
+      message: `¿Estás seguro de eliminar la reserva de <strong>${booking.student?.name || 'Estudiante'}</strong> para el curso o taller <strong>${booking.course?.title || 'Curso / Taller'}</strong>?`,
       confirmText: 'Sí, Eliminar',
       onConfirm: async () => {
         try {

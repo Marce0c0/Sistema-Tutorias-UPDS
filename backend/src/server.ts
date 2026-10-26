@@ -85,7 +85,16 @@ app.use('/api/notifications', notificationsRouter);
 app.use('/api/reviews', reviewsRouter);
 app.use('/api/materials', materialsRouter);
 
-// ─── 6. Middleware de Manejo Centralizado de Errores ────────────────────────
+// ─── 6. Ruta 404 para Endpoints no Encontrados ──────────────────────────────
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Ruta no encontrada: ${req.method} ${req.originalUrl}`,
+    suggestion: 'Consulte la raíz GET / para verificar los endpoints REST disponibles.',
+  });
+});
+
+// ─── 7. Middleware de Manejo Centralizado de Errores ────────────────────────
 app.use(errorHandler);
 
 // ─── 7. Iniciar el Servidor ─────────────────────────────────────────────────

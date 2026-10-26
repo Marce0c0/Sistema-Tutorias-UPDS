@@ -1,4 +1,4 @@
-// Vista del Catálogo de Cursos y Materias — Sistema-Tutoriales-UPDS
+// Vista del Catálogo de Cursos y Talleres Extracurriculares — Sistema-Tutoriales-UPDS
 import { store } from '../state/store.js';
 import { api } from '../services/api.js';
 import { Modal } from '../components/Modal.js';
@@ -143,7 +143,7 @@ export const CoursesView = {
           </div>
         </form>
       `,
-      confirmText: isEdit ? 'Guardar Cambios' : 'Crear Materia',
+      confirmText: isEdit ? 'Guardar Cambios' : 'Crear Curso / Taller',
       onConfirm: async (dialog) => {
         const titleVal = dialog.querySelector('#course-title-input').value.trim();
         const descVal = dialog.querySelector('#course-desc-input').value.trim();
@@ -183,8 +183,8 @@ export const CoursesView = {
 
   confirmDelete(course) {
     Modal.confirm({
-      title: '¿Eliminar Curso?',
-      message: `¿Estás seguro de eliminar la materia <strong>${course.title}</strong>? Se eliminarán todas sus tutorías y mensajes asociados.`,
+      title: '¿Eliminar Curso o Taller?',
+      message: `¿Estás seguro de eliminar el curso o taller <strong>${course.title}</strong>? Se cancelarán también todas sus clases extra y sesiones asociadas.`,
       confirmText: 'Sí, Eliminar',
       onConfirm: async () => {
         try {

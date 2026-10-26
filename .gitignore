@@ -4,6 +4,7 @@ Informe*.md
 Reporte*.md
 *.docx
 *.pdf
+ENTREGA_ACTIVIDAD_5/
 
 # ─── Llaves, Credenciales y Certificados Cloud (NUNCA SUBIR) ────────────────
 .aws/

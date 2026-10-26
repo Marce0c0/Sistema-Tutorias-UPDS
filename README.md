@@ -1,318 +1,172 @@
-# 🎓 Sistema de Tutorías UPDS
-### Plataforma universitaria full stack para gestión académica de tutorías, cursos y recursos de estudio.
+# Sistema de Tutorías y Cursos Universitarios (UPDS)
 
-> **Repositorio oficial:** [github.com/Marce0c0/Sistema-Tutorias-UPDS](https://github.com/Marce0c0/Sistema-Tutorias-UPDS)  
-> **Rama de entrega activa:** `feature/actividad-3-frontend-fullstack`  
-> **Estado:** ✅ En desarrollo activo — Actividad 3 completada, Actividad 4 en planificación.
+Plataforma universitaria full stack para la gestión académica de tutorías, cursos extracurriculares, reservas de sesiones y recursos educativos.
 
----
-
-## 📋 ¿Qué es este proyecto?
-
-**Sistema de Tutorías UPDS** es una plataforma web universitaria que conecta a **estudiantes**, **tutores** y **coordinadores académicos** de la Universidad Privada Domingo Savio (UPDS).
-
-El sistema permite:
-- 📚 Explorar el **catálogo de materias y cursos** con sus tutores asignados.
-- 📅 Programar y **reservar sesiones de tutoría** presenciales o virtuales (Google Meet).
-- ⭐ **Calificar y reseñar** a los tutores después de cada sesión (1–5 estrellas).
-- 💬 Participar en **foros de dudas por materia** para resolver preguntas colectivamente.
-- 📄 Acceder a **materiales de estudio y guías** alojados en Amazon S3.
-- 🔔 Recibir **notificaciones y recordatorios** de reservas y actualizaciones.
-- 👥 Administrar usuarios con tres roles diferenciados: **Estudiante**, **Tutor** y **Administrador**.
+Repositorio oficial: [github.com/Marce0c0/Sistema-Tutorias-UPDS](https://github.com/Marce0c0/Sistema-Tutorias-UPDS)
 
 ---
 
-## 🛠️ Stack Tecnológico
+## 1. Descripción del Proyecto
 
-| Capa | Tecnología | Detalle |
-|---|---|---|
-| **Frontend** | HTML5, CSS3, JavaScript ES6+ | SPA (Single Page Application) modular sin frameworks |
-| **Backend** | Node.js + TypeScript + Express 5 | API REST con arquitectura en capas (Router → Controller → Prisma) |
-| **ORM** | Prisma 6 | Modelos relacionales + migraciones + seed automatizado |
-| **Base de Datos** | PostgreSQL 17 | Instancia gratuita en **Supabase** (São Paulo, `sa-east-1`) |
-| **Almacenamiento Cloud** | Amazon S3 | Bucket en la nube para almacenamiento de recursos y materiales |
-| **Control de versiones** | Git + GitHub | Flujo `main ← develop ← feature/*` |
-| **Despliegue** | Amazon S3 (hosting estático) | Script automatizado `frontend/deploy-s3.ps1` |
+El **Sistema de Tutorías y Cursos UPDS** es una solución integral orientada a optimizar el acompañamiento académico entre estudiantes, docentes tutores y coordinadores universitarios. La plataforma unifica el agendamiento de clases de reforzamiento, el catálogo de cursos extracurriculares y talleres prácticos, la gestión de foros de consulta por materia y la evaluación de la calidad de tutoría mediante reseñas estudiantiles.
+
+### Capacidades Principales
+- **Catálogo de Cursos y Talleres:** Exploración, filtrado y búsqueda en tiempo real de programas académicos con búsqueda insensible a mayúsculas y control de disponibilidad.
+- **Gestión y Reserva de Tutorías:** Programación de sesiones presenciales o virtuales (con enlace a Google Meet), control estricto de cupos máximos y prevención de solapamiento de horarios.
+- **Autenticación y Control de Acceso (RBAC):** Sesiones seguras mediante tokens JWT con tres niveles de privilegios: Administrador, Tutor y Estudiante, más navegación en modo invitado para consulta pública.
+- **Foros Académicos por Curso:** Espacio colaborativo de preguntas y respuestas entre alumnos y tutores para resolución de dudas.
+- **Calificaciones y Reseñas:** Sistema de feedback estudiantil de 1 a 5 estrellas con comentarios para evaluar el desempeño docente.
+- **Materiales de Estudio:** Enlaces y recursos académicos centralizados y protegidos en la nube.
+- **Notificaciones del Sistema:** Bandeja interactiva de avisos sobre reservas confirmadas, actualizaciones de sesiones y respuestas en foros.
 
 ---
 
-## 🗃️ Modelo de Datos — 8 Entidades Universitarias
+## 2. Stack Tecnológico
 
-El sistema está construido sobre **8 tablas relacionales** normalizadas en PostgreSQL:
+| Capa | Tecnología | Propósito |
+| :--- | :--- | :--- |
+| **Frontend** | HTML5, CSS3, JavaScript (ES6+ Modules) | Single Page Application (SPA) modular, reactiva sin dependencias de frameworks pesados |
+| **Backend API** | Node.js 20 LTS, Express 5, TypeScript | API REST tipada bajo arquitectura por capas (Rutas, Controladores, Middlewares, ORM) |
+| **ORM & Modelado** | Prisma ORM 6 | Mapeo objeto-relacional, validación de esquemas y generación de tipos TypeScript |
+| **Base de Datos** | PostgreSQL 17 (Supabase Cloud) | Persistencia relacional con SSL forzado, índices y restricciones de integridad |
+| **Seguridad** | JSON Web Tokens (JWT), Bcrypt | Autenticación basada en tokens, hashing seguro de contraseñas y autorización por roles |
+| **Contenedores** | Docker & Docker Compose | Entorno reproducible multi-etapa para desarrollo y producción |
+| **Hosting Cloud** | Amazon Web Services (AWS S3) | Alojamiento y despliegue del frontend estático bajo el Free Tier ($0.00 USD) |
+
+---
+
+## 3. Modelo de Datos Relacional
+
+El sistema opera sobre **8 entidades normalizadas** en PostgreSQL:
 
 ```
-users ──────────── courses ─────── tutorias ─── reviews
-  │                   │                │
-  ├── bookings ────────┘                └─── bookings
-  ├── forum_messages ──────────────────────── courses
-  ├── notifications
-  ├── reviews (calificaciones ⭐)
-  └── materials (recursos en S3 📄)
+users (estudiantes, tutores, admins)
+  ├── courses (cursos y talleres) ─────────────── tutorias (sesiones presenciales / virtuales)
+  │     ├── forum_messages (foros de dudas)        ├── bookings (reservas de cupo)
+  │     └── materials (guías y recursos S3)        └── reviews (calificaciones 1-5 ⭐)
+  └── notifications (avisos y recordatorios)
 ```
 
-| # | Tabla SQL | Modelo | Descripción | Campos Clave |
-|---|---|---|---|---|
-| 1 | `users` | `User` | Personas del sistema (estudiantes, tutores, admins) | `role: student\|tutor\|admin`, `password` (opcional hasta Actividad 4) |
-| 2 | `courses` | `Course` | Catálogo de materias universitarias | `title`, `tutorId → User` |
-| 3 | `tutorias` | `Tutoria` | Sesiones de tutoría programadas | `date`, `maxStudents`, `modality: presencial\|virtual\|hibrida`, `location`, `meetingUrl` |
-| 4 | `bookings` | `Booking` | Inscripciones y reservas de cupo | `status: pending\|confirmed\|cancelled`, relación a `Tutoria` y `Course` |
-| 5 | `forum_messages` | `ForumMessage` | Dudas y consultas académicas por materia | `title`, `content`, autor y curso |
-| 6 | `notifications` | `Notification` | Alertas y recordatorios | `type: info\|reminder\|booking_update\|forum_reply`, `isRead` |
-| 7 | `reviews` | `Review` | Calificaciones de los estudiantes al tutor | `rating (1–5)`, `comment`, única por `(tutoriaId, studentId)` |
-| 8 | `materials` | `Material` | Guías y documentos de estudio en S3 | `fileUrl`, `fileType: pdf\|slide\|doc\|link`, subido por tutor |
+### Resumen de Entidades:
+1. **users:** Cuentas institucionales con roles (`student`, `tutor`, `admin`), correo verificado y contraseña hasheada.
+2. **courses:** Catálogo de cursos con título único normalizado, descripción, tutor asignado y estado `activo` (booleano).
+3. **tutorias:** Clases extra y sesiones con fecha/hora, cupo límite, modalidad (`presencial`, `virtual`, `hibrida`) y enlace de reunión.
+4. **bookings:** Inscripción de estudiantes a tutorías con estados (`pending`, `confirmed`, `cancelled`).
+5. **forum_messages:** Hilos de discusión académica asociados a cada curso.
+6. **reviews:** Evaluaciones estudiantiles únicas por sesión con puntaje y reseña cualitativa.
+7. **materials:** Recursos bibliográficos y enlaces de descarga organizados por curso.
+8. **notifications:** Bandeja de eventos y alertas automáticas por usuario.
 
 ---
 
-## 📁 Estructura del Repositorio
+## 4. Endpoints de la API REST
 
-```
-sistema-tutoriales-UPDS/
-│
-├── backend/                           ← API REST (Node.js + TypeScript)
-│   ├── prisma/
-│   │   ├── schema.prisma              ← 8 modelos + 5 enums
-│   │   ├── seed.ts                    ← Datos iniciales (3 usuarios, 2 cursos, 2 tutorías...)
-│   │   └── migrations/                ← Historial DDL versionado
-│   ├── src/
-│   │   ├── server.ts                  ← Punto de entrada Express (puerto 3001)
-│   │   ├── controllers/               ← Lógica de negocio por entidad
-│   │   │   ├── users.controller.ts
-│   │   │   ├── courses.controller.ts
-│   │   │   ├── tutorias.controller.ts
-│   │   │   ├── bookings.controller.ts
-│   │   │   ├── forums.controller.ts
-│   │   │   ├── notifications.controller.ts
-│   │   │   ├── reviews.controller.ts  ← ⭐ Calificaciones
-│   │   │   └── materials.controller.ts← 📄 Recursos en S3
-│   │   ├── routes/                    ← Routers Express (un archivo por entidad)
-│   │   └── middlewares/
-│   │       ├── validate.ts            ← Validación UUID, enums y esquemas de entrada
-│   │       └── errorHandler.ts        ← Manejo centralizado de errores HTTP
-│   ├── api.http                       ← Suite de pruebas REST Client (VS Code)
-│   ├── .env.example                   ← Plantilla de variables de entorno
-│   └── package.json
-│
-├── frontend/                          ← SPA (Vanilla HTML/CSS/JS)
-│   ├── index.html                     ← Shell único de la aplicación
-│   ├── css/styles.css                 ← Paleta UPDS (azul marino #002d62, rojo #e30613)
-│   ├── img/upds-logo.png             ← Logo institucional oficial
-│   ├── js/
-│   │   ├── app.js                     ← Router del lado del cliente (hash-based)
-│   │   ├── config/api.js             ← Base URL de la API
-│   │   ├── state/store.js            ← Estado global del usuario activo
-│   │   ├── components/
-│   │   │   ├── Navbar.js             ← Navegación principal con logo UPDS
-│   │   │   └── Modal.js              ← Modal reutilizable para formularios
-│   │   ├── services/                  ← Capa de acceso a la API (fetch)
-│   │   │   ├── usersService.js
-│   │   │   ├── coursesService.js
-│   │   │   ├── tutoriasService.js
-│   │   │   ├── bookingsService.js
-│   │   │   ├── forumsService.js
-│   │   │   └── notificationsService.js
-│   │   ├── utils/toast.js            ← Notificaciones tipo toast en pantalla
-│   │   └── views/                    ← Vistas completas por sección
-│   │       ├── DashboardView.js      ← Panel resumen con estadísticas
-│   │       ├── UsersView.js          ← CRUD de usuarios con selector de rol
-│   │       ├── CoursesView.js        ← CRUD de cursos y asignación de tutores
-│   │       ├── TutoriasView.js       ← CRUD de tutorías + reserva rápida de cupos
-│   │       ├── BookingsView.js       ← Gestión de reservas y cambio de estado
-│   │       ├── ForumsView.js         ← Foro de dudas con filtrado por materia
-│   │       └── NotificationsView.js  ← Bandeja de notificaciones con marca de leído
-│   └── deploy-s3.ps1                 ← Script PowerShell de despliegue a AWS S3
-│
-├── CONTEXTO_PROYECTO.md              ← Documento técnico interno de referencia
-├── Informe_Actividad3.md             ← Informe académico de la Actividad 3
-└── .gitignore
-```
+Todos los endpoints retornan respuestas estándar en formato JSON:
+
+### Autenticación (`/api/auth`)
+- `POST /api/auth/register` - Registro de nuevos estudiantes.
+- `POST /api/auth/login` - Inicio de sesión y generación de token JWT.
+- `GET /api/auth/me` - Perfil del usuario autenticado.
+
+### Cursos y Talleres (`/api/courses`)
+- `GET /api/courses` - Listado general de cursos. Soporta búsqueda parametrizada opcional: `?buscar=nombre`.
+- `GET /api/courses/:id` - Detalle de un curso específico por UUID.
+- `POST /api/courses` - Creación de curso (Solo Admin). Valida título obligatorio, previene duplicados (`409 Conflict`) y asigna estado `activo: true` por defecto.
+- `PUT /api/courses/:id` - Actualización de título, descripción o estado `activo` (Solo Admin).
+- `DELETE /api/courses/:id` - Eliminación de curso y desvinculación de dependencias (Solo Admin).
+
+### Tutorías y Sesiones (`/api/tutorias`)
+- `GET /api/tutorias` - Listado de tutorías activas con filtrado por fecha, curso o modalidad.
+- `GET /api/tutorias/:id` - Detalle de sesión y cupos disponibles en tiempo real.
+- `POST /api/tutorias` - Programación de nueva tutoría (Admin y Tutor).
+- `PUT /api/tutorias/:id` - Edición de horario o modalidad.
+- `DELETE /api/tutorias/:id` - Cancelación de sesión.
+
+### Reservas (`/api/bookings`)
+- `GET /api/bookings` - Listado de reservas del usuario en sesión.
+- `POST /api/bookings` - Solicitud de cupo para una tutoría con validación de capacidad.
+- `PATCH /api/bookings/:id/status` - Cambio de estado de la reserva (`confirmed` / `cancelled`).
+
+### Foros y Consultas (`/api/forums`)
+- `GET /api/forums/course/:courseId` - Mensajes del foro de un curso específico.
+- `POST /api/forums` - Publicación de nueva consulta académica.
+- `DELETE /api/forums/:id` - Moderación de mensajes (Admin y autor).
 
 ---
 
-## 🚀 Cómo Correr el Proyecto Localmente
+## 5. Arquitectura y Seguridad
 
-### Pre-requisitos
-- **Node.js** v18 o superior
-- **npm** v9 o superior
-- Una cuenta en [Supabase](https://supabase.com) (gratuita) con un proyecto PostgreSQL activo, o cualquier instancia PostgreSQL local
+- **Consultas Parametrizadas:** Toda la interacción con PostgreSQL se ejecuta mediante el motor de Prisma ORM con sentencias preparadas nativas (`$1`, `$2`), eliminando cualquier riesgo de inyección SQL.
+- **Normalización de Datos:** Limpieza estricta de cadenas mediante `.trim()` y comparaciones insensibles a mayúsculas (`mode: 'insensitive'`) para evitar registros duplicados redundantes.
+- **Validación de Tipos en Tiempo de Ejecución:** Validación estricta de tipos de datos JSON (como booleanos nativos para estados) rechazando valores ambiguos con códigos HTTP apropiados (`400 Bad Request`).
+- **Variables de Entorno Aisladas:** Secretos de infraestructura (`DATABASE_URL`, `JWT_SECRET`) protegidos localmente en `.env` y excluidos del repositorio mediante `.gitignore`.
+
+---
+
+## 6. Instalación y Ejecución Local
+
+### Prerrequisitos
+- Node.js 20 LTS o superior
+- npm 10+
+- Git
 
 ### 1. Clonar el repositorio
-
 ```bash
 git clone https://github.com/Marce0c0/Sistema-Tutorias-UPDS.git
 cd Sistema-Tutorias-UPDS
 ```
 
-### 2. Configurar el Backend
-
+### 2. Configurar y levantar el Backend
 ```bash
 cd backend
-
-# Instalar dependencias
 npm install
 
-# Copiar y completar las variables de entorno
+# Configurar variables de entorno basadas en la plantilla
 cp .env.example .env
-```
 
-Editar `.env` y reemplazar con tus datos de Supabase (o base de datos local):
-
-```env
-PORT=3001
-DATABASE_URL="postgresql://postgres.[PROJECT_ID]:[PASSWORD]@aws-1-sa-east-1.pooler.supabase.com:5432/postgres"
-AWS_REGION="us-east-2"
-AWS_S3_BUCKET_NAME="sistema-tutorias-upds"
-```
-
-### 3. Crear las tablas e insertar datos de prueba
-
-```bash
-# Aplica el esquema de 8 tablas a la base de datos
+# Generar cliente de Prisma y sincronizar esquema
+npx prisma generate
 npx prisma db push
 
-# Carga 3 usuarios + 2 cursos + 2 tutorías + reservas + reseñas + materiales
-npm run prisma:seed
-```
-
-### 4. Arrancar el servidor backend
-
-```bash
+# Compilar TypeScript e iniciar servidor
+npm run build
 npm run dev
-# → API disponible en http://localhost:3001
 ```
+El backend iniciará en `http://localhost:3001`.
 
-### 5. Servir el Frontend
-
-En otra terminal (desde la raíz del repositorio):
-
+### 3. Levantar el Frontend
+En otra terminal dentro de la raíz del proyecto:
 ```bash
-# Con npx serve (no requiere instalación)
-npx serve frontend -l 3000
-# → SPA disponible en http://localhost:3000
+cd frontend
+npx serve -p 3000 -s
 ```
+Accede a la plataforma web desde tu navegador en `http://localhost:3000`.
 
 ---
 
-## 🔌 Endpoints de la API (40 rutas en 8 recursos)
+## 7. Despliegue con Docker Compose
 
-La API base es `http://localhost:3001/api/`. Todos los endpoints aceptan y devuelven JSON.
-
-| Recurso | GET (listar) | GET (por ID) | POST (crear) | PUT (actualizar) | DELETE |
-|---|---|---|---|---|---|
-| `/api/users` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `/api/courses` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `/api/tutorias` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `/api/bookings` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `/api/forums` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `/api/notifications` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `/api/reviews` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `/api/materials` | ✅ | ✅ | ✅ | ✅ | ✅ |
-
-**Filtros disponibles:**
-- `GET /api/tutorias?courseId=<uuid>` — tutorías de un curso específico
-- `GET /api/forums?courseId=<uuid>` — mensajes del foro de una materia
-- `GET /api/notifications?userId=<uuid>` — notificaciones de un usuario
-- `GET /api/reviews?tutoriaId=<uuid>` — reseñas de una tutoría
-- `GET /api/materials?courseId=<uuid>` — materiales de un curso
-
-Podés probar todos los endpoints desde VS Code usando el archivo `backend/api.http` con la extensión **REST Client**.
-
----
-
-## 🏛️ Arquitectura del Sistema
-
+Para ejecutar toda la infraestructura en contenedores aislados:
+```bash
+# En la raíz del repositorio:
+docker compose up -d --build
 ```
-                  [Navegador Web]
-                        │
-                [SPA Frontend :3000]
-           HTML + CSS (paleta UPDS) + JS ES6+
-            Router hash-based sin frameworks
-                        │ fetch() / JSON
-                        ▼
-              [API REST Backend :3001]
-              Express 5 + TypeScript
-                        │
-              [Middleware de Validación]
-              UUID regex + enums + campos
-                        │
-              [Controladores Async]
-              Lógica de negocio pura
-                        │
-               [Prisma ORM Client]
-              Singleton global con pool
-                        │
-        ┌───────────────┴───────────────┐
-        ▼                               ▼
-[Supabase PostgreSQL 17]       [Amazon S3 (us-east-2)]
-  sa-east-1 São Paulo           Materiales de estudio
-  8 tablas relacionales         + Hosting SPA estático
+Servicios levantados:
+- **Frontend SPA:** `http://localhost:8080` (Nginx Alpine optimizado).
+- **Backend API:** `http://localhost:3001` (Node.js 20 Alpine en TypeScript).
+- **PostgreSQL Local:** puerto `5432` con volumen persistente para datos locales.
+
+---
+
+## 8. Despliegue Estático en AWS S3
+
+El frontend estático cuenta con un script de sincronización automatizado hacia Amazon S3:
+```powershell
+./frontend/deploy-s3.ps1
 ```
-
-**Principios aplicados:**
-- **Desacoplamiento total:** El frontend solo conoce la URL de la API. El backend no conoce HTML.
-- **Arquitectura en capas:** Router → Middleware → Controller → Prisma. Sin acceso directo a la BD desde rutas.
-- **Validación en frontera:** Todo UUID y enum se valida antes de llegar al controlador.
-- **Cero dependencias externas en el frontend:** No se usa React, Vue, Angular ni ningún otro framework. Solo Web APIs nativas.
+El script sincroniza los archivos HTML, CSS, JS e imágenes hacia el bucket de AWS configurado con políticas de caché optimizadas y costo cero dentro del Free Tier.
 
 ---
 
-## ☁️ Infraestructura Cloud ($0.00 USD)
-
-| Servicio | Proveedor | Costo | Descripción |
-|---|---|---|---|
-| **PostgreSQL 17** | Supabase (Free Tier) | **$0.00** | Base de datos relacional para desarrollo e integración |
-| **S3 Static Hosting** | Amazon S3 (Free Tier) | **$0.00** | Hosting estático para el cliente SPA y recursos de estudio |
-| **AWS CLI** | AWS SDK / CLI | **$0.00** | Herramientas de despliegue automatizado |
-
----
-
-## 🗺️ Hoja de Ruta del Proyecto
-
-| Actividad | Estado | Descripción |
-|---|---|---|
-| **Actividad 1** | ✅ Entregada | Planificación: casos de uso, DER, stack tecnológico |
-| **Actividad 2** | ✅ Entregada | Backend API REST completa (30 endpoints, 6 entidades iniciales) |
-| **Actividad 3** | ✅ Completada | Frontend SPA con CRUD completo consumiendo la API + deploy a S3 |
-| **Actividad 4** | 🔜 Próxima | Autenticación y seguridad con JWT + bcrypt + login/registro |
-| **Actividad 5** | 📋 Planificada | Vistas de Reviews y Materials + perfil de usuario |
-| **Actividad 6** | 📋 Planificada | Despliegue productivo en AWS EC2 + CloudFront CDN + dominio HTTPS |
-
----
-
-## 🧪 Datos de Prueba (incluidos en el Seed)
-
-Al ejecutar `npm run prisma:seed` se insertan los siguientes registros:
-
-| Tipo | Registro | Detalle |
-|---|---|---|
-| 👤 Estudiante | `juan@estudiante.com` | ID fijo para pruebas de reservas y reseñas |
-| 👩‍🏫 Tutora | `maria@tutor.com` | Dicta ambos cursos y subió los materiales |
-| 🔑 Admin | `admin@upds.edu.bo` | Coordinación Académica UPDS |
-| 📚 Curso 1 | Matemáticas Aplicadas | Cálculo y álgebra lineal |
-| 📚 Curso 2 | Programación Web II | Node.js + Express + TypeScript |
-| 🗓️ Tutoría 1 | Taller APIs REST — Oct 22 | Presencial · Aula 302 Bloque B · con enlace Google Meet |
-| 🗓️ Tutoría 2 | Resolución Cálculo I — Oct 24 | Virtual · enlace Google Meet |
-| ✅ Reserva | Juan → Tutoría 1 | Estado: `confirmed` |
-| ⭐ Reseña | Juan → Tutoría 1 | Rating: **5/5** · "Excelente explicación de los middlewares..." |
-| 📄 Material 1 | Guía APIs RESTful (PDF) | Subido por María · Curso Web II · alojado en S3 |
-| 📄 Material 2 | Formulario Integrales (PDF) | Subido por María · Matemáticas Aplicadas · alojado en S3 |
-
----
-
-## 🤝 Contribuir / Flujo de Ramas
-
-```
-main          ← Versión estable y evaluada por el docente
-  └── develop ← Integración de todas las features completadas
-        └── feature/actividad-3-frontend-fullstack  ← Rama de trabajo actual
-        └── feature/actividad-4-jwt-auth            ← (próxima)
-```
-
-Los commits siguen la convención **Conventional Commits**:  
-`feat:`, `fix:`, `docs:`, `chore:`, `style:`, `refactor:`
-
----
-
-## 📄 Licencia
-
-Proyecto académico — Universidad Privada Domingo Savio (UPDS).  
-Desarrollado para la materia **Tecnología Web II**.
+## Licencia
+Proyecto desarrollado con fines académicos para la Universidad Privada Domingo Savio (UPDS).
