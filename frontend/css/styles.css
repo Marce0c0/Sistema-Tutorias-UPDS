@@ -85,6 +85,20 @@
   outline-offset: 2px;
 }
 
+/* Caret e inserción de texto calibrada */
+input, textarea, select {
+  caret-color: var(--primary-blue);
+}
+
+a {
+  text-underline-offset: 3px;
+}
+
+/* Números tabulares para alineación perfecta de métricas y datos */
+.table td, .stat-card-value, .pricing-amount-badge, .capacity-labels, .pill-number, .meta-val {
+  font-variant-numeric: tabular-nums;
+}
+
 /* Barra de desplazamiento suave y calibrada */
 * {
   scrollbar-width: thin;
@@ -470,11 +484,11 @@ body.modal-open {
   margin-top: 0.35rem;
 }
 
-/* Variantes de color en borde izquierdo de KPI */
-.stat-card-blue { border-left: 4px solid var(--primary-blue); }
-.stat-card-indigo { border-left: 4px solid #6366f1; }
-.stat-card-emerald { border-left: 4px solid var(--success); }
-.stat-card-amber { border-left: 4px solid var(--warning); }
+/* Variantes de color en acento superior de KPI (Craft Floor: sin border-left grueso) */
+.stat-card-blue { border-top: 3px solid var(--primary-blue); }
+.stat-card-indigo { border-top: 3px solid #2563eb; }
+.stat-card-emerald { border-top: 3px solid var(--success); }
+.stat-card-amber { border-top: 3px solid var(--warning); }
 
 /* ─── Grid Dividido del Dashboard ─────────────────────────────────────────── */
 .dashboard-split-grid {
@@ -877,9 +891,9 @@ body.modal-open {
 
 /* ─── Banner Informativo de Precios y Subvención Académica ──────────────── */
 .tutorias-pricing-banner {
-  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
-  border: 1px solid #bfdbfe;
-  border-left: 5px solid var(--primary-blue);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-top: 3px solid var(--primary-blue);
   padding: 1rem 1.25rem;
   border-radius: var(--radius-md);
   margin-bottom: 1.5rem;
@@ -1932,9 +1946,9 @@ body.modal-open {
 
 /* ─── Pestaña de Eventos & Hackathons (Diseño Pulido Impeccable) ──────────── */
 .events-disclaimer-card {
-  background: linear-gradient(135deg, #f8fafc 0%, #f5f3ff 100%);
-  border: 1px solid #ddd6fe;
-  border-left: 5px solid #7c3aed;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-top: 3px solid var(--primary-navy);
   padding: 1.15rem 1.35rem;
   border-radius: var(--radius-md);
   margin-bottom: 1.5rem;
@@ -1945,12 +1959,12 @@ body.modal-open {
 }
 
 .events-disclaimer-icon {
-  font-size: 2.2rem;
+  font-size: 2rem;
   flex-shrink: 0;
 }
 
 .events-disclaimer-title {
-  color: #5b21b6;
+  color: var(--primary-navy);
   font-size: 0.98rem;
   font-weight: 700;
   margin-bottom: 0.2rem;
@@ -1990,7 +2004,7 @@ body.modal-open {
 }
 
 .event-badge-status {
-  background: #7c3aed;
+  background: var(--primary-navy);
   color: #ffffff;
   font-size: 0.72rem;
   font-weight: 700;
@@ -2111,14 +2125,14 @@ body.modal-open {
 }
 
 .btn-event-register {
-  border-color: #7c3aed;
-  color: #7c3aed;
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
 }
 
 .btn-event-register:hover {
-  background-color: #f5f3ff;
-  border-color: #6d28d9;
-  color: #6d28d9;
+  background-color: var(--primary-light);
+  border-color: var(--primary-navy);
+  color: var(--primary-navy);
 }
 
 

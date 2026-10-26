@@ -86,10 +86,10 @@ export const WelcomeView = {
               </div>
 
               <ul class="guest-features-list">
-                <li> Explora talleres técnicos, bootcamps y cursos de extensión.</li>
-                <li> Consulta fechas, horarios y tutores docentes asignados.</li>
-                <li>🏆 Convocatorias a Hackathons municipales y torneos tech en Cochabamba.</li>
-                <li> Abierto para estudiantes, egresados e invitados interesados.</li>
+                <li>✓ Explora talleres técnicos, bootcamps y cursos de extensión.</li>
+                <li>✓ Consulta fechas, horarios y tutores docentes asignados.</li>
+                <li>✓ Convocatorias a Hackathons municipales y torneos tech en Cochabamba.</li>
+                <li>✓ Abierto para estudiantes, egresados e interesados en la oferta académica.</li>
               </ul>
 
               <button type="button" id="enter-guest-btn" class="btn btn-outline-primary btn-block btn-lg" style="width:100%; justify-content:center; margin-top:1.5rem;">
