@@ -13,6 +13,13 @@ class Store {
       bookings: [],
       forums: [],
       notifications: [],
+      events: (() => {
+        try {
+          const raw = localStorage.getItem('upds_events_v1');
+          if (raw) return JSON.parse(raw);
+        } catch {}
+        return [];
+      })(),
       stats: {
         totalUsers: 0,
         totalCourses: 0,
@@ -129,6 +136,14 @@ class Store {
 
   setNotifications(notifications) {
     this.state.notifications = notifications;
+    this.notify();
+  }
+
+  setEvents(events) {
+    this.state.events = events;
+    try {
+      localStorage.setItem('upds_events_v1', JSON.stringify(events));
+    } catch {}
     this.notify();
   }
 }

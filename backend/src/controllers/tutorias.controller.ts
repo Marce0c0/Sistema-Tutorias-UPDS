@@ -60,7 +60,7 @@ export const getTutoriaById = async (req: Request, res: Response, next: NextFunc
 // POST /api/tutorias — Crear una nueva tutoría
 export const createTutoria = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { courseId, title, description, date, maxStudents, status } = req.body;
+    const { courseId, title, description, date, maxStudents, status, modality, location, meetingUrl } = req.body;
 
     const newTutoria = await prisma.tutoria.create({
       data: {
@@ -70,6 +70,9 @@ export const createTutoria = async (req: Request, res: Response, next: NextFunct
         date: new Date(date),
         maxStudents: maxStudents !== undefined ? Number(maxStudents) : 10,
         status: status || 'active',
+        modality: modality || 'presencial',
+        location: location?.trim() || null,
+        meetingUrl: meetingUrl?.trim() || null,
       },
       include: {
         course: { select: { id: true, title: true } },
@@ -86,7 +89,7 @@ export const createTutoria = async (req: Request, res: Response, next: NextFunct
 export const updateTutoria = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const id = req.params.id as string;
-    const { title, description, date, maxStudents, status } = req.body;
+    const { title, description, date, maxStudents, status, modality, location, meetingUrl } = req.body;
 
     const updated = await prisma.tutoria.update({
       where: { id },
@@ -96,6 +99,9 @@ export const updateTutoria = async (req: Request, res: Response, next: NextFunct
         ...(date && { date: new Date(date) }),
         ...(maxStudents !== undefined && { maxStudents: Number(maxStudents) }),
         ...(status && { status }),
+        ...(modality && { modality }),
+        ...(location !== undefined && { location: location?.trim() || null }),
+        ...(meetingUrl !== undefined && { meetingUrl: meetingUrl?.trim() || null }),
       },
       include: {
         course: { select: { id: true, title: true } },

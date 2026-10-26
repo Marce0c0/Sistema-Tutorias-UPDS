@@ -155,6 +155,12 @@ export const UsersView = {
               <option value="admin" ${user?.role === 'admin' ? 'selected' : ''}>Administrador</option>
             </select>
           </div>
+
+          <div class="form-group">
+            <label class="form-label" for="user-password-input">${isEdit ? 'Nueva Contraseña (Opcional)' : 'Contraseña de Acceso JWT (Opcional)'}</label>
+            <input type="password" id="user-password-input" class="form-control" placeholder="${isEdit ? 'Dejar en blanco para conservar actual' : 'Por defecto: Upds2026'}" />
+            <small class="form-help">${isEdit ? 'Solo escribe si deseas restablecer la contraseña (mínimo 6 caracteres).' : 'Si se deja vacío, la clave inicial será <code>Upds2026</code>.'}</small>
+          </div>
         </form>
       `,
       confirmText: isEdit ? 'Guardar Cambios' : 'Registrar',
@@ -162,6 +168,7 @@ export const UsersView = {
         const name = dialog.querySelector('#user-name-input').value.trim();
         const email = dialog.querySelector('#user-email-input').value.trim();
         const role = dialog.querySelector('#user-role-input').value;
+        const password = dialog.querySelector('#user-password-input').value.trim() || undefined;
 
         const validation = Validators.validateUser({ name, email, role });
         if (!validation.isValid) {
@@ -171,11 +178,11 @@ export const UsersView = {
 
         try {
           if (isEdit) {
-            await api.users.update(user.id, { name, role });
+            await api.users.update(user.id, { name, role, ...(password ? { password } : {}) });
             Toast.success('Usuario actualizado correctamente.');
           } else {
-            await api.users.create({ name, email, role });
-            Toast.success('Usuario creado exitosamente.');
+            await api.users.create({ name, email, role, password });
+            Toast.success('Usuario creado exitosamente con clave de acceso.');
           }
 
           // Recargar lista desde la BD

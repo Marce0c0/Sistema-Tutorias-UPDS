@@ -18,6 +18,9 @@ const RULES = {
   // Cursos
   'courses.manage': ['admin'],
 
+  // Eventos y Hackathons
+  'events.manage': ['admin'],
+
   // Tutorías
   'tutorias.manage': ['admin', 'tutor'],
   'tutorias.book': ['student'],

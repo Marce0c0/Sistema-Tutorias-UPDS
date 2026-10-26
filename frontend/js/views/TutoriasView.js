@@ -360,6 +360,27 @@ export const TutoriasView = {
               </select>
             </div>
           </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label class="form-label" for="tutoria-modality-select">Modalidad de Impartición *</label>
+              <select id="tutoria-modality-select" class="form-control">
+                <option value="presencial" ${tutoria?.modality === 'presencial' ? 'selected' : ''}>Presencial (En Campus)</option>
+                <option value="virtual" ${tutoria?.modality === 'virtual' ? 'selected' : ''}>Virtual (Online)</option>
+                <option value="hibrida" ${tutoria?.modality === 'hibrida' ? 'selected' : ''}>Híbrida</option>
+              </select>
+            </div>
+
+            <div class="form-group col-6">
+              <label class="form-label" for="tutoria-location-input">Aula / Laboratorio (Presencial)</label>
+              <input type="text" id="tutoria-location-input" class="form-control" value="${tutoria?.location || ''}" placeholder="Ej. Aula 304 - Campus Central" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="tutoria-meeting-input">Enlace de Videollamada (Si es Virtual / Híbrida)</label>
+            <input type="url" id="tutoria-meeting-input" class="form-control" value="${tutoria?.meetingUrl || ''}" placeholder="https://meet.google.com/abc-defg-hij" />
+          </div>
         </form>
       `,
       confirmText: isEdit ? 'Guardar Cambios' : 'Programar Sesión',
@@ -371,6 +392,9 @@ export const TutoriasView = {
         const dateVal = dialog.querySelector('#tutoria-date-input').value;
         const maxStudents = Number(dialog.querySelector('#tutoria-max-input').value);
         const status = dialog.querySelector('#tutoria-status-select').value;
+        const modality = dialog.querySelector('#tutoria-modality-select').value;
+        const location = dialog.querySelector('#tutoria-location-input').value.trim() || null;
+        const meetingUrl = dialog.querySelector('#tutoria-meeting-input').value.trim() || null;
 
         // Limpiar tags anteriores y anexar nuevo tag de tarifa
         descVal = descVal.replace(/\[tarifa: [a-z]+\]/gi, '').trim();
@@ -397,6 +421,9 @@ export const TutoriasView = {
             date: new Date(dateVal).toISOString(),
             maxStudents,
             status,
+            modality,
+            location,
+            meetingUrl,
           };
 
           if (isEdit) {

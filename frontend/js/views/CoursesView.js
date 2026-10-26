@@ -111,7 +111,7 @@ export const CoursesView = {
 
   openCourseModal(course = null) {
     const isEdit = Boolean(course);
-    const title = isEdit ? 'Editar Curso' : 'Crear Nueva Materia';
+    const title = isEdit ? 'Editar Curso / Taller' : 'Crear Nuevo Curso o Taller Extracurricular';
     const state = store.getState();
     const tutors = state.users.filter((u) => u.role === 'tutor' || u.role === 'admin');
 
@@ -120,8 +120,8 @@ export const CoursesView = {
       content: `
         <form id="course-modal-form" class="modal-form">
           <div class="form-group">
-            <label class="form-label" for="course-title-input">Nombre de la Materia *</label>
-            <input type="text" id="course-title-input" class="form-control" value="${course?.title || ''}" placeholder="Ej. Arquitectura de Software" required />
+            <label class="form-label" for="course-title-input">Nombre del Curso / Taller *</label>
+            <input type="text" id="course-title-input" class="form-control" value="${course?.title || ''}" placeholder="Ej. Taller Práctico de Machine Learning" required />
             <small class="form-help">Mínimo 3 caracteres.</small>
           </div>
 

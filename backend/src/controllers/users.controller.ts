@@ -2,6 +2,7 @@
 // Gestiona estudiantes, tutores y administradores de la plataforma
 
 import { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcryptjs';
 import prisma from '../lib/prisma';
 
 // Selector público seguro que previene la fuga de credenciales
@@ -53,9 +54,17 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
 // POST /api/users — Crear un nuevo usuario
 export const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { name, email, role } = req.body;
+    const { name, email, role, password } = req.body;
+    const rawPassword = password && typeof password === 'string' && password.trim().length >= 6 ? password.trim() : 'Upds2026';
+    const passwordHash = await bcrypt.hash(rawPassword, 10);
+
     const newUser = await prisma.user.create({
-      data: { name: name.trim(), email: email.toLowerCase().trim(), role },
+      data: {
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
+        role,
+        passwordHash,
+      },
       select: userPublicSelect,
     });
     res.status(201).json(newUser);
@@ -68,7 +77,11 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 export const updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const id = req.params.id as string;
-    const { name, email, role } = req.body;
+    const { name, email, role, password } = req.body;
+    let passwordHash: string | undefined = undefined;
+    if (password && typeof password === 'string' && password.trim().length >= 6) {
+      passwordHash = await bcrypt.hash(password.trim(), 10);
+    }
 
     const updated = await prisma.user.update({
       where: { id },
@@ -76,6 +89,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
         ...(name && { name: name.trim() }),
         ...(email && { email: email.toLowerCase().trim() }),
         ...(role && { role }),
+        ...(passwordHash && { passwordHash }),
       },
       select: userPublicSelect,
     });

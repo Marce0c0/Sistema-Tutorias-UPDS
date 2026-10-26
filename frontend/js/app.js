@@ -8,7 +8,7 @@ import { DashboardView } from './views/DashboardView.js';
 import { UsersView } from './views/UsersView.js';
 import { CoursesView } from './views/CoursesView.js';
 import { TutoriasView } from './views/TutoriasView.js';
-import { EventsView } from './views/EventsView.js';
+import { EventsView, getStoredEvents } from './views/EventsView.js';
 import { BookingsView } from './views/BookingsView.js';
 import { ForumsView } from './views/ForumsView.js';
 import { NotificationsView } from './views/NotificationsView.js';
@@ -78,6 +78,7 @@ class App {
         bookings,
         forums,
         notifications,
+        events: getStoredEvents(),
         activeUser: initialUser,
         currentView: initialView,
         isLoading: false,

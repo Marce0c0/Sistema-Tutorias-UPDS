@@ -5,7 +5,7 @@ import { api } from '../services/api.js';
 import { Toast } from '../components/Toast.js';
 import { withButtonLoading } from '../utils/button.js';
 import { Icons } from '../components/Icons.js';
-import { EVENTS_DATA } from './EventsView.js';
+import { getStoredEvents } from './EventsView.js';
 
 export const WelcomeView = {
   render() {
@@ -13,7 +13,7 @@ export const WelcomeView = {
     const computeCounts = (s) => ({
       courses: (s.courses || []).filter((c) => !c.title.toLowerCase().includes('hackathon') && !c.title.toLowerCase().includes('ctf')).length,
       tutorias: (s.tutorias || []).filter((t) => !t.title.toLowerCase().includes('hackathon') && !t.title.toLowerCase().includes('ctf')).length,
-      events: (EVENTS_DATA || []).length,
+      events: (s.events && s.events.length > 0 ? s.events : getStoredEvents()).length,
     });
 
     const initialCounts = computeCounts(state);
