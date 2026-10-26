@@ -7,6 +7,7 @@ import { Toast } from '../components/Toast.js';
 import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
 import { can } from '../utils/permissions.js';
+import { withButtonLoading } from '../utils/button.js';
 
 export const NotificationsView = {
   render() {
@@ -73,7 +74,7 @@ export const NotificationsView = {
         btn.addEventListener('click', async () => {
           const id = btn.getAttribute('data-id');
           const currentRead = btn.getAttribute('data-read') === 'true';
-          await this.toggleRead(id, !currentRead);
+          await withButtonLoading(btn, () => this.toggleRead(id, !currentRead), '...');
         });
       });
 

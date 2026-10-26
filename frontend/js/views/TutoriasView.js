@@ -8,6 +8,7 @@ import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
 import { can } from '../utils/permissions.js';
 import { Navbar } from '../components/Navbar.js';
+import { withButtonLoading } from '../utils/button.js';
 
 export const TutoriasView = {
   render() {
@@ -187,7 +188,7 @@ export const TutoriasView = {
           const tutoriaId = btn.getAttribute('data-id');
           const courseId = btn.getAttribute('data-course-id');
           const date = btn.getAttribute('data-date');
-          await this.quickBook(tutoriaId, courseId, date);
+          await withButtonLoading(btn, () => this.quickBook(tutoriaId, courseId, date), 'Reservando cupo...');
         });
       });
 

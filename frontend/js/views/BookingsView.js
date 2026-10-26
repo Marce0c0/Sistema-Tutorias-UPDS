@@ -7,6 +7,7 @@ import { Toast } from '../components/Toast.js';
 import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
 import { can } from '../utils/permissions.js';
+import { withButtonLoading } from '../utils/button.js';
 
 export const BookingsView = {
   render() {
@@ -95,7 +96,7 @@ export const BookingsView = {
         btn.addEventListener('click', async () => {
           const id = btn.getAttribute('data-id');
           const newStatus = btn.getAttribute('data-status');
-          await this.updateStatus(id, newStatus);
+          await withButtonLoading(btn, () => this.updateStatus(id, newStatus), '...');
         });
       });
 

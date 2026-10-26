@@ -2,6 +2,7 @@
 import { store } from '../state/store.js';
 import { Modal } from '../components/Modal.js';
 import { Toast } from '../components/Toast.js';
+import { withButtonLoading } from '../utils/button.js';
 
 export const EventsView = {
   render() {
@@ -163,11 +164,14 @@ export const EventsView = {
     });
 
     container.querySelectorAll('.btn-event-register').forEach((btn) => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const id = btn.getAttribute('data-id');
         const ev = eventsData.find((e) => e.id === id);
         if (ev) {
-          Toast.success(`¡Registro de interés guardado para: ${ev.title}! Te notificaremos convocatorias de equipo.`);
+          await withButtonLoading(btn, async () => {
+            await new Promise((r) => setTimeout(r, 400));
+            Toast.success(`¡Registro de interés guardado para: ${ev.title}! Te notificaremos convocatorias de equipo.`);
+          }, 'Registrando...');
         }
       });
     });

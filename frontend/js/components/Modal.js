@@ -58,8 +58,11 @@ class ModalManager {
     const confirmBtn = dialog.querySelector('.modal-confirm-btn');
     if (confirmBtn && onConfirm) {
       confirmBtn.addEventListener('click', async (e) => {
+        if (confirmBtn.disabled || confirmBtn.classList.contains('btn-loading')) return;
+        const originalHtml = confirmBtn.innerHTML;
         confirmBtn.disabled = true;
-        confirmBtn.textContent = 'Procesando...';
+        confirmBtn.classList.add('btn-loading');
+        confirmBtn.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span> <span>Procesando...</span>`;
         try {
           const result = await onConfirm(dialog, e);
           if (result !== false) {
@@ -70,7 +73,8 @@ class ModalManager {
         } finally {
           if (confirmBtn) {
             confirmBtn.disabled = false;
-            confirmBtn.textContent = confirmText;
+            confirmBtn.classList.remove('btn-loading');
+            confirmBtn.innerHTML = originalHtml;
           }
         }
       });

@@ -3,6 +3,7 @@
 import { store } from '../state/store.js';
 import { api } from '../services/api.js';
 import { Toast } from '../components/Toast.js';
+import { withButtonLoading } from '../utils/button.js';
 
 export const WelcomeView = {
   render() {
@@ -114,28 +115,24 @@ export const WelcomeView = {
       }
 
       const submitBtn = container.querySelector('#welcome-login-btn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Autenticando...';
-
-      try {
-        const res = await api.auth.login({ email, password });
-        if (res.token && res.user) {
-          localStorage.setItem('token', res.token);
-          localStorage.setItem('authUser', JSON.stringify(res.user));
-          localStorage.removeItem('guestMode');
-          store.setActiveUser(res.user);
-          store.setView('dashboard');
-          Toast.success(`¡Bienvenido/a ${res.user.name}! Sesión JWT iniciada.`);
-          // Cargar datos protegidos
-          api.users.getAll().then((list) => store.setUsers(list)).catch(() => {});
-          api.notifications.getAll().then((list) => store.setNotifications(list)).catch(() => {});
+      await withButtonLoading(submitBtn, async () => {
+        try {
+          const res = await api.auth.login({ email, password });
+          if (res.token && res.user) {
+            localStorage.setItem('token', res.token);
+            localStorage.setItem('authUser', JSON.stringify(res.user));
+            localStorage.removeItem('guestMode');
+            store.setActiveUser(res.user);
+            store.setView('dashboard');
+            Toast.success(`¡Bienvenido/a ${res.user.name}! Sesión JWT iniciada.`);
+            // Cargar datos protegidos
+            api.users.getAll().then((list) => store.setUsers(list)).catch(() => {});
+            api.notifications.getAll().then((list) => store.setNotifications(list)).catch(() => {});
+          }
+        } catch (err) {
+          Toast.error(err.message || 'Credenciales incorrectas.');
         }
-      } catch (err) {
-        Toast.error(err.message || 'Credenciales incorrectas.');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = '🚀 Ingresar con JWT';
-      }
+      }, 'Autenticando...');
     });
 
     // Rellenar credenciales rápidas

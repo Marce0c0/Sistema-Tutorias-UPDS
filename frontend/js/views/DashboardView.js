@@ -27,7 +27,7 @@ export const DashboardView = {
         </p>
       </div>
       <div class="banner-badge">
-        <span class="badge-status-dot"></span> API REST Conectada (PostgreSQL)
+        <span class="badge-status-dot"></span> Campus UPDS · Sistema En Línea
       </div>
     `;
     container.appendChild(banner);
