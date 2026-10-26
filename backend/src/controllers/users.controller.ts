@@ -1,13 +1,24 @@
-// Controlador de Usuarios — CRUD completo
+// Controlador de Usuarios — CRUD completo (Seguridad & Exclusión de passwordHash)
 // Gestiona estudiantes, tutores y administradores de la plataforma
 
 import { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcryptjs';
 import prisma from '../lib/prisma';
 
-// GET /api/users — Obtener todos los usuarios
+// Selector público seguro que previene la fuga de credenciales
+const userPublicSelect = {
+  id: true,
+  name: true,
+  email: true,
+  role: true,
+  createdAt: true,
+};
+
+// GET /api/users — Obtener todos los usuarios (sin passwordHash)
 export const getUsers = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const users = await prisma.user.findMany({
+      select: userPublicSelect,
       orderBy: { createdAt: 'desc' },
     });
     res.status(200).json(users);
@@ -22,7 +33,8 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
     const id = req.params.id as string;
     const user = await prisma.user.findUnique({
       where: { id },
-      include: {
+      select: {
+        ...userPublicSelect,
         courses: true,   // Incluye los cursos que imparte (si es tutor)
         bookings: true,  // Incluye las reservas que tiene (si es estudiante)
       },
@@ -42,9 +54,18 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
 // POST /api/users — Crear un nuevo usuario
 export const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { name, email, role } = req.body;
+    const { name, email, role, password } = req.body;
+    const rawPassword = password && typeof password === 'string' && password.trim().length >= 6 ? password.trim() : 'Upds2026';
+    const passwordHash = await bcrypt.hash(rawPassword, 10);
+
     const newUser = await prisma.user.create({
-      data: { name: name.trim(), email: email.toLowerCase().trim(), role },
+      data: {
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
+        role,
+        passwordHash,
+      },
+      select: userPublicSelect,
     });
     res.status(201).json(newUser);
   } catch (error) {
@@ -56,7 +77,11 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 export const updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const id = req.params.id as string;
-    const { name, email, role } = req.body;
+    const { name, email, role, password } = req.body;
+    let passwordHash: string | undefined = undefined;
+    if (password && typeof password === 'string' && password.trim().length >= 6) {
+      passwordHash = await bcrypt.hash(password.trim(), 10);
+    }
 
     const updated = await prisma.user.update({
       where: { id },
@@ -64,7 +89,9 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
         ...(name && { name: name.trim() }),
         ...(email && { email: email.toLowerCase().trim() }),
         ...(role && { role }),
+        ...(passwordHash && { passwordHash }),
       },
+      select: userPublicSelect,
     });
 
     res.status(200).json(updated);

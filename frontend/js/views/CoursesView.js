@@ -1,0 +1,203 @@
+// Vista del Catálogo de Cursos y Talleres Extracurriculares — Sistema-Tutoriales-UPDS
+import { store } from '../state/store.js';
+import { api } from '../services/api.js';
+import { Modal } from '../components/Modal.js';
+import { Toast } from '../components/Toast.js';
+import { Validators } from '../utils/validators.js';
+import { EmptyState } from '../components/EmptyState.js';
+import { can } from '../utils/permissions.js';
+import { Icons } from '../components/Icons.js';
+
+export const CoursesView = {
+  render() {
+    const state = store.getState();
+    const canManage = can(state.activeUser?.role, 'courses.manage');
+    const container = document.createElement('div');
+    container.className = 'view-content animate-fade-in';
+
+    const renderList = () => {
+      // Filtrar para mostrar únicamente cursos y talleres (los hackathons y eventos tienen su propia pestaña)
+      const courses = state.courses.filter(
+        (c) =>
+          !c.title.toLowerCase().includes('hackathon') &&
+          !c.title.toLowerCase().includes('torneo') &&
+          !c.title.toLowerCase().includes('ctf')
+      );
+      const bodyContainer = container.querySelector('#courses-grid-container');
+      if (!bodyContainer) return;
+
+      if (courses.length === 0) {
+        bodyContainer.innerHTML = '';
+        bodyContainer.appendChild(
+          EmptyState({
+            icon: Icons.book('', 36),
+            title: 'No hay cursos extracurriculares registrados',
+            description: 'Comienza creando el primer taller o programa de extensión.',
+            actionText: canManage ? '+ Crear Curso' : undefined,
+            onAction: canManage ? () => this.openCourseModal() : undefined,
+          })
+        );
+        return;
+      }
+
+      bodyContainer.innerHTML = `
+        <div class="cards-grid">
+          ${courses.map((c) => `
+            <div class="card course-card">
+              <div class="course-card-header">
+                <span class="course-tag">Curso Extracurricular / Taller</span>
+                ${canManage ? `
+                  <div class="course-actions">
+                    <button class="btn btn-xs btn-outline btn-edit-course" data-id="${c.id}" title="Editar">${Icons.edit('', 13)}</button>
+                    <button class="btn btn-xs btn-danger-outline btn-delete-course" data-id="${c.id}" title="Eliminar">${Icons.trash('', 13)}</button>
+                  </div>
+                ` : ''}
+              </div>
+              <h3 class="course-title">${c.title}</h3>
+              <p class="course-desc">${c.description || 'Sin descripción detallada disponible.'}</p>
+              <div class="course-footer">
+                <div class="course-tutor">
+                  <span class="tutor-avatar" style="color:var(--primary-navy);display:inline-flex;align-items:center;justify-content:center;background:#e8f1fa;border-radius:50%;width:32px;height:32px;">${Icons.cap('', 16)}</span>
+                  <div class="tutor-info">
+                    <span class="tutor-label">Instructor / Tutor:</span>
+                    <span class="tutor-name">${c.tutor?.name || 'No asignado'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      // Eventos
+      bodyContainer.querySelectorAll('.btn-edit-course').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          const course = state.courses.find((c) => c.id === id);
+          if (course) this.openCourseModal(course);
+        });
+      });
+
+      bodyContainer.querySelectorAll('.btn-delete-course').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          const course = state.courses.find((c) => c.id === id);
+          if (course) this.confirmDelete(course);
+        });
+      });
+    };
+
+    container.innerHTML = `
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">Catálogo de Cursos Extracurriculares y Talleres</h2>
+          <p class="view-subtitle">Programas de formación complementaria, talleres prácticos y tutorías externos a las clases regulares.</p>
+        </div>
+        <div class="view-actions">
+          ${canManage ? '<button id="btn-create-course" class="btn btn-primary">+ Nuevo Curso Extracurricular</button>' : ''}
+        </div>
+      </div>
+
+      <div id="courses-grid-container"></div>
+    `;
+
+    container.querySelector('#btn-create-course')?.addEventListener('click', () => {
+      this.openCourseModal();
+    });
+
+    setTimeout(renderList, 0);
+    return container;
+  },
+
+  openCourseModal(course = null) {
+    const isEdit = Boolean(course);
+    const title = isEdit ? 'Editar Curso / Taller' : 'Crear Nuevo Curso o Taller Extracurricular';
+    const state = store.getState();
+    const tutors = state.users.filter((u) => u.role === 'tutor' || u.role === 'admin');
+
+    Modal.open({
+      title,
+      content: `
+        <form id="course-modal-form" class="modal-form">
+          <div class="form-group">
+            <label class="form-label" for="course-title-input">Nombre del Curso / Taller *</label>
+            <input type="text" id="course-title-input" class="form-control" value="${course?.title || ''}" placeholder="Ej. Taller Práctico de Machine Learning" required />
+            <small class="form-help">Mínimo 3 caracteres.</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="course-desc-input">Descripción del Curso</label>
+            <textarea id="course-desc-input" class="form-control" rows="3" placeholder="Objetivos, temario y alcance">${course?.description || ''}</textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="course-tutor-select">Docente Tutor Asignado</label>
+            <select id="course-tutor-select" class="form-control">
+              <option value="">-- Sin tutor asignado --</option>
+              ${tutors.map((t) => `
+                <option value="${t.id}" ${course?.tutorId === t.id ? 'selected' : ''}>
+                  ${t.name} (${t.email})
+                </option>
+              `).join('')}
+            </select>
+          </div>
+        </form>
+      `,
+      confirmText: isEdit ? 'Guardar Cambios' : 'Crear Curso / Taller',
+      onConfirm: async (dialog) => {
+        const titleVal = dialog.querySelector('#course-title-input').value.trim();
+        const descVal = dialog.querySelector('#course-desc-input').value.trim();
+        const tutorIdVal = dialog.querySelector('#course-tutor-select').value || null;
+
+        const validation = Validators.validateCourse({ title: titleVal, tutorId: tutorIdVal });
+        if (!validation.isValid) {
+          Toast.error(validation.errors[0]);
+          return false;
+        }
+
+        try {
+          const payload = {
+            title: titleVal,
+            description: descVal || null,
+            tutorId: tutorIdVal,
+          };
+
+          if (isEdit) {
+            await api.courses.update(course.id, payload);
+            Toast.success('Curso actualizado exitosamente.');
+          } else {
+            await api.courses.create(payload);
+            Toast.success('Curso creado exitosamente.');
+          }
+
+          const updatedCourses = await api.courses.getAll();
+          store.setCourses(updatedCourses);
+          return true;
+        } catch (err) {
+          Toast.error(err.message);
+          return false;
+        }
+      },
+    });
+  },
+
+  confirmDelete(course) {
+    Modal.confirm({
+      title: '¿Eliminar Curso o Taller?',
+      message: `¿Estás seguro de eliminar el curso o taller <strong>${course.title}</strong>? Se cancelarán también todas sus clases extra y sesiones asociadas.`,
+      confirmText: 'Sí, Eliminar',
+      onConfirm: async () => {
+        try {
+          await api.courses.delete(course.id);
+          Toast.success('Curso eliminado exitosamente.');
+          const updatedCourses = await api.courses.getAll();
+          store.setCourses(updatedCourses);
+          return true;
+        } catch (err) {
+          Toast.error(err.message);
+          return false;
+        }
+      },
+    });
+  },
+};

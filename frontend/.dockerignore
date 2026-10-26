@@ -1,0 +1,6 @@
+.git
+deploy-s3.ps1
+*.test.mjs
+Dockerfile*
+docker-compose*
+README.md

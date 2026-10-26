@@ -9,6 +9,21 @@ const VALID_TUTORIA_STATUSES = ['active', 'completed', 'cancelled'];
 const VALID_NOTIFICATION_TYPES = ['info', 'reminder', 'booking_update', 'forum_reply'];
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// ─── Middleware de Sanitización contra XSS e Inyecciones ──────────────────────
+export const sanitizeInput = (req: Request, _res: Response, next: NextFunction): void => {
+  if (req.body && typeof req.body === 'object') {
+    for (const key of Object.keys(req.body)) {
+      if (typeof req.body[key] === 'string') {
+        // Remover etiquetas script y tags maliciosos
+        req.body[key] = req.body[key]
+          .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+          .replace(/javascript:/gi, '');
+      }
+    }
+  }
+  next();
+};
+
 // ─── Validar ID de Parámetros (:id) ─────────────────────────────────────────
 export const validateId = (req: Request, res: Response, next: NextFunction): void => {
   const id = req.params.id;
@@ -227,3 +242,49 @@ export const validateNotification = (req: Request, res: Response, next: NextFunc
 
   next();
 };
+
+// ─── Validar Calificación / Reseña (Review) ──────────────────────────────────
+export const validateReview = (req: Request, res: Response, next: NextFunction): void => {
+  const { tutoriaId, studentId, rating } = req.body;
+
+  if (!tutoriaId || !studentId || rating === undefined) {
+    res.status(400).json({ success: false, message: 'tutoriaId, studentId y rating son obligatorios.' });
+    return;
+  }
+
+  if (!UUID_REGEX.test(tutoriaId) || !UUID_REGEX.test(studentId)) {
+    res.status(400).json({ success: false, message: 'tutoriaId y studentId deben ser UUIDs válidos.' });
+    return;
+  }
+
+  const numRating = Number(rating);
+  if (!Number.isInteger(numRating) || numRating < 1 || numRating > 5) {
+    res.status(400).json({ success: false, message: 'El campo rating debe ser un número entero entre 1 y 5.' });
+    return;
+  }
+
+  next();
+};
+
+// ─── Validar Material de Estudio (Material) ─────────────────────────────────
+export const validateMaterial = (req: Request, res: Response, next: NextFunction): void => {
+  const { courseId, uploadedById, title, fileUrl } = req.body;
+
+  if (!courseId || !uploadedById || !title || !fileUrl) {
+    res.status(400).json({ success: false, message: 'courseId, uploadedById, title y fileUrl son obligatorios.' });
+    return;
+  }
+
+  if (!UUID_REGEX.test(courseId) || !UUID_REGEX.test(uploadedById)) {
+    res.status(400).json({ success: false, message: 'courseId y uploadedById deben ser UUIDs válidos.' });
+    return;
+  }
+
+  if (typeof title !== 'string' || title.trim().length < 2) {
+    res.status(400).json({ success: false, message: 'El título del material debe tener al menos 2 caracteres.' });
+    return;
+  }
+
+  next();
+};
+

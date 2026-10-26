@@ -1,13 +1,13 @@
 ### ==============================================================================
 ### SISTEMA DE TUTORÍAS Y CURSOS UNIVERSITARIOS (UPDS) - REST CLIENT SUITE
-### Base URL: Servidor Express Backend
+### Base URL: Servidor Express Backend (Seguridad, Auth JWT, RBAC & Docker)
 ### ==============================================================================
 
 @baseUrl = http://localhost:3001
 @contentType = application/json
 
 ### ------------------------------------------------------------------------------
-### 0. SALUD DE LA API / ROOT
+### 0. SALUD DE LA API / ROOT & CABECERAS DE SEGURIDAD
 ### ------------------------------------------------------------------------------
 
 # @name getRoot
@@ -16,11 +16,136 @@ Accept: {{contentType}}
 
 
 ### ==============================================================================
-### 1. USUARIOS (/api/users)
+### 0.1 MÓDULO DE AUTENTICACIÓN Y SEGURIDAD JWT (/api/auth)
+### ==============================================================================
+
+# @name loginAdmin
+# 1. Login exitoso como Administrador (obtiene JWT con rol admin)
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@upds.edu.bo",
+  "password": "Upds2026"
+}
+
+### Guardar token de respuesta (ejecutar antes de pruebas RBAC)
+@adminToken = {{loginAdmin.response.body.token}}
+
+###
+
+# @name loginTutor
+# 2. Login exitoso como Tutor
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "maria@tutor.com",
+  "password": "Upds2026"
+}
+
+@tutorToken = {{loginTutor.response.body.token}}
+
+###
+
+# @name loginStudent
+# 3. Login exitoso como Estudiante
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "juan@estudiante.com",
+  "password": "Upds2026"
+}
+
+@studentToken = {{loginStudent.response.body.token}}
+
+###
+
+# @name registerNewUser
+# 4. Registro de un nuevo estudiante con validación y hash bcrypt
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "name": "Carlos Gomez",
+  "email": "carlos.gomez@estudiante.upds.edu.bo",
+  "password": "Password2026!",
+  "role": "student"
+}
+
+###
+
+# @name getMeAuth
+# 5. Obtener perfil de usuario autenticado mediante JWT activo
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{adminToken}}
+Accept: {{contentType}}
+
+###
+
+# @name test401MissingToken
+# 6. CASO NEGATIVO: 401 Unauthorized por falta de token JWT
+GET {{baseUrl}}/api/users
+Accept: {{contentType}}
+
+###
+
+# @name test401InvalidToken
+# 7. CASO NEGATIVO: 401 Unauthorized por token corrupto o inválido
+GET {{baseUrl}}/api/users
+Authorization: Bearer token_falso_invalido_upds
+Accept: {{contentType}}
+
+###
+
+# @name test403ForbiddenRole
+# 8. CASO NEGATIVO: 403 Forbidden cuando un estudiante intenta crear un curso (requiere rol admin)
+POST {{baseUrl}}/api/courses
+Authorization: Bearer {{studentToken}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Curso No Autorizado",
+  "description": "Intento de estudiante"
+}
+
+###
+
+# @name test400ShortPassword
+# 9. CASO NEGATIVO: 400 Bad Request por formato de contraseña inválido
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "name": "Pedro Perez",
+  "email": "pedro@upds.edu.bo",
+  "password": "123",
+  "role": "student"
+}
+
+###
+
+# @name testSanitizationXSS
+# 10. PRUEBA DE SEGURIDAD: Sanitización de inyecciones XSS en el payload
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "name": "Marta <script>alert('XSS')</script>",
+  "email": "marta.xss@upds.edu.bo",
+  "password": "SecurePassword2026!",
+  "role": "student"
+}
+
+
+### ==============================================================================
+### 1. USUARIOS (/api/users) - Requiere RBAC Admin/Tutor
 ### ==============================================================================
 
 # @name getAllUsers
 GET {{baseUrl}}/api/users
+Authorization: Bearer {{adminToken}}
 Accept: {{contentType}}
 
 ###
@@ -302,7 +427,89 @@ Accept: {{contentType}}
 
 
 ### ==============================================================================
-### 7. CASOS DE PRUEBA DE VALIDACIÓN Y MANEJO DE ERRORES (400 / 404 / 409)
+### 7. CALIFICACIONES Y RESEÑAS (/api/reviews)
+### ==============================================================================
+
+# @name getAllReviews
+GET {{baseUrl}}/api/reviews
+Accept: {{contentType}}
+
+###
+
+# @name getReviewsByTutoria
+GET {{baseUrl}}/api/reviews?tutoriaId=a1b2c3d4-e5f6-4a1b-8c2d-3e4f5a6b7c8d
+Accept: {{contentType}}
+
+###
+
+# @name createReview
+POST {{baseUrl}}/api/reviews
+Content-Type: {{contentType}}
+
+{
+  "tutoriaId": "b2c3d4e5-f6a1-4b2c-9d3e-4f5a6b7c8d9e",
+  "studentId": "{{sampleUserId}}",
+  "rating": 5,
+  "comment": "La sesión virtual de cálculo fue muy dinámica y resolvió todos los ejercicios de integrales."
+}
+
+###
+
+# @name updateReview
+PUT {{baseUrl}}/api/reviews/990e8400-e29b-41d4-a716-446655440010
+Content-Type: {{contentType}}
+
+{
+  "rating": 5,
+  "comment": "Actualización: Excelente explicación con código en vivo."
+}
+
+###
+
+# @name deleteReview
+DELETE {{baseUrl}}/api/reviews/990e8400-e29b-41d4-a716-446655440010
+Accept: {{contentType}}
+
+
+### ==============================================================================
+### 8. MATERIALES Y RECURSOS EN S3 (/api/materials)
+### ==============================================================================
+
+# @name getAllMaterials
+GET {{baseUrl}}/api/materials
+Accept: {{contentType}}
+
+###
+
+# @name getMaterialsByCourse
+GET {{baseUrl}}/api/materials?courseId=7602b258-16be-4d49-9160-19d5e2b14422
+Accept: {{contentType}}
+
+###
+
+# @name createMaterial
+POST {{baseUrl}}/api/materials
+Content-Type: {{contentType}}
+
+{
+  "courseId": "7602b258-16be-4d49-9160-19d5e2b14422",
+  "uploadedById": "dfacc15e-e3ae-4d1c-9a88-f5fc2f464914",
+  "title": "Diapositivas: Patrones de Arquitectura Backend",
+  "description": "Presentación sobre Clean Architecture, Repositorios y Servicios.",
+  "fileUrl": "https://sistema-tutorias-upds.s3.us-east-2.amazonaws.com/materials/arquitectura-backend-upds.pdf",
+  "fileType": "pdf"
+}
+
+###
+
+# @name deleteMaterial
+DELETE {{baseUrl}}/api/materials/880e8400-e29b-41d4-a716-446655440020
+Accept: {{contentType}}
+
+
+### ==============================================================================
+### 9. CASOS DE PRUEBA DE VALIDACIÓN Y MANEJO DE ERRORES (400 / 404 / 409)
+
 ### ==============================================================================
 
 # @name testInvalidUuid_Expect400
