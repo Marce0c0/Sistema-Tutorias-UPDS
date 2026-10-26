@@ -6,6 +6,7 @@ import { Modal } from '../components/Modal.js';
 import { Toast } from '../components/Toast.js';
 import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
+import { Icons } from '../components/Icons.js';
 
 export const UsersView = {
   render() {
@@ -28,7 +29,7 @@ export const UsersView = {
         bodyContainer.innerHTML = '';
         bodyContainer.appendChild(
           EmptyState({
-            icon: '👥',
+            icon: Icons.users('', 36),
             title: 'No se encontraron usuarios',
             description: currentRoleFilter ? 'No hay usuarios registrados con el rol seleccionado.' : 'Comienza creando el primer usuario.',
             actionText: '+ Registrar Usuario',
@@ -58,8 +59,12 @@ export const UsersView = {
                   <td>${Badge.role(u.role)}</td>
                   <td>${Badge.formatDate(u.createdAt)}</td>
                   <td class="text-right">
-                    <button class="btn btn-xs btn-outline btn-edit-user" data-id="${u.id}">✏️ Editar</button>
-                    <button class="btn btn-xs btn-danger-outline btn-delete-user" data-id="${u.id}">🗑️ Eliminar</button>
+                    <button class="btn btn-xs btn-outline btn-edit-user" data-id="${u.id}" style="display:inline-flex; align-items:center; gap:0.25rem;">
+                      ${Icons.edit('', 12)} <span>Editar</span>
+                    </button>
+                    <button class="btn btn-xs btn-danger-outline btn-delete-user" data-id="${u.id}" style="display:inline-flex; align-items:center; gap:0.25rem;">
+                      ${Icons.trash('', 12)} <span>Eliminar</span>
+                    </button>
                   </td>
                 </tr>
               `).join('')}

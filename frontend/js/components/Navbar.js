@@ -4,6 +4,7 @@ import { api } from '../services/api.js';
 import { ENV } from '../config/env.js';
 import { Modal } from './Modal.js';
 import { Toast } from './Toast.js';
+import { Icons } from './Icons.js';
 import { can } from '../utils/permissions.js';
 
 const ROLES = [
@@ -24,17 +25,17 @@ export const Navbar = {
     const navItems = isWelcome
       ? []
       : [
-          { id: 'dashboard', label: 'Dashboard', icon: '📊', permission: 'view.dashboard' },
-          { id: 'users', label: 'Usuarios', icon: '👥', permission: 'view.users' },
-          { id: 'courses', label: 'Cursos & Talleres', icon: '📚', permission: 'view.courses' },
-          { id: 'tutorias', label: 'Tutorías', icon: '🎓', permission: 'view.tutorias' },
-          { id: 'events', label: 'Eventos & Hackathons', icon: '🏆', permission: 'view.events' },
-          { id: 'bookings', label: 'Reservas', icon: '📅', permission: 'view.bookings' },
-          { id: 'forums', label: 'Foro de Dudas', icon: '💬', permission: 'view.forums' },
+          { id: 'dashboard', label: 'Dashboard', icon: Icons.dashboard('nav-icon', 16), permission: 'view.dashboard' },
+          { id: 'users', label: 'Usuarios', icon: Icons.users('nav-icon', 16), permission: 'view.users' },
+          { id: 'courses', label: 'Cursos & Talleres', icon: Icons.book('nav-icon', 16), permission: 'view.courses' },
+          { id: 'tutorias', label: 'Tutorías', icon: Icons.cap('nav-icon', 16), permission: 'view.tutorias' },
+          { id: 'events', label: 'Eventos & Hackathons', icon: Icons.trophy('nav-icon', 16), permission: 'view.events' },
+          { id: 'bookings', label: 'Reservas', icon: Icons.calendar('nav-icon', 16), permission: 'view.bookings' },
+          { id: 'forums', label: 'Foro de Dudas', icon: Icons.chat('nav-icon', 16), permission: 'view.forums' },
           {
             id: 'notifications',
             label: 'Notificaciones',
-            icon: '🔔',
+            icon: Icons.bell('nav-icon', 16),
             permission: 'view.notifications',
             badge: state.stats.unreadNotifications > 0 ? state.stats.unreadNotifications : null,
           },
@@ -65,17 +66,17 @@ export const Navbar = {
                   ? `
                   <span class="role-tag" style="background:#475569;color:#ffffff;font-size:0.72rem;font-weight:700;">MODO INVITADO</span>
                   <button id="headbar-login-btn" class="btn btn-sm btn-primary" style="background:#004b93;border-color:#004b93;color:#ffffff;font-size:0.78rem;">
-                    🔑 Iniciar Sesión
+                    ${Icons.key('btn-svg-icon', 14)} <span>Iniciar Sesión</span>
                   </button>
                   <button id="headbar-home-btn" class="btn btn-sm btn-outline" style="color:#ffffff;border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.12);font-size:0.78rem;" title="Volver a la pantalla principal">
-                    🏠 Regresar al Inicio
+                    ${Icons.home('btn-svg-icon', 14)} <span>Regresar al Inicio</span>
                   </button>
                 `
                   : isAuthenticated
                   ? `
                   <div class="auth-user-badge">
                     <span class="role-tag role-${activeUser.role}">${ROLES.find((r) => r.id === activeUser.role)?.label || activeUser.role}</span>
-                    <span class="session-label" title="${activeUser.email}">👤 ${activeUser.name}</span>
+                    <span class="session-label" title="${activeUser.email}">${Icons.user('btn-svg-icon', 13)} ${activeUser.name}</span>
                   </div>
                 `
                   : ''
@@ -87,9 +88,9 @@ export const Navbar = {
           <div class="header-right-cluster" style="display:flex; align-items:center; gap:0.5rem;">
             ${
               isAuthenticated
-                ? `<button id="logout-btn" class="btn btn-sm btn-secondary" title="Cerrar Sesión JWT">Salir</button>`
+                ? `<button id="logout-btn" class="btn btn-sm btn-secondary" title="Cerrar Sesión JWT">${Icons.logout('btn-svg-icon', 14)} Salir</button>`
                 : isWelcome
-                ? `<button id="headbar-guest-btn" class="btn btn-sm btn-outline" style="color:#ffffff;border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.1);">🌐 Modo Invitado</button>`
+                ? `<button id="headbar-guest-btn" class="btn btn-sm btn-outline" style="color:#ffffff;border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.1);">${Icons.globe('btn-svg-icon', 14)} Modo Invitado</button>`
                 : ''
             }
             <!-- Botón Menú Móvil -->

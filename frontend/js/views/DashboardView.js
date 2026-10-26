@@ -3,6 +3,7 @@ import { store } from '../state/store.js';
 import { StatCard } from '../components/StatCard.js';
 import { Badge } from '../components/Badge.js';
 import { can } from '../utils/permissions.js';
+import { Icons } from '../components/Icons.js';
 
 export const DashboardView = {
   render() {
@@ -42,7 +43,7 @@ export const DashboardView = {
         StatCard({
           title: 'Estudiantes y Tutores',
           value: stats.totalUsers,
-          icon: '👥',
+          icon: Icons.users('', 22),
           subtitle: 'Usuarios en plataforma',
           color: 'blue',
           onClick: () => store.setView('users'),
@@ -54,7 +55,7 @@ export const DashboardView = {
       StatCard({
         title: 'Cursos y Materias',
         value: stats.totalCourses,
-        icon: '📚',
+        icon: Icons.book('', 22),
         subtitle: 'Catálogo académico',
         color: 'indigo',
         onClick: () => store.setView('courses'),
@@ -65,7 +66,7 @@ export const DashboardView = {
       StatCard({
         title: 'Tutorías Activas',
         value: stats.activeTutorias,
-        icon: '🎓',
+        icon: Icons.cap('', 22),
         subtitle: 'Sesiones grupales / indiv.',
         color: 'emerald',
         onClick: () => store.setView('tutorias'),
@@ -76,7 +77,7 @@ export const DashboardView = {
       StatCard({
         title: 'Reservas Realizadas',
         value: visibleBookings.length,
-        icon: '📅',
+        icon: Icons.calendar('', 22),
         subtitle: seesAllBookings ? 'Citas agendadas' : 'Mis citas agendadas',
         color: 'amber',
         onClick: () => store.setView('bookings'),
@@ -103,7 +104,7 @@ export const DashboardView = {
           <ul class="activity-list">
             ${upcomingTutorias.map((t) => `
               <li class="activity-item">
-                <div class="activity-icon">🎓</div>
+                <div class="activity-icon" style="display:flex; align-items:center; justify-content:center;">${Icons.cap('', 18)}</div>
                 <div class="activity-content">
                   <div class="activity-title">${t.title}</div>
                   <div class="activity-meta">
@@ -135,7 +136,7 @@ export const DashboardView = {
           <ul class="activity-list">
             ${recentBookings.map((b) => `
               <li class="activity-item">
-                <div class="activity-icon">📅</div>
+                <div class="activity-icon" style="display:flex; align-items:center; justify-content:center;">${Icons.calendar('', 18)}</div>
                 <div class="activity-content">
                   <div class="activity-title">${b.student?.name || 'Estudiante'}</div>
                   <div class="activity-meta">

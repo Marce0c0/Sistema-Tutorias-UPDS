@@ -7,6 +7,7 @@ import { Toast } from '../components/Toast.js';
 import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
 import { can } from '../utils/permissions.js';
+import { Icons } from '../components/Icons.js';
 
 export const ForumsView = {
   render() {
@@ -27,7 +28,7 @@ export const ForumsView = {
         bodyContainer.innerHTML = '';
         bodyContainer.appendChild(
           EmptyState({
-            icon: '💬',
+            icon: Icons.chat('', 36),
             title: 'No hay consultas en el foro',
             description: selectedCourseId ? 'No hay preguntas publicadas para esta materia aún.' : 'Sé el primero en iniciar una consulta académica.',
             actionText: '+ Publicar Consulta',
@@ -53,8 +54,8 @@ export const ForumsView = {
                   <span class="course-pill">${m.course?.title || 'Materia'}</span>
                   ${canModerate || m.userId === state.activeUser?.id ? `
                     <div class="forum-actions">
-                      <button class="btn btn-xs btn-outline btn-edit-forum" data-id="${m.id}" title="Editar">✏️</button>
-                      <button class="btn btn-xs btn-danger-outline btn-delete-forum" data-id="${m.id}" title="Eliminar">🗑️</button>
+                      <button class="btn btn-xs btn-outline btn-edit-forum" data-id="${m.id}" title="Editar" style="display:inline-flex; align-items:center; justify-content:center;">${Icons.edit('', 12)}</button>
+                      <button class="btn btn-xs btn-danger-outline btn-delete-forum" data-id="${m.id}" title="Eliminar" style="display:inline-flex; align-items:center; justify-content:center;">${Icons.trash('', 12)}</button>
                     </div>
                   ` : ''}
                 </div>

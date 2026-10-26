@@ -9,6 +9,7 @@ import { EmptyState } from '../components/EmptyState.js';
 import { can } from '../utils/permissions.js';
 import { Navbar } from '../components/Navbar.js';
 import { withButtonLoading } from '../utils/button.js';
+import { Icons } from '../components/Icons.js';
 
 export const TutoriasView = {
   render() {
@@ -28,7 +29,7 @@ export const TutoriasView = {
           normalPrice: '120 Bs',
           studentPrice: '50 Bs',
           discountTag: '58% DCTO. UPDS',
-          btnLabel: '📅 Reservar con Descuento (50 Bs)',
+          btnLabel: 'Reservar con Descuento (50 Bs)',
         };
       }
       if (text.includes('[tarifa: discount]') || text.includes('apis rest') || text.includes('bootcamp') || text.includes('cloud') || text.includes('inteligencia artificial') || text.includes('docker')) {
@@ -37,7 +38,7 @@ export const TutoriasView = {
           normalPrice: '70 Bs',
           studentPrice: '35 Bs',
           discountTag: '50% DCTO. UPDS',
-          btnLabel: '📅 Reservar con Descuento (35 Bs)',
+          btnLabel: 'Reservar con Descuento (35 Bs)',
         };
       }
       // Por defecto para clases extra introductorias y magistrales ofrecidas por docentes
@@ -46,7 +47,7 @@ export const TutoriasView = {
         normalPrice: '0 Bs',
         studentPrice: '0 Bs',
         discountTag: '100% SUBVENCIONADA',
-        btnLabel: '📅 Reservar Cupo Gratis (0 Bs)',
+        btnLabel: 'Reservar Cupo Gratis (0 Bs)',
       };
     };
 
@@ -65,7 +66,7 @@ export const TutoriasView = {
         bodyContainer.innerHTML = '';
         bodyContainer.appendChild(
           EmptyState({
-            icon: '🎓',
+            icon: Icons.cap('', 36),
             title: 'No hay clases extra programadas',
             description: 'Programa una nueva clase extra o sesión de tutoría con docentes para los estudiantes.',
             actionText: canManage ? '+ Programar Clase Extra' : undefined,
@@ -91,7 +92,7 @@ export const TutoriasView = {
                     <span class="course-pill">${t.course?.title || 'Materia'}</span>
                     <div class="tutoria-badges-cluster">
                       <span class="tutoria-modality-badge ${isPresencial ? 'modality-presencial' : 'modality-virtual'}">
-                        ${isPresencial ? '🏢 Presencial' : '💻 Virtual'}
+                        ${isPresencial ? Icons.building('', 12) + ' Presencial' : Icons.laptop('', 12) + ' Virtual'}
                       </span>
                       ${Badge.tutoriaStatus(t.status)}
                     </div>
@@ -104,7 +105,7 @@ export const TutoriasView = {
                   ${pricing.isFree ? `
                     <div class="tutoria-pricing-box pricing-free">
                       <div class="pricing-top-row">
-                        <span class="pricing-badge-label">🎉 100% Gratuito</span>
+                        <span class="pricing-badge-label">${Icons.award('', 14)} 100% Gratuito</span>
                         <span class="pricing-amount-badge">0 Bs</span>
                       </div>
                       <span class="pricing-legend">Clase Extra Universitaria (Subvencionada por UPDS sin costo)</span>
@@ -122,21 +123,21 @@ export const TutoriasView = {
                         </div>
                         <span class="price-discount-tag">${pricing.discountTag}</span>
                       </div>
-                      <span class="pricing-legend">🎓 Tarifa preferencial válida con credencial o correo @upds.edu.bo</span>
+                      <span class="pricing-legend">${Icons.cap('', 13)} Tarifa preferencial válida con credencial o correo @upds.edu.bo</span>
                     </div>
                   `}
 
                   <div class="tutoria-meta">
                     <div class="meta-row">
-                      <span class="meta-label">📅 Fecha y Hora:</span>
+                      <span class="meta-label" style="display:inline-flex;align-items:center;gap:0.35rem;">${Icons.calendar('', 13)} Fecha y Hora:</span>
                       <span class="meta-val">${Badge.formatDate(t.date)}</span>
                     </div>
                     <div class="meta-row">
-                      <span class="meta-label">👨‍🏫 Tutor Docente:</span>
+                      <span class="meta-label" style="display:inline-flex;align-items:center;gap:0.35rem;">${Icons.cap('', 13)} Tutor Docente:</span>
                       <span class="meta-val">${t.course?.tutor?.name || 'No asignado'}</span>
                     </div>
                     <div class="meta-row">
-                      <span class="meta-label">📍 Ubicación:</span>
+                      <span class="meta-label" style="display:inline-flex;align-items:center;gap:0.35rem;">${Icons.pin('', 13)} Ubicación:</span>
                       <span class="meta-val">${t.location || (t.meetingUrl ? `<a href="${t.meetingUrl}" target="_blank" rel="noreferrer">Enlace a Google Meet</a>` : 'Campus Central UPDS')}</span>
                     </div>
                   </div>
@@ -144,7 +145,7 @@ export const TutoriasView = {
                   <div class="capacity-box">
                     <div class="capacity-labels">
                       <span>Aforo: ${bookingsCount} / ${t.maxStudents} estudiantes</span>
-                      <span class="${isFull ? 'text-danger font-semibold' : 'text-muted'}">${isFull ? '¡Cupos Agotados!' : `${t.maxStudents - bookingsCount} disp.`}</span>
+                      <span class="${isFull ? 'text-danger font-semibold' : 'text-muted'}">${isFull ? 'Cupos Agotados' : `${t.maxStudents - bookingsCount} disp.`}</span>
                     </div>
                     <div class="progress-bar">
                       <div class="progress-fill ${isFull ? 'progress-full' : ''}" style="width: ${percent}%;"></div>
@@ -154,19 +155,19 @@ export const TutoriasView = {
 
                 <div class="tutoria-footer">
                   ${canBook ? `
-                    <button class="btn btn-sm btn-primary btn-book-tutoria" data-id="${t.id}" data-course-id="${t.courseId}" data-date="${t.date}" style="flex:1;" ${isFull || t.status !== 'active' ? 'disabled' : ''}>
-                      ${pricing.btnLabel}
+                    <button class="btn btn-sm btn-primary btn-book-tutoria" data-id="${t.id}" data-course-id="${t.courseId}" data-date="${t.date}" style="flex:1; gap:0.45rem;" ${isFull || t.status !== 'active' ? 'disabled' : ''}>
+                      ${Icons.calendar('', 14)} <span>${pricing.btnLabel}</span>
                     </button>
                   ` : ''}
                   ${!state.activeUser || state.activeUser.role === 'guest' ? `
-                    <button class="btn btn-sm btn-outline-primary btn-guest-book" data-id="${t.id}" style="flex:1; border-color:#004b93; color:#004b93; font-weight:600;" ${isFull || t.status !== 'active' ? 'disabled' : ''}>
-                      🔒 Iniciar sesión para reservar (${pricing.isFree ? 'Gratis' : pricing.studentPrice})
+                    <button class="btn btn-sm btn-outline-primary btn-guest-book" data-id="${t.id}" style="flex:1; border-color:#004b93; color:#004b93; font-weight:600; gap:0.45rem;" ${isFull || t.status !== 'active' ? 'disabled' : ''}>
+                      ${Icons.lock('', 14)} <span>Iniciar sesión para reservar (${pricing.isFree ? 'Gratis' : pricing.studentPrice})</span>
                     </button>
                   ` : ''}
                   ${canManage ? `
                     <div class="footer-actions">
-                      <button class="btn btn-xs btn-outline btn-edit-tutoria" data-id="${t.id}" title="Editar sesión">✏️</button>
-                      <button class="btn btn-xs btn-danger-outline btn-delete-tutoria" data-id="${t.id}" title="Eliminar sesión">🗑️</button>
+                      <button class="btn btn-xs btn-outline btn-edit-tutoria" data-id="${t.id}" title="Editar sesión">${Icons.edit('', 13)}</button>
+                      <button class="btn btn-xs btn-danger-outline btn-delete-tutoria" data-id="${t.id}" title="Eliminar sesión">${Icons.trash('', 13)}</button>
                     </div>
                   ` : ''}
                 </div>
@@ -212,7 +213,7 @@ export const TutoriasView = {
     container.innerHTML = `
       <div class="view-header">
         <div>
-          <h2 class="view-title">🎓 Clases Extra & Tutorías Docentes UPDS</h2>
+          <h2 class="view-title" style="display:flex;align-items:center;gap:0.5rem;">${Icons.cap('', 22)} <span>Clases Extra & Tutorías Docentes UPDS</span></h2>
           <p class="view-subtitle">Clases complementarias, talleres prácticos y sesiones extra impartidas por docentes universitarios, independientes al plan regular de materias.</p>
         </div>
         <div class="view-actions">
@@ -222,7 +223,7 @@ export const TutoriasView = {
 
       <!-- Banner Institucional de Política de Precios y Subvención -->
       <div class="tutorias-pricing-banner">
-        <span class="pricing-banner-icon">🎓</span>
+        <span class="pricing-banner-icon" style="color:var(--primary-blue); display:inline-flex;">${Icons.cap('', 28)}</span>
         <div>
           <h3 class="pricing-banner-title">Clases Extra Universitarias & Tarifas Preferenciales UPDS</h3>
           <p class="pricing-banner-desc">
@@ -327,13 +328,13 @@ export const TutoriasView = {
               <label class="form-label" for="tutoria-pricing-select">Modalidad de Tarifa / Costo *</label>
               <select id="tutoria-pricing-select" class="form-control">
                 <option value="free" ${!tutoria?.description || tutoria?.description?.includes('[tarifa: free]') ? 'selected' : ''}>
-                  🎉 100% Gratuita (Clase Extra Subvencionada por UPDS — 0 Bs)
+                  100% Gratuita (Clase Extra Subvencionada por UPDS — 0 Bs)
                 </option>
                 <option value="discount" ${tutoria?.description?.includes('[tarifa: discount]') ? 'selected' : ''}>
-                  🏷️ Clase Extra Práctica con Descuento (Normal: 70 Bs | Estudiantes UPDS: 35 Bs)
+                  Clase Extra Práctica con Descuento (Normal: 70 Bs | Estudiantes UPDS: 35 Bs)
                 </option>
                 <option value="cert" ${tutoria?.description?.includes('[tarifa: cert]') ? 'selected' : ''}>
-                  🏆 Certificación Técnica Extra (Normal: 120 Bs | Estudiantes UPDS: 50 Bs)
+                  Certificación Técnica Extra (Normal: 120 Bs | Estudiantes UPDS: 50 Bs)
                 </option>
               </select>
             </div>

@@ -6,6 +6,7 @@ import { Toast } from '../components/Toast.js';
 import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
 import { can } from '../utils/permissions.js';
+import { Icons } from '../components/Icons.js';
 
 export const CoursesView = {
   render() {
@@ -29,7 +30,7 @@ export const CoursesView = {
         bodyContainer.innerHTML = '';
         bodyContainer.appendChild(
           EmptyState({
-            icon: '📚',
+            icon: Icons.book('', 36),
             title: 'No hay cursos extracurriculares registrados',
             description: 'Comienza creando el primer taller o programa de extensión.',
             actionText: canManage ? '+ Crear Curso' : undefined,
@@ -47,8 +48,8 @@ export const CoursesView = {
                 <span class="course-tag">Curso Extracurricular / Taller</span>
                 ${canManage ? `
                   <div class="course-actions">
-                    <button class="btn btn-xs btn-outline btn-edit-course" data-id="${c.id}" title="Editar">✏️</button>
-                    <button class="btn btn-xs btn-danger-outline btn-delete-course" data-id="${c.id}" title="Eliminar">🗑️</button>
+                    <button class="btn btn-xs btn-outline btn-edit-course" data-id="${c.id}" title="Editar">${Icons.edit('', 13)}</button>
+                    <button class="btn btn-xs btn-danger-outline btn-delete-course" data-id="${c.id}" title="Eliminar">${Icons.trash('', 13)}</button>
                   </div>
                 ` : ''}
               </div>
@@ -56,7 +57,7 @@ export const CoursesView = {
               <p class="course-desc">${c.description || 'Sin descripción detallada disponible.'}</p>
               <div class="course-footer">
                 <div class="course-tutor">
-                  <span class="tutor-avatar">👨‍🏫</span>
+                  <span class="tutor-avatar" style="color:var(--primary-navy);display:inline-flex;align-items:center;justify-content:center;background:#e8f1fa;border-radius:50%;width:32px;height:32px;">${Icons.cap('', 16)}</span>
                   <div class="tutor-info">
                     <span class="tutor-label">Instructor / Tutor:</span>
                     <span class="tutor-name">${c.tutor?.name || 'No asignado'}</span>

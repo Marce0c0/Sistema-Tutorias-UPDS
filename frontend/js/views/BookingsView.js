@@ -8,6 +8,7 @@ import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
 import { can } from '../utils/permissions.js';
 import { withButtonLoading } from '../utils/button.js';
+import { Icons } from '../components/Icons.js';
 
 export const BookingsView = {
   render() {
@@ -30,7 +31,7 @@ export const BookingsView = {
         bodyContainer.innerHTML = '';
         bodyContainer.appendChild(
           EmptyState({
-            icon: '📅',
+            icon: Icons.calendar('', 36),
             title: 'No hay reservas registradas',
             description: canManage
               ? 'Los estudiantes pueden agendar clases extra y sesiones con docentes universitarios.'
@@ -71,15 +72,15 @@ export const BookingsView = {
                   <td>${Badge.formatDate(b.scheduledAt)}</td>
                   <td>${Badge.bookingStatus(b.status)}</td>
                   <td class="text-right">
-                    <div class="action-btn-group">
+                    <div class="action-btn-group" style="display:inline-flex; align-items:center; gap:0.3rem;">
                       ${canManage && b.status !== 'confirmed' ? `
-                        <button class="btn btn-xs btn-success-outline btn-status-booking" data-id="${b.id}" data-status="confirmed" title="Confirmar">✓</button>
+                        <button class="btn btn-xs btn-success-outline btn-status-booking" data-id="${b.id}" data-status="confirmed" title="Confirmar" style="display:inline-flex; align-items:center; justify-content:center;">${Icons.check('', 12)}</button>
                       ` : ''}
                       ${(canManage || isOwn) && b.status !== 'cancelled' ? `
-                        <button class="btn btn-xs btn-warning-outline btn-status-booking" data-id="${b.id}" data-status="cancelled" title="Cancelar">✕</button>
+                        <button class="btn btn-xs btn-warning-outline btn-status-booking" data-id="${b.id}" data-status="cancelled" title="Cancelar" style="display:inline-flex; align-items:center; justify-content:center;">${Icons.x('', 12)}</button>
                       ` : ''}
                       ${canManage ? `
-                        <button class="btn btn-xs btn-danger-outline btn-delete-booking" data-id="${b.id}" title="Eliminar">🗑️</button>
+                        <button class="btn btn-xs btn-danger-outline btn-delete-booking" data-id="${b.id}" title="Eliminar" style="display:inline-flex; align-items:center; justify-content:center;">${Icons.trash('', 12)}</button>
                       ` : ''}
                     </div>
                   </td>

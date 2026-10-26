@@ -1,19 +1,15 @@
 // Vista de Hackathons y Eventos Tecnológicos Externos (Cochabamba) — Sistema-Tutoriales-UPDS
 import { store } from '../state/store.js';
 import { Modal } from '../components/Modal.js';
+import { Icons } from '../components/Icons.js';
 
-export const EventsView = {
-  render() {
-    const container = document.createElement('div');
-    container.className = 'view-content animate-fade-in';
-
-    const eventsData = [
+export const EVENTS_DATA = [
       {
         id: 'hackathon-cbba-2026',
         title: 'Hackathon Cochabamba Innova Tech 2026',
         category: 'hackathon',
         organizer: 'Alcaldía de Cochabamba & Hub de Innovación Tech',
-        badge: '🔥 Convocatoria Abierta',
+        badge: 'Convocatoria Abierta',
         badgeColor: '#dc2626',
         date: '5 al 7 de Noviembre, 2026',
         location: 'Recinto Ferial Alalay — Pabellón Cochabamba Tech',
@@ -28,7 +24,7 @@ export const EventsView = {
         title: 'Torneo Departamental de Ciberseguridad & CTF Cochabamba',
         category: 'security',
         organizer: 'Comunidades Tech Cochabamba & Aliados Ciberseguridad',
-        badge: '⚡ Clasificatoria Virtual',
+        badge: 'Clasificatoria Virtual',
         badgeColor: '#2563eb',
         date: '12 al 14 de Noviembre, 2026',
         location: 'Plataforma CTFd / Discord Oficial Tech Cochabamba',
@@ -43,7 +39,7 @@ export const EventsView = {
         title: 'Feria de Innovación & Emprendimiento Digital "Llajta Tech"',
         category: 'feria',
         organizer: 'Secretaría de Desarrollo Productivo & Alcaldía de Cochabamba',
-        badge: '📅 Próximamente (Diciembre 2026)',
+        badge: 'Próximamente (Diciembre 2026)',
         badgeColor: '#059669',
         date: '1 al 3 de Diciembre, 2026',
         location: 'Paseo de El Prado / Centro de Convenciones Cochabamba',
@@ -55,16 +51,22 @@ export const EventsView = {
       },
     ];
 
-    container.innerHTML = `
+    export const EventsView = {
+      render() {
+        const container = document.createElement('div');
+        container.className = 'view-content animate-fade-in';
+        const eventsData = EVENTS_DATA;
+
+        container.innerHTML = `
       <div class="view-header">
         <div>
-          <h2 class="view-title">🏆 Eventos & Hackathons Tecnológicos — Cochabamba</h2>
+          <h2 class="view-title" style="display:flex;align-items:center;gap:0.5rem;">${Icons.trophy('', 22)} <span>Eventos & Hackathons Tecnológicos — Cochabamba</span></h2>
           <p class="view-subtitle">Convocatorias externas, desafíos de innovación Smart City y torneos impulsados por la Alcaldía de Cochabamba y aliados del ecosistema.</p>
         </div>
       </div>
 
       <div class="events-disclaimer-card">
-        <span class="events-disclaimer-icon">🏛️</span>
+        <span class="events-disclaimer-icon" style="color:var(--primary-navy);display:inline-flex;">${Icons.building('', 26)}</span>
         <div>
           <h3 class="events-disclaimer-title">Vinculación con el Ecosistema Tecnológico de Cochabamba</h3>
           <p class="events-disclaimer-desc">
@@ -81,7 +83,7 @@ export const EventsView = {
             <div>
               <div class="event-card-header">
                 <span class="event-badge-status">${ev.badge}</span>
-                <span class="event-badge-location">📍 Cochabamba</span>
+                <span class="event-badge-location" style="display:inline-flex;align-items:center;gap:0.3rem;">${Icons.pin('', 12)} Cochabamba</span>
               </div>
 
               <h3 class="event-title">${ev.title}</h3>
@@ -89,19 +91,19 @@ export const EventsView = {
 
               <div class="event-meta-box">
                 <div class="event-meta-row">
-                  <span class="event-meta-label">🏛️ Organizador:</span>
+                  <span class="event-meta-label" style="display:inline-flex;align-items:center;gap:0.35rem;">${Icons.building('', 13)} Organizador:</span>
                   <span class="event-meta-val">${ev.organizer}</span>
                 </div>
                 <div class="event-meta-row">
-                  <span class="event-meta-label">📅 Fechas:</span>
+                  <span class="event-meta-label" style="display:inline-flex;align-items:center;gap:0.35rem;">${Icons.calendar('', 13)} Fechas:</span>
                   <span class="event-meta-val">${ev.date}</span>
                 </div>
                 <div class="event-meta-row">
-                  <span class="event-meta-label">📍 Sede:</span>
+                  <span class="event-meta-label" style="display:inline-flex;align-items:center;gap:0.35rem;">${Icons.pin('', 13)} Sede:</span>
                   <span class="event-meta-val">${ev.location}</span>
                 </div>
                 <div class="event-meta-row">
-                  <span class="event-meta-label">👥 Modalidad:</span>
+                  <span class="event-meta-label" style="display:inline-flex;align-items:center;gap:0.35rem;">${Icons.users('', 13)} Modalidad:</span>
                   <span class="event-meta-val">${ev.modality}</span>
                 </div>
               </div>
@@ -115,11 +117,11 @@ export const EventsView = {
             </div>
 
             <div class="event-card-footer">
-              <button class="btn btn-sm btn-outline btn-event-details" data-id="${ev.id}">
-                📋 Ver Bases
+              <button class="btn btn-sm btn-outline btn-event-details" data-id="${ev.id}" style="gap:0.4rem;">
+                ${Icons.fileText('', 14)} <span>Ver Bases</span>
               </button>
-              <a href="${ev.link}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary" title="Abrir sitio web o red social de la convocatoria">
-                🚀 Ir a Convocatoria ↗
+              <a href="${ev.link}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary" title="Abrir sitio web o red social de la convocatoria" style="gap:0.4rem;">
+                ${Icons.rocket('', 14)} <span>Ir a Convocatoria</span> ${Icons.external('', 12)}
               </a>
             </div>
           </div>
@@ -144,7 +146,7 @@ export const EventsView = {
                 <p><strong>Modalidad:</strong> ${ev.modality}</p>
                 <hr style="border:0;border-top:1px solid #e2e8f0;margin:10px 0;"/>
                 <p><strong>Descripción Detallada:</strong><br/>${ev.description}</p>
-                <p><strong>Premios e Incentivos:</strong><br/><span style="color:#059669;font-weight:600;">🏆 ${ev.prizes}</span></p>
+                <p><strong>Premios e Incentivos:</strong><br/><span style="display:inline-flex; align-items:center; gap:0.35rem; color:#059669; font-weight:600;">${Icons.award('', 15)} <span>${ev.prizes}</span></span></p>
                 <div style="background:#f8fafc;padding:10px;border-radius:6px;border:1px solid #e2e8f0;margin-top:12px;">
                   <strong>Requisitos de Participación:</strong>
                   <ul style="margin:4px 0 0 16px;padding:0;">
@@ -154,12 +156,12 @@ export const EventsView = {
                   </ul>
                 </div>
                 <div style="margin-top:12px;padding:8px 12px;background:#eff6ff;border-left:3px solid #0284c7;border-radius:4px;font-size:0.83rem;color:#1e3a8a;">
-                  ℹ️ <strong>Difusión Informativa UPDS:</strong> Convocatoria externa a la universidad. La inscripción se formaliza directamente en la web o red social del organizador.
+                  <strong>Difusión Informativa UPDS:</strong> Convocatoria externa a la universidad. La inscripción se formaliza directamente en la web o red social del organizador.
                 </div>
               </div>
             `,
             cancelText: 'Cerrar',
-            confirmText: '🌐 Ir al Sitio Oficial / Red Social ↗',
+            confirmText: 'Ir al Sitio Oficial / Red Social ↗',
             onConfirm: () => {
               window.open(ev.link, '_blank', 'noopener,noreferrer');
             },

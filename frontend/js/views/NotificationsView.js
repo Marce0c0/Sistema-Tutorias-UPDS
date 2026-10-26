@@ -8,6 +8,7 @@ import { Validators } from '../utils/validators.js';
 import { EmptyState } from '../components/EmptyState.js';
 import { can } from '../utils/permissions.js';
 import { withButtonLoading } from '../utils/button.js';
+import { Icons } from '../components/Icons.js';
 
 export const NotificationsView = {
   render() {
@@ -32,7 +33,7 @@ export const NotificationsView = {
         bodyContainer.innerHTML = '';
         bodyContainer.appendChild(
           EmptyState({
-            icon: '🔔',
+            icon: Icons.bell('', 36),
             title: 'No hay notificaciones',
             description: selectedUserId ? 'El usuario seleccionado no tiene alertas pendientes.' : 'No existen avisos o recordatorios en el sistema.',
             actionText: canSend ? '+ Enviar Notificación' : undefined,
@@ -55,10 +56,10 @@ export const NotificationsView = {
                     <span class="notification-date">· ${Badge.formatDate(n.createdAt)}</span>
                   </div>
                   <div class="notification-actions">
-                    <button class="btn btn-xs ${n.isRead ? 'btn-outline' : 'btn-primary-outline'} btn-toggle-read" data-id="${n.id}" data-read="${n.isRead}">
-                      ${n.isRead ? 'Marcar no leída' : '✓ Marcar leída'}
+                    <button class="btn btn-xs ${n.isRead ? 'btn-outline' : 'btn-primary-outline'} btn-toggle-read" data-id="${n.id}" data-read="${n.isRead}" style="display:inline-flex; align-items:center; gap:0.25rem;">
+                      ${n.isRead ? 'Marcar no leída' : `${Icons.check('', 12)} <span>Marcar leída</span>`}
                     </button>
-                    ${canSend ? `<button class="btn btn-xs btn-danger-outline btn-delete-notification" data-id="${n.id}" title="Eliminar">🗑️</button>` : ''}
+                    ${canSend ? `<button class="btn btn-xs btn-danger-outline btn-delete-notification" data-id="${n.id}" title="Eliminar" style="display:inline-flex; align-items:center; justify-content:center;">${Icons.trash('', 12)}</button>` : ''}
                   </div>
                 </div>
                 <h4 class="notification-title">${n.title}</h4>
