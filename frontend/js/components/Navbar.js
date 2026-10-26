@@ -67,6 +67,9 @@ export const Navbar = {
                   <button id="headbar-login-btn" class="btn btn-sm btn-primary" style="background:#004b93;border-color:#004b93;color:#ffffff;font-size:0.78rem;">
                     🔑 Iniciar Sesión
                   </button>
+                  <button id="headbar-home-btn" class="btn btn-sm btn-outline" style="color:#ffffff;border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.12);font-size:0.78rem;" title="Volver a la pantalla principal">
+                    🏠 Regresar al Inicio
+                  </button>
                 `
                   : isAuthenticated
                   ? `
@@ -175,6 +178,16 @@ export const Navbar = {
     if (headbarLoginBtn) {
       headbarLoginBtn.addEventListener('click', () => {
         this.openLoginModal();
+      });
+    }
+
+    // Regresar al Inicio desde el headbar (Modo Invitado)
+    const headbarHomeBtn = container.querySelector('#headbar-home-btn');
+    if (headbarHomeBtn) {
+      headbarHomeBtn.addEventListener('click', () => {
+        localStorage.removeItem('guestMode');
+        store.setActiveUser(null);
+        store.setView('welcome');
       });
     }
 
