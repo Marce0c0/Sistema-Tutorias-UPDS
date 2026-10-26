@@ -1,8 +1,6 @@
 // Vista de Hackathons y Eventos Tecnológicos Externos (Cochabamba) — Sistema-Tutoriales-UPDS
 import { store } from '../state/store.js';
 import { Modal } from '../components/Modal.js';
-import { Toast } from '../components/Toast.js';
-import { withButtonLoading } from '../utils/button.js';
 
 export const EventsView = {
   render() {
@@ -117,12 +115,12 @@ export const EventsView = {
             </div>
 
             <div class="event-card-footer">
-              <button class="btn btn-sm btn-primary btn-event-details" data-id="${ev.id}">
+              <button class="btn btn-sm btn-outline btn-event-details" data-id="${ev.id}">
                 📋 Ver Bases
               </button>
-              <button class="btn btn-sm btn-outline btn-event-register" data-id="${ev.id}">
-                🚀 Participar
-              </button>
+              <a href="${ev.link}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary" title="Abrir sitio web o red social de la convocatoria">
+                🚀 Ir a Convocatoria ↗
+              </a>
             </div>
           </div>
         `
@@ -155,23 +153,17 @@ export const EventsView = {
                     <li>Cumplir con el código de conducta ético del evento.</li>
                   </ul>
                 </div>
+                <div style="margin-top:12px;padding:8px 12px;background:#eff6ff;border-left:3px solid #0284c7;border-radius:4px;font-size:0.83rem;color:#1e3a8a;">
+                  ℹ️ <strong>Difusión Informativa UPDS:</strong> Convocatoria externa a la universidad. La inscripción se formaliza directamente en la web o red social del organizador.
+                </div>
               </div>
             `,
-            confirmText: 'Entendido / Cerrar',
+            cancelText: 'Cerrar',
+            confirmText: '🌐 Ir al Sitio Oficial / Red Social ↗',
+            onConfirm: () => {
+              window.open(ev.link, '_blank', 'noopener,noreferrer');
+            },
           });
-        }
-      });
-    });
-
-    container.querySelectorAll('.btn-event-register').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        const id = btn.getAttribute('data-id');
-        const ev = eventsData.find((e) => e.id === id);
-        if (ev) {
-          await withButtonLoading(btn, async () => {
-            await new Promise((r) => setTimeout(r, 400));
-            Toast.success(`¡Registro de interés guardado para: ${ev.title}! Te notificaremos convocatorias de equipo.`);
-          }, 'Registrando...');
         }
       });
     });
