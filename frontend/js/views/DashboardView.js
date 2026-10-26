@@ -53,7 +53,7 @@ export const DashboardView = {
 
     kpiGrid.appendChild(
       StatCard({
-        title: 'Cursos y Materias',
+        title: 'Cursos y Talleres',
         value: stats.totalCourses,
         icon: Icons.book('', 22),
         subtitle: 'Catálogo académico',

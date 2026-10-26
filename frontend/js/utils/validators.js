@@ -35,10 +35,10 @@ export const Validators = {
   validateCourse(data) {
     const errors = [];
     if (!data.title || typeof data.title !== 'string' || data.title.trim().length < 3) {
-      errors.push('El título de la materia es obligatorio y debe tener al menos 3 caracteres.');
+      errors.push('El título del curso o taller es obligatorio y debe tener al menos 3 caracteres.');
     }
     if (data.tutorId && !this.isValidUuid(data.tutorId)) {
-      errors.push('El tutor seleccionado debe ser un identificador válido.');
+      errors.push('El docente tutor seleccionado debe ser un identificador válido.');
     }
     return { isValid: errors.length === 0, errors };
   },
@@ -46,7 +46,7 @@ export const Validators = {
   validateTutoria(data) {
     const errors = [];
     if (!data.courseId || !this.isValidUuid(data.courseId)) {
-      errors.push('Debe seleccionar una materia válida.');
+      errors.push('Debe seleccionar un curso o taller válido.');
     }
     if (!data.title || typeof data.title !== 'string' || data.title.trim().length < 3) {
       errors.push('El tema o título de la tutoría debe tener al menos 3 caracteres.');
@@ -70,7 +70,7 @@ export const Validators = {
       errors.push('Debe seleccionar un estudiante registrado.');
     }
     if (!data.courseId || !this.isValidUuid(data.courseId)) {
-      errors.push('Debe seleccionar la materia para la reserva.');
+      errors.push('Debe seleccionar el curso o taller para la reserva.');
     }
     if (!data.scheduledAt || isNaN(new Date(data.scheduledAt).getTime())) {
       errors.push('Debe definir una fecha de reserva válida.');

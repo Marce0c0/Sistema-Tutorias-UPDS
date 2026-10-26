@@ -89,7 +89,7 @@ export const TutoriasView = {
               <div class="card tutoria-card">
                 <div>
                   <div class="tutoria-card-header">
-                    <span class="course-pill">${t.course?.title || 'Materia'}</span>
+                    <span class="course-pill">${t.course?.title || 'Curso / Taller'}</span>
                     <div class="tutoria-badges-cluster">
                       <span class="tutoria-modality-badge ${isPresencial ? 'modality-presencial' : 'modality-virtual'}">
                         ${isPresencial ? Icons.building('', 12) + ' Presencial' : Icons.laptop('', 12) + ' Virtual'}
@@ -280,7 +280,7 @@ export const TutoriasView = {
     const courses = state.courses;
 
     if (courses.length === 0) {
-      Toast.warning('Debe registrar al menos una materia antes de programar tutorías.');
+      Toast.warning('Debe registrar al menos un curso o taller antes de programar tutorías.');
       store.setView('courses');
       return;
     }
@@ -302,11 +302,11 @@ export const TutoriasView = {
       content: `
         <form id="tutoria-modal-form" class="modal-form">
           <div class="form-group">
-            <label class="form-label" for="tutoria-course-select">Materia Curricular *</label>
+            <label class="form-label" for="tutoria-course-select">Curso o Taller Extracurricular *</label>
             <select id="tutoria-course-select" class="form-control" required>
               ${courses.map((c) => `
                 <option value="${c.id}" ${tutoria?.courseId === c.id ? 'selected' : ''}>
-                  ${c.title} (${c.tutor ? `Tutor: ${c.tutor.name}` : 'Sin tutor'})
+                  ${c.title} (${c.tutor ? `Docente: ${c.tutor.name}` : 'Sin docente asignado'})
                 </option>
               `).join('')}
             </select>

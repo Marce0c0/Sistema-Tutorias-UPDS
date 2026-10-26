@@ -49,7 +49,7 @@ export const BookingsView = {
             <thead>
               <tr>
                 <th>Estudiante</th>
-                <th>Materia</th>
+                <th>Curso / Taller</th>
                 <th>Sesión de Tutoría</th>
                 <th>Fecha Programada</th>
                 <th>Estado Actual</th>
@@ -65,7 +65,7 @@ export const BookingsView = {
                     <div class="font-semibold">${b.student?.name || 'Estudiante'}</div>
                     <small class="text-muted">${b.student?.email || ''}</small>
                   </td>
-                  <td>${b.course?.title || 'Materia'}</td>
+                  <td>${b.course?.title || 'Curso / Taller'}</td>
                   <td>
                     ${b.tutoria ? `<span class="tutoria-ref-badge">${b.tutoria.title}</span>` : '<span class="text-muted">Cita individual</span>'}
                   </td>
@@ -180,10 +180,10 @@ export const BookingsView = {
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="booking-course-select">Materia Curricular *</label>
+            <label class="form-label" for="booking-course-select">Curso o Taller Extracurricular *</label>
             <select id="booking-course-select" class="form-control" required>
               ${courses.map((c) => `
-                <option value="${c.id}">${c.title} (${c.tutor ? `Tutor: ${c.tutor.name}` : 'Sin tutor'})</option>
+                <option value="${c.id}">${c.title} (${c.tutor ? `Docente: ${c.tutor.name}` : 'Sin docente asignado'})</option>
               `).join('')}
             </select>
           </div>

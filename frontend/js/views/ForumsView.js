@@ -93,7 +93,7 @@ export const ForumsView = {
         </div>
         <div class="view-actions">
           <select id="forum-course-filter" class="form-control" style="width: auto;">
-            <option value="">Todas las materias</option>
+            <option value="">Todos los cursos y talleres</option>
             ${state.courses.map((c) => `
               <option value="${c.id}" ${selectedCourseId === c.id ? 'selected' : ''}>${c.title}</option>
             `).join('')}
@@ -142,7 +142,7 @@ export const ForumsView = {
       content: `
         <form id="forum-modal-form" class="modal-form">
           <div class="form-group">
-            <label class="form-label" for="forum-course-select">Materia Relacionada *</label>
+            <label class="form-label" for="forum-course-select">Curso o Taller Relacionado *</label>
             <select id="forum-course-select" class="form-control" required ${isEdit ? 'disabled' : ''}>
               ${courses.map((c) => `
                 <option value="${c.id}" ${message?.courseId === c.id ? 'selected' : ''}>${c.title}</option>
