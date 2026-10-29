@@ -60,7 +60,7 @@ export const getCourseById = async (req: Request, res: Response, next: NextFunct
 // POST /api/courses — Crear un nuevo curso (Ficha E: anti-duplicados 409 | Ficha F: activo boolean)
 export const createCourse = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { title, description, tutorId, activo } = req.body;
+    const { title, description, tutorId, activo, price, category } = req.body;
     const normalizedTitle = title ? title.trim() : '';
 
     if (!normalizedTitle) {
@@ -99,14 +99,43 @@ export const createCourse = async (req: Request, res: Response, next: NextFuncti
       return;
     }
 
-    const newCourse = await prisma.course.create({
+    // Parsear precio y categoría
+    const parsedPrice = price !== undefined ? Math.max(0, parseInt(price, 10) || 0) : 0;
+    const courseCategory = (category && typeof category === 'string' && category.trim()) || 'Académico';
+
+    // Restricción por rol: si el creador es tutor, se asigna forzosamente su propio ID de docente
+    const user = (req as any).user;
+    let finalTutorId = tutorId || null;
+    if (user?.role === 'tutor') {
+      finalTutorId = user.id;
+    }
+
+    const newCourse = await (prisma.course as any).create({
       data: {
         title: normalizedTitle,
         description: description?.trim(),
-        tutorId: tutorId || null,
+        tutorId: finalTutorId,
         activo: isActive,
+        price: parsedPrice,
+        category: courseCategory,
       },
     });
+
+    // Auto-crear foro oficial del curso/taller publicado por el tutor o administración
+    try {
+      const authorId = finalTutorId || user?.id || '3b593672-04b3-469b-9ffb-149eb0f317b9';
+      await prisma.forumMessage.create({
+        data: {
+          courseId: newCourse.id,
+          userId: authorId,
+          title: `Foro Oficial: ${normalizedTitle}`,
+          content: `<!--upds_meta:{"category":"debate","channel":"course:${newCourse.id}","coverImage":null}-->\nEspacio oficial de consultas y debate para el taller o curso ${normalizedTitle}. Aquí los estudiantes matriculados pueden formular sus preguntas y dudas técnicas para recibir respuestas del docente titular y compañeros.`,
+        },
+      });
+    } catch (forumErr) {
+      console.warn('Auto-create forum message notice:', forumErr);
+    }
+
     res.status(201).json(newCourse);
   } catch (error) {
     next(error);
@@ -117,7 +146,24 @@ export const createCourse = async (req: Request, res: Response, next: NextFuncti
 export const updateCourse = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const id = req.params.id as string;
-    const { title, description, tutorId, activo } = req.body;
+    const user = (req as any).user;
+
+    const existing = await prisma.course.findUnique({ where: { id } });
+    if (!existing) {
+      res.status(404).json({ message: 'Curso no encontrado.' });
+      return;
+    }
+
+    // El tutor solo puede modificar sus propios cursos
+    if (user?.role === 'tutor' && existing.tutorId !== user.id) {
+      res.status(403).json({
+        success: false,
+        message: 'Acceso denegado: Solo puedes editar los cursos y talleres creados por tu cuenta docente.',
+      });
+      return;
+    }
+
+    const { title, description, tutorId, activo, price, category } = req.body;
 
     // Ficha F: Validación de tipo booleano en PUT
     if (activo !== undefined && typeof activo !== 'boolean') {
@@ -128,13 +174,15 @@ export const updateCourse = async (req: Request, res: Response, next: NextFuncti
       return;
     }
 
-    const updated = await prisma.course.update({
+    const updated = await (prisma.course as any).update({
       where: { id },
       data: {
         ...(title && { title: title.trim() }),
         ...(description !== undefined && { description: description?.trim() }),
-        ...(tutorId !== undefined && { tutorId }),
+        ...(user?.role === 'admin' && tutorId !== undefined && { tutorId }),
         ...(activo !== undefined && { activo }),
+        ...(price !== undefined && { price: Math.max(0, parseInt(price, 10) || 0) }),
+        ...(category !== undefined && { category: category.trim() }),
       },
     });
 
@@ -147,6 +195,23 @@ export const updateCourse = async (req: Request, res: Response, next: NextFuncti
 export const deleteCourse = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const id = req.params.id as string;
+    const user = (req as any).user;
+
+    const existing = await prisma.course.findUnique({ where: { id } });
+    if (!existing) {
+      res.status(404).json({ message: 'Curso no encontrado.' });
+      return;
+    }
+
+    // El tutor solo puede eliminar sus propios cursos
+    if (user?.role === 'tutor' && existing.tutorId !== user.id) {
+      res.status(403).json({
+        success: false,
+        message: 'Acceso denegado: Solo puedes eliminar los cursos y talleres creados por tu cuenta docente.',
+      });
+      return;
+    }
+
     await prisma.course.delete({ where: { id } });
     res.status(200).json({ success: true, message: 'Curso eliminado exitosamente.' });
   } catch (error) {

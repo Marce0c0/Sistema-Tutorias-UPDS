@@ -52,6 +52,48 @@ async function main() {
     },
   });
 
+  const student2 = await prisma.user.upsert({
+    where: { email: 'carlos@estudiante.com' },
+    update: {
+      passwordHash: defaultPasswordHash,
+    },
+    create: {
+      id: '770e8400-e29b-41d4-a716-446655440050',
+      name: 'Carlos Mendoza',
+      email: 'carlos@estudiante.com',
+      passwordHash: defaultPasswordHash,
+      role: 'student',
+    },
+  });
+
+  const student3 = await prisma.user.upsert({
+    where: { email: 'lucia@estudiante.com' },
+    update: {
+      passwordHash: defaultPasswordHash,
+    },
+    create: {
+      id: '770e8400-e29b-41d4-a716-446655440051',
+      name: 'Lucia Fernandez',
+      email: 'lucia@estudiante.com',
+      passwordHash: defaultPasswordHash,
+      role: 'student',
+    },
+  });
+
+  const tutor2 = await prisma.user.upsert({
+    where: { email: 'rodrigo@tutor.com' },
+    update: {
+      passwordHash: defaultPasswordHash,
+    },
+    create: {
+      id: '770e8400-e29b-41d4-a716-446655440052',
+      name: 'Ing. Rodrigo Arce',
+      email: 'rodrigo@tutor.com',
+      passwordHash: defaultPasswordHash,
+      role: 'tutor',
+    },
+  });
+
   // 2. Cursos Extracurriculares y Talleres de Extensión
   const course1 = await prisma.course.upsert({
     where: { id: '196842ff-59e6-49d3-bbd0-78bfee97194a' },
@@ -199,6 +241,19 @@ async function main() {
       tutoriaId: tutoria1.id,
       scheduledAt: new Date('2026-10-22T18:00:00.000Z'),
       status: 'confirmed',
+    },
+  });
+
+  const booking2 = await prisma.booking.upsert({
+    where: { id: '777ccbc6-4a04-42b7-bdf6-6f7f446ece22' },
+    update: { status: 'pending' },
+    create: {
+      id: '777ccbc6-4a04-42b7-bdf6-6f7f446ece22',
+      studentId: student2.id,
+      courseId: course1.id,
+      tutoriaId: tutoria2.id,
+      scheduledAt: new Date('2026-10-24T15:00:00.000Z'),
+      status: 'pending',
     },
   });
 

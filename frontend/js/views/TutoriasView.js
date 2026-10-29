@@ -53,7 +53,8 @@ export const TutoriasView = {
 
     const renderList = () => {
       // Filtrar tutorías y clases extra regulares (los eventos y hackathons tienen su propia pestaña)
-      const tutorias = state.tutorias.filter(
+      const currentTutorias = store.getState().tutorias || [];
+      const tutorias = currentTutorias.filter(
         (t) =>
           !t.title.toLowerCase().includes('hackathon') &&
           !t.title.toLowerCase().includes('ctf') &&

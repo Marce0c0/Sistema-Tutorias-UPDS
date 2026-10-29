@@ -1,5 +1,6 @@
 // Vista de Inicio y Acceso — Sistema-Tutoriales-UPDS
 // Permite iniciar sesión con JWT o ingresar en Modo Invitado para ver cursos
+import { safeStorage, safeSession } from '../config/env.js';
 import { store } from '../state/store.js';
 import { api } from '../services/api.js';
 import { Toast } from '../components/Toast.js';
@@ -59,12 +60,18 @@ export const WelcomeView = {
                   ${Icons.shield('', 14)} <span><strong>Admin:</strong> admin@upds.edu.bo</span>
                 </button>
                 <button type="button" class="btn-quick-fill" data-email="maria@tutor.com" style="display:flex; align-items:center; gap:0.45rem;">
-                  ${Icons.cap('', 14)} <span><strong>Tutor:</strong> maria@tutor.com</span>
+                  ${Icons.cap('', 14)} <span><strong>Docente:</strong> maria@tutor.com</span>
                 </button>
                 <button type="button" class="btn-quick-fill" data-email="juan@estudiante.com" style="display:flex; align-items:center; gap:0.45rem;">
                   ${Icons.user('', 14)} <span><strong>Estudiante:</strong> juan@estudiante.com</span>
                 </button>
               </div>
+            </div>
+
+            <!-- Distintivo Powered by AWS en la Tarjeta de Login -->
+            <div class="login-aws-badge-box">
+              <span class="login-aws-badge-label">Desplegado en Infraestructura Cloud</span>
+              <img src="img/powered-by-aws.png" alt="Powered by AWS Cloud" class="login-aws-img" />
             </div>
           </div>
 
@@ -76,24 +83,24 @@ export const WelcomeView = {
               </span>
               <div>
                 <h2 class="panel-title">Modo Invitado</h2>
-                <p class="panel-desc">Explora cursos extracurriculares y clases extra sin iniciar sesión</p>
+                <p class="panel-desc">Explora cursos extracurriculares y talleres prácticos sin iniciar sesión</p>
               </div>
             </div>
 
             <div class="guest-info-body">
               <p class="guest-text">
-                Programas de formación complementaria, bootcamps prácticos y clases extra especializadas impartidas por docentes universitarios, enfocadas en tecnologías y habilidades de alta demanda.
+                Programas de formación complementaria, bootcamps y talleres prácticos impartidos por docentes universitarios de UPDS Cochabamba, enfocados en tecnologías y habilidades de alta demanda.
               </p>
 
-              <!-- Métricas Reales Actualizadas (Cursos, Tutorías y Eventos) -->
+              <!-- Métricas Reales Actualizadas (Cursos, Talleres y Eventos) -->
               <div class="guest-metrics-row" style="grid-template-columns: repeat(3, 1fr); gap: 0.6rem;">
                 <div class="guest-metric-pill">
                   <span class="pill-number" id="guest-pill-courses">${initialCounts.courses}</span>
-                  <span class="pill-label">Cursos / Talleres</span>
+                  <span class="pill-label">Cursos & Talleres</span>
                 </div>
                 <div class="guest-metric-pill">
                   <span class="pill-number" id="guest-pill-tutorias">${initialCounts.tutorias}</span>
-                  <span class="pill-label">Clases & Tutorías</span>
+                  <span class="pill-label">Sesiones con QR</span>
                 </div>
                 <div class="guest-metric-pill">
                   <span class="pill-number" id="guest-pill-events">${initialCounts.events}</span>
@@ -102,15 +109,20 @@ export const WelcomeView = {
               </div>
 
               <ul class="guest-features-list">
-                <li><span style="color:#009640; display:inline-flex;">${Icons.check('', 14)}</span> Explora talleres técnicos, bootcamps y cursos de extensión.</li>
-                <li><span style="color:#009640; display:inline-flex;">${Icons.check('', 14)}</span> Consulta fechas, horarios y docentes universitarios asignados.</li>
-                <li><span style="color:#009640; display:inline-flex;">${Icons.check('', 14)}</span> Convocatorias a Hackathons municipales y torneos tech en Cochabamba.</li>
-                <li><span style="color:#009640; display:inline-flex;">${Icons.check('', 14)}</span> Abierto para estudiantes, egresados e interesados en la oferta académica.</li>
+                <li><span style="color:#009640; display:inline-flex;">${Icons.check('', 14)}</span> Catálogo unificado de cursos técnicos y talleres prácticos académicos.</li>
+                <li><span style="color:#009640; display:inline-flex;">${Icons.check('', 14)}</span> Inscripción con emisión instantánea de <strong>Entrada y Pase Digital en Código QR</strong>.</li>
+                <li><span style="color:#009640; display:inline-flex;">${Icons.check('', 14)}</span> Compatible con <strong>Google Wallet</strong> y <strong>Apple Wallet</strong> para tu smartphone.</li>
+                <li><span style="color:#009640; display:inline-flex;">${Icons.check('', 14)}</span> Convocatorias abiertas a Hackathons municipales y torneos tech en Cochabamba.</li>
               </ul>
 
               <button type="button" id="enter-guest-btn" class="btn btn-outline-primary btn-block btn-lg" style="width:100%; justify-content:center; margin-top:1.25rem; gap:0.5rem;">
                 ${Icons.compass('', 18)} <span>Explorar en Modo Invitado</span>
               </button>
+
+              <div style="margin-top:1.15rem; display:flex; align-items:center; justify-content:center; gap:0.6rem; opacity:0.92;">
+                <span style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;">CDN Global & Hosting:</span>
+                <img src="img/powered-by-aws.png" alt="Powered by AWS Cloud" style="height:36px; width:auto; object-fit:contain;" />
+              </div>
             </div>
           </div>
         </div>
@@ -146,15 +158,29 @@ export const WelcomeView = {
         try {
           const res = await api.auth.login({ email, password });
           if (res.token && res.user) {
-            localStorage.setItem('token', res.token);
-            localStorage.setItem('authUser', JSON.stringify(res.user));
-            localStorage.removeItem('guestMode');
+            safeStorage.setItem('token', res.token);
+            safeStorage.setItem('authUser', JSON.stringify(res.user));
+            safeStorage.removeItem('guestMode');
+            safeSession.removeItem('guestMode');
             store.setActiveUser(res.user);
             store.setView('dashboard');
             Toast.success(`¡Bienvenido/a ${res.user.name}! Sesión JWT iniciada.`);
-            // Cargar datos protegidos
-            api.users.getAll().then((list) => store.setUsers(list)).catch(() => {});
-            api.notifications.getAll().then((list) => store.setNotifications(list)).catch(() => {});
+            // Cargar datos protegidos y actualizar estado completo
+            Promise.all([
+              api.users.getAll().catch(() => []),
+              api.bookings.getAll().catch(() => []),
+              api.notifications.getAll().catch(() => []),
+              api.courses.getAll().catch(() => []),
+              api.tutorias.getAll().catch(() => []),
+            ]).then(([users, bookings, notifications, courses, tutorias]) => {
+              store.setState({
+                users: users || [],
+                bookings: bookings || [],
+                notifications: notifications || [],
+                courses: (courses && courses.length > 0) ? courses : store.getState().courses,
+                tutorias: (tutorias && tutorias.length > 0) ? tutorias : store.getState().tutorias,
+              });
+            }).catch(() => {});
           }
         } catch (err) {
           Toast.error(err.message || 'Credenciales incorrectas.');
@@ -179,7 +205,8 @@ export const WelcomeView = {
 
     // Entrar en Modo Invitado
     container.querySelector('#enter-guest-btn').addEventListener('click', () => {
-      localStorage.setItem('guestMode', 'true');
+      safeSession.setItem('guestMode', 'true');
+      safeStorage.removeItem('guestMode');
       store.setActiveUser({
         id: 'guest',
         name: 'Invitado',

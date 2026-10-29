@@ -3,11 +3,12 @@
 
 const RULES = {
   // Navegación
+  'view.welcome': ['admin', 'tutor', 'student', 'guest'],
   'view.dashboard': ['admin', 'tutor', 'student'],
   'view.courses': ['admin', 'tutor', 'student', 'guest'],
   'view.tutorias': ['admin', 'tutor', 'student', 'guest'],
   'view.events': ['admin', 'tutor', 'student', 'guest'],
-  'view.bookings': ['admin', 'tutor', 'student'],
+  'view.bookings': ['admin', 'student', 'tutor'],
   'view.forums': ['admin', 'tutor', 'student'],
   'view.notifications': ['admin', 'tutor', 'student'],
   'view.users': ['admin'],
@@ -17,7 +18,8 @@ const RULES = {
   'users.manage': ['admin'],
 
   // Cursos
-  'courses.manage': ['admin'],
+  'courses.manage': ['admin', 'tutor'],
+  'courses.create': ['admin', 'tutor'],
 
   // Eventos y Hackathons
   'events.manage': ['admin'],
@@ -26,17 +28,17 @@ const RULES = {
   'tutorias.manage': ['admin', 'tutor'],
   'tutorias.book': ['student'],
 
-  // Reservas
-  'bookings.create': ['admin', 'student'],
+  // Reservas (Las entradas solo se generan mediante inscripción de estudiantes en Cursos & Talleres)
+  'bookings.create': [],
   'bookings.manage': ['admin', 'tutor'],
 
   // Foro
   'forums.create': ['admin', 'tutor', 'student'],
   'forums.moderate': ['admin', 'tutor'],
 
-  // Notificaciones
-  'notifications.viewAll': ['admin', 'tutor'],
-  'notifications.send': ['admin', 'tutor'],
+  // Notificaciones (100% personales y automáticas para cada rol según eventos)
+  'notifications.viewAll': [],
+  'notifications.send': [],
 };
 
 // Sin rol asignado se asume 'guest' (modo invitado sin privilegios de modificación)
