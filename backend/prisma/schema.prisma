@@ -28,6 +28,8 @@ model Course {
   id            String         @id @default(uuid())
   title         String
   description   String?
+  price         Int            @default(0)
+  category      String         @default("Académico")
   activo        Boolean        @default(true)
   tutorId       String?        @map("tutor_id")
   tutor         User?          @relation("TutorCourses", fields: [tutorId], references: [id], onDelete: SetNull)
@@ -66,8 +68,11 @@ model Booking {
   courseId    String        @map("course_id")
   tutoriaId   String?       @map("tutoria_id")
   scheduledAt DateTime      @map("scheduled_at")
-  status      BookingStatus @default(pending)
-  createdAt   DateTime      @default(now()) @map("created_at")
+  status             BookingStatus @default(pending)
+  receiptUrl         String?       @map("receipt_url")
+  cancelledBy        String?       @map("cancelled_by")
+  cancellationReason String?       @map("cancellation_reason")
+  createdAt          DateTime      @default(now()) @map("created_at")
 
   student User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
   course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)

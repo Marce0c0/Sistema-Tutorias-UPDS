@@ -9,7 +9,7 @@ export const coursesRouter = Router();
 coursesRouter.get('/', getCourses);
 coursesRouter.get('/:id', validateId, getCourseById);
 
-// Operaciones restringidas para administradores
-coursesRouter.post('/', authenticateJWT, authorizeRoles('admin'), validateCourse, createCourse);
-coursesRouter.put('/:id', authenticateJWT, authorizeRoles('admin'), validateId, validateCourseUpdate, updateCourse);
-coursesRouter.delete('/:id', authenticateJWT, authorizeRoles('admin'), validateId, deleteCourse);
+// Operaciones restringidas para administradores y tutores (docentes de sus propios cursos)
+coursesRouter.post('/', authenticateJWT, authorizeRoles('admin', 'tutor'), validateCourse, createCourse);
+coursesRouter.put('/:id', authenticateJWT, authorizeRoles('admin', 'tutor'), validateId, validateCourseUpdate, updateCourse);
+coursesRouter.delete('/:id', authenticateJWT, authorizeRoles('admin', 'tutor'), validateId, deleteCourse);

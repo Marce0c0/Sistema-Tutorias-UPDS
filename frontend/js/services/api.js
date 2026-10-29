@@ -1,7 +1,7 @@
 // Cliente HTTP Centralizado — Sistema-Tutoriales-UPDS
 // Provee métodos tipados para consumir los 30 endpoints REST de las 6 entidades
 
-import { ENV } from '../config/env.js';
+import { ENV, safeStorage } from '../config/env.js';
 
 class ApiService {
   constructor() {
@@ -10,8 +10,9 @@ class ApiService {
 
   // Wrapper genérico de petición fetch
   async request(endpoint, options = {}) {
-    const url = `${this.baseUrl}${endpoint}`;
-    const token = localStorage.getItem('token');
+    const base = ENV.getApiUrl();
+    const url = `${base}${endpoint}`;
+    const token = safeStorage.getItem('token');
     const defaultHeaders = {
       'Content-Type': 'application/json',
       Accept: 'application/json',

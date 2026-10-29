@@ -43,9 +43,9 @@ app.use((req, res, next) => {
 });
 
 // ─── 3. Límite de Tamaño de Carga y Sanitización ────────────────────────────
-// Previene ataques de denegación de servicio (DoS) por payloads gigantes
-app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+// Permite imágenes de comprobantes bancarios comprimidos (hasta 10MB)
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(sanitizeInput);
 
 // ─── 4. Ruta Raíz y Salud de la API ─────────────────────────────────────────

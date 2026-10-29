@@ -1,25 +1,34 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Sistema de Gestión de Tutorías y Cursos Universitarios - Universidad Privada Domingo Savio (UPDS). Plataforma Full Stack integrada con API REST y PostgreSQL." />
+  <meta name="description"
+    content="Sistema de Gestión de Cursos, Talleres y Hackathons - Universidad Privada Domingo Savio (UPDS) Sede Cochabamba. Plataforma Full Stack integrada con API REST y PostgreSQL." />
   <meta name="author" content="Universidad Privada Domingo Savio" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="theme-color" content="#0F2042" />
 
-  <title>Sistema de Tutorías y Cursos | UPDS</title>
+  <title>Cursos, Talleres & Hackathons | UPDS Cochabamba</title>
+
+  <!-- Favicon e Icono de Pestaña Institucional UPDS -->
+  <link rel="icon" type="image/png" href="img/upds-logo.png" />
+  <link rel="shortcut icon" type="image/png" href="img/upds-logo.png" />
+  <link rel="apple-touch-icon" href="img/upds-logo.png" />
 
   <!-- Tipografía Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
 
   <!-- Estilos del Sistema de Diseño -->
-  <link rel="stylesheet" href="css/styles.css?v=3" />
+  <link rel="stylesheet" href="css/styles.css?v=35" />
 </head>
+
 <body>
   <!-- Splash Screen Institucional de Carga Inicial -->
   <div id="app-loading-overlay" class="loading-overlay">
@@ -32,8 +41,20 @@
       </div>
       <p class="splash-text">Universidad Privada Domingo Savio</p>
       <p class="splash-subtext">Cargando plataforma institucional...</p>
+
+      <div class="splash-aws-box">
+        <img src="img/powered-by-aws.png" alt="Powered by AWS Cloud" class="splash-aws-img" />
+      </div>
     </div>
   </div>
+  <script>
+    try {
+      if (sessionStorage.getItem('app_initialized') === 'true') {
+        var ov = document.getElementById('app-loading-overlay');
+        if (ov) ov.classList.add('hidden');
+      }
+    } catch (e) { }
+  </script>
 
   <div id="app" class="app-layout">
     <!-- Barra de Navegación y Encabezado Superior -->
@@ -44,14 +65,182 @@
       <div id="main-content-mount" class="content-wrapper"></div>
     </main>
 
-    <!-- Pie de Página Institucional -->
+    <!-- Pie de Página Institucional y Créditos Académicos -->
     <footer class="app-footer">
       <div class="footer-container">
-        <div class="footer-info">
-          <strong>Universidad Privada Domingo Savio (UPDS)</strong> — Sistema de Tutorías y Cursos
+        <div class="footer-grid">
+          <!-- Columna 1: Identidad Institucional UPDS -->
+          <div class="footer-col footer-col-brand">
+            <div class="footer-brand-header">
+              <div class="footer-logo-badge">
+                <img src="img/upds-logo.png" alt="Universidad Privada Domingo Savio" class="footer-logo-img" />
+              </div>
+              <div>
+                <h3 class="footer-brand-title">Universidad Privada Domingo Savio</h3>
+                <p class="footer-brand-sub">Sede Cochabamba · Facultad de Ciencias y Tecnología</p>
+              </div>
+            </div>
+            <p class="footer-description">
+              Plataforma académica integral para la gestión de cursos extracurriculares, certificaciones prácticas,
+              convocatorias a hackathons municipales y foros de consulta colaborativa.
+            </p>
+            <div class="footer-pills">
+              <span class="footer-pill"><span class="footer-pill-dot green"></span> Campus Cochabamba</span>
+              <span class="footer-pill">🎓 Tecnologías Web II</span>
+              <span class="footer-pill">⚡ SPA Modular ES6+</span>
+            </div>
+          </div>
+
+          <!-- Columna 2: Presentación del Desarrollador (Estudiante) -->
+          <div class="footer-col footer-col-author">
+            <div class="footer-student-card">
+              <div class="footer-student-header">
+                <div class="footer-student-avatar-box">
+                  <img src="https://github.com/Marce0c0.png" alt="Marcelo - Estudiante UPDS"
+                    class="footer-student-avatar-img"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" loading="lazy" />
+                  <div class="footer-student-avatar-fallback" style="display:none;">M</div>
+                </div>
+                <div class="footer-student-meta">
+                  <div class="footer-student-name-row">
+                    <strong class="footer-student-name">Marcelo</strong>
+                    <span class="footer-badge-student">Estudiante UPDS</span>
+                  </div>
+                  <span class="footer-student-degree">Ingeniería de Sistemas · Sede Cochabamba</span>
+                </div>
+              </div>
+
+              <p class="footer-student-bio">
+                Desarrollado como proyecto para la materia de <strong>Tecnologías Web II</strong>, aplicando
+                arquitectura de alto rendimiento con Vanilla JavaScript, Bun/TypeScript REST API y Supabase PostgreSQL.
+              </p>
+
+              <div class="footer-btn-group">
+                <a href="https://github.com/Marce0c0" target="_blank" rel="noopener noreferrer"
+                  class="footer-github-btn" title="Ver perfil de GitHub de Marcelo">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path
+                      d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                    <path d="M9 18c-4.51 2-5-2-7-2" />
+                  </svg>
+                  <span>GitHub @Marce0c0</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:0.7;">
+                    <path d="M15 3h6v6" />
+                    <path d="M10 14 21 3" />
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  </svg>
+                </a>
+
+                <a href="https://github.com/Marce0c0/Sistema-Tutorias-UPDS" target="_blank" rel="noopener noreferrer"
+                  class="footer-repo-btn" title="Ver repositorio de código abierto">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="16 18 22 12 16 6" />
+                    <polyline points="8 6 2 12 8 18" />
+                  </svg>
+                  <span>Repositorio</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna 3: Accesos Rápidos del Ecosistema -->
+          <div class="footer-col footer-col-links">
+            <h4 class="footer-col-title">Ecosistema Académico</h4>
+            <ul class="footer-nav-list">
+              <li>
+                <a href="#courses" class="footer-nav-link">
+                  <span class="footer-link-bullet">›</span> Cursos y Talleres Prácticos
+                </a>
+              </li>
+              <li>
+                <a href="#events" class="footer-nav-link">
+                  <span class="footer-link-bullet">›</span> Hackathons & Retos Tecnológicos
+                </a>
+              </li>
+              <li>
+                <a href="#forums" class="footer-nav-link">
+                  <span class="footer-link-bullet">›</span> Foros Oficiales de Consultas
+                </a>
+              </li>
+              <li>
+                <a href="#users" class="footer-nav-link">
+                  <span class="footer-link-bullet">›</span> Directorio de Estudiantes y Tutores
+                </a>
+              </li>
+              <li>
+                <a href="#bookings" class="footer-nav-link">
+                  <span class="footer-link-bullet">›</span> Validación de Entradas & Pases QR
+                </a>
+              </li>
+            </ul>
+
+            <div class="footer-cloud-card">
+              <div class="footer-cloud-header">
+                <span class="footer-status-indicator"></span>
+                <strong class="footer-cloud-title">Infraestructura Cloud & Despliegue</strong>
+              </div>
+
+              <!-- Servicios Activos en Producción -->
+              <div class="footer-cloud-services">
+                <a href="https://d3i4klrqeo94p9.cloudfront.net/" target="_blank" rel="noopener noreferrer" class="footer-cloud-tag active" title="CDN Global con SSL — Distribución CloudFront Activa">
+                  <span class="footer-tag-dot green"></span>
+                  <span>CloudFront CDN</span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="opacity:0.7;"><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+                </a>
+                <span class="footer-cloud-tag active" title="Almacenamiento de Assets Estáticos & Hosting">
+                  <span class="footer-tag-dot green"></span>
+                  <span>AWS S3</span>
+                </span>
+                <span class="footer-cloud-tag active" title="Cómputo Serverless para Tareas y Certificados">
+                  <span class="footer-tag-dot green"></span>
+                  <span>AWS Lambda</span>
+                </span>
+                <span class="footer-cloud-tag active" title="Base de Datos Relacional PostgreSQL Gestionada">
+                  <span class="footer-tag-dot green"></span>
+                  <span>Supabase Cloud</span>
+                </span>
+              </div>
+
+              <!-- Distintivo Oficial AWS Cloud en Footer -->
+              <div class="footer-aws-badge-box">
+                <img src="img/powered-by-aws.png" alt="Powered by AWS Cloud" class="footer-aws-logo-img" />
+              </div>
+
+              <!-- Servicios en Roadmap / Por Implementar -->
+              <div class="footer-roadmap-block">
+                <span class="footer-roadmap-label">Roadmap / Por Implementar:</span>
+                <div class="footer-cloud-services">
+                  <span class="footer-cloud-tag roadmap" title="Por implementar: Correos Transaccionales con Boletos QR">
+                    <span class="footer-tag-dot amber"></span>
+                    <span>Amazon SES</span>
+                  </span>
+                  <span class="footer-cloud-tag roadmap" title="Por implementar: Disparador de Cron y Recordatorios">
+                    <span class="footer-tag-dot amber"></span>
+                    <span>AWS EventBridge</span>
+                  </span>
+                  <span class="footer-cloud-tag roadmap" title="Por implementar: Alarma de Costo Cero ($0.00)">
+                    <span class="footer-tag-dot amber"></span>
+                    <span>AWS CloudWatch</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="footer-author">
-          Portal Institucional de Gestión y Asesoría Académica
+
+        <!-- Barra Inferior de Copyright y Atribución -->
+        <div class="footer-bottom-bar">
+          <div>
+            © 2026 <strong>Universidad Privada Domingo Savio</strong> — Cochabamba, Bolivia. Todos los derechos
+            reservados.
+          </div>
+          <div class="footer-bottom-student">
+            Desarrollado por <strong style="color:#e2e8f0;">Sammy Marcelo Sivila Sanchez</strong> · Estudiante
+            de Ingeniería de Sistemas UPDS
+          </div>
         </div>
       </div>
     </footer>
@@ -61,6 +250,7 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Módulo Principal de JavaScript ES6 -->
-  <script type="module" src="js/app.js?v=3"></script>
+  <script type="module" src="js/app.js?v=96"></script>
 </body>
+
 </html>

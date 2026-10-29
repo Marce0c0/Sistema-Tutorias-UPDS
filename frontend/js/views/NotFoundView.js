@@ -150,9 +150,9 @@ export const NotFoundView = {
             ${Icons.book('', 16)}
             <span>Explorar Cursos & Talleres</span>
           </button>
-          <button id="btn-404-tutorias" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 0.4rem;">
-            ${Icons.cap('', 16)}
-            <span>Ver Tutorías</span>
+          <button id="btn-404-events" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+            ${Icons.trophy('', 16)}
+            <span>Eventos & Hackathons</span>
           </button>
         </div>
 
@@ -194,7 +194,7 @@ export const NotFoundView = {
     const btnSearch = container.querySelector('#btn-404-search');
     const btnHome = container.querySelector('#btn-404-home');
     const btnCourses = container.querySelector('#btn-404-courses');
-    const btnTutorias = container.querySelector('#btn-404-tutorias');
+    const btnEvents = container.querySelector('#btn-404-events');
     const btnReport = container.querySelector('#btn-report-broken-link');
 
     // Búsqueda interactiva
@@ -237,9 +237,9 @@ export const NotFoundView = {
       window.location.hash = '#/courses';
     });
 
-    btnTutorias?.addEventListener('click', () => {
-      store.setView('tutorias');
-      window.location.hash = '#/tutorias';
+    btnEvents?.addEventListener('click', () => {
+      store.setView('events');
+      window.location.hash = '#/events';
     });
 
     // Reporte de enlace roto con feedback instantáneo

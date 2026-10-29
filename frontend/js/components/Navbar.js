@@ -1,7 +1,7 @@
 // Componente de Navegación Principal — Sistema-Tutoriales-UPDS
 import { store } from '../state/store.js';
 import { api } from '../services/api.js';
-import { ENV } from '../config/env.js';
+import { ENV, safeStorage, safeSession } from '../config/env.js';
 import { Modal } from './Modal.js';
 import { Toast } from './Toast.js';
 import { Icons } from './Icons.js';
@@ -9,39 +9,72 @@ import { can } from '../utils/permissions.js';
 
 const ROLES = [
   { id: 'student', label: 'Estudiante' },
-  { id: 'tutor', label: 'Tutor Docente' },
+  { id: 'tutor', label: 'Docente' },
   { id: 'admin', label: 'Administrador' },
 ];
 
 export const Navbar = {
+  updateBadge() {
+    const state = store.getState();
+    const activeUser = state.activeUser;
+    const notifs = state.notifications || [];
+    const count = activeUser && activeUser.role !== 'guest'
+      ? notifs.filter((n) => !Boolean(n.isRead ?? n.is_read) && (n.userId || n.user_id) === activeUser.id).length
+      : 0;
+
+    const notifBtn = document.querySelector('.nav-btn[data-view="notifications"]');
+    if (notifBtn) {
+      let badge = notifBtn.querySelector('.nav-badge');
+      if (count > 0) {
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'nav-badge';
+          notifBtn.appendChild(badge);
+        }
+        badge.textContent = String(count);
+      } else if (badge) {
+        badge.remove();
+      }
+    }
+  },
+
   render(container) {
     const state = store.getState();
     const activeUser = state.activeUser;
-    const token = localStorage.getItem('token');
+    const currentView = state.currentView;
+    const token = safeStorage.getItem('token');
     const isAuthenticated = !!(token && activeUser && activeUser.role !== 'guest');
     const isGuest = activeUser?.role === 'guest';
-    const isWelcome = !activeUser;
+    const isWelcome = !activeUser || currentView === 'welcome';
 
     const navItems = isWelcome
       ? []
-      : [
-          { id: 'dashboard', label: 'Dashboard', icon: Icons.dashboard('nav-icon', 16), permission: 'view.dashboard' },
-          { id: 'users', label: 'Usuarios', icon: Icons.users('nav-icon', 16), permission: 'view.users' },
-          { id: 'courses', label: 'Cursos & Talleres', icon: Icons.book('nav-icon', 16), permission: 'view.courses' },
-          { id: 'tutorias', label: 'Tutorías', icon: Icons.cap('nav-icon', 16), permission: 'view.tutorias' },
-          { id: 'events', label: 'Eventos & Hackathons', icon: Icons.trophy('nav-icon', 16), permission: 'view.events' },
-          { id: 'bookings', label: 'Reservas', icon: Icons.calendar('nav-icon', 16), permission: 'view.bookings' },
-          { id: 'forums', label: 'Foro de Dudas', icon: Icons.chat('nav-icon', 16), permission: 'view.forums' },
-          {
-            id: 'notifications',
-            label: 'Notificaciones',
-            icon: Icons.bell('nav-icon', 16),
-            permission: 'view.notifications',
-            badge: state.stats.unreadNotifications > 0 ? state.stats.unreadNotifications : null,
-          },
-        ].filter((item) => !item.permission || can(activeUser?.role, item.permission));
-
-    const currentView = state.currentView;
+      : (isGuest
+          ? [
+              { id: 'courses', label: 'Cursos & Talleres', icon: Icons.book('nav-icon', 16), permission: 'view.courses' },
+              { id: 'events', label: 'Eventos & Hackathons', icon: Icons.trophy('nav-icon', 16), permission: 'view.events' },
+            ]
+          : [
+              { id: 'dashboard', label: 'Dashboard', icon: Icons.dashboard('nav-icon', 16), permission: 'view.dashboard' },
+              { id: 'users', label: 'Usuarios', icon: Icons.users('nav-icon', 16), permission: 'view.users' },
+              { id: 'courses', label: 'Cursos & Talleres', icon: Icons.book('nav-icon', 16), permission: 'view.courses' },
+              { id: 'events', label: 'Eventos & Hackathons', icon: Icons.trophy('nav-icon', 16), permission: 'view.events' },
+              {
+                id: 'bookings',
+                label: activeUser?.role === 'admin' ? 'Gestión de Entradas' : (activeUser?.role === 'student' ? 'Mis Entradas QR' : 'Entradas & Reservas'),
+                icon: Icons.ticket('nav-icon', 16),
+                permission: 'view.bookings',
+              },
+              { id: 'forums', label: 'Foro de Dudas', icon: Icons.chat('nav-icon', 16), permission: 'view.forums' },
+              {
+                id: 'notifications',
+                label: 'Notificaciones',
+                icon: Icons.bell('nav-icon', 16),
+                permission: 'view.notifications',
+                badge: state.stats.unreadNotifications > 0 ? state.stats.unreadNotifications : null,
+              },
+            ].filter((item) => !item.permission || can(activeUser?.role, item.permission))
+        );
 
     container.innerHTML = `
       <header class="app-header">
@@ -54,15 +87,15 @@ export const Navbar = {
                 <img src="img/upds-logo.png" alt="Universidad Privada Domingo Savio" class="brand-logo-img" />
               </div>
               <div class="brand-text">
-                <span class="brand-title">Tutorías Universitarias</span>
-                <span class="brand-subtitle">Universidad Privada Domingo Savio</span>
+                <span class="brand-title">Cursos & Hackathons</span>
+                <span class="brand-subtitle">Universidad Privada Domingo Savio · Cochabamba</span>
               </div>
             </div>
 
             <!-- Modo Activo e Iniciar Sesión (Arriba a la Izquierda) -->
             <div class="header-status-box" style="display:flex; align-items:center; gap:0.45rem;">
               ${
-                isGuest
+                !isWelcome && isGuest
                   ? `
                   <span class="role-tag" style="background:#475569;color:#ffffff;font-size:0.72rem;font-weight:700;">MODO INVITADO</span>
                   <button id="headbar-login-btn" class="btn btn-sm btn-primary" style="background:#004b93;border-color:#004b93;color:#ffffff;font-size:0.78rem;">
@@ -72,7 +105,7 @@ export const Navbar = {
                     ${Icons.home('btn-svg-icon', 14)} <span>Regresar al Inicio</span>
                   </button>
                 `
-                  : isAuthenticated
+                  : !isWelcome && isAuthenticated
                   ? `
                   <div class="auth-user-badge">
                     <span class="role-tag role-${activeUser.role}">${ROLES.find((r) => r.id === activeUser.role)?.label || activeUser.role}</span>
@@ -87,14 +120,12 @@ export const Navbar = {
           <!-- Bloque Superior Derecho: Controles y Salir -->
           <div class="header-right-cluster" style="display:flex; align-items:center; gap:0.5rem;">
             ${
-              isAuthenticated
-                ? `<button id="logout-btn" class="btn btn-sm btn-secondary" title="Cerrar Sesión JWT">${Icons.logout('btn-svg-icon', 14)} Salir</button>`
-                : isWelcome
-                ? `<button id="headbar-guest-btn" class="btn btn-sm btn-outline" style="color:#ffffff;border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.1);">${Icons.globe('btn-svg-icon', 14)} Modo Invitado</button>`
+              !isWelcome && isAuthenticated
+                ? `<button id="logout-btn" class="btn btn-sm btn-secondary desktop-logout-btn" title="Cerrar Sesión JWT">${Icons.logout('btn-svg-icon', 14)} Salir</button>`
                 : ''
             }
             <!-- Botón Menú Móvil -->
-            ${navItems.length > 0 ? `<button id="mobile-menu-toggle" class="mobile-toggle" aria-label="Abrir menú">☰</button>` : ''}
+            ${navItems.length > 0 ? `<button id="mobile-menu-toggle" class="mobile-toggle" aria-label="Abrir menú">${Icons.menu('mobile-menu-icon', 20)}</button>` : ''}
           </div>
         </div>
 
@@ -117,6 +148,18 @@ export const Navbar = {
             `
               )
               .join('')}
+            ${
+              activeUser
+                ? `
+              <li class="nav-item mobile-logout-item">
+                <button id="mobile-logout-btn" class="nav-btn-mobile-logout" type="button" title="${isAuthenticated ? 'Cerrar Sesión UPDS' : 'Salir del Modo Invitado'}">
+                  <span class="nav-icon">${Icons.logout('nav-icon', 18)}</span>
+                  <span class="nav-label">${isAuthenticated ? 'Cerrar Sesión (Salir)' : 'Salir del Modo Invitado'}</span>
+                </button>
+              </li>
+            `
+                : ''
+            }
           </ul>
         </nav>
         `
@@ -131,30 +174,58 @@ export const Navbar = {
       if (activeUser && activeUser.role !== 'guest') {
         store.setView('dashboard');
       } else {
+        safeStorage.removeItem('guestMode');
+        safeSession.removeItem('guestMode');
+        store.setActiveUser(null);
         store.setView('welcome');
       }
     });
 
-    // Pestañas
-    container.querySelectorAll('.nav-btn').forEach((btn) => {
+    // Pestañas (solo botones con data-view)
+    container.querySelectorAll('.nav-btn[data-view]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const view = btn.getAttribute('data-view');
-        store.setView(view);
+        if (view) {
+          if (!activeUser && (view === 'courses' || view === 'events')) {
+            safeSession.setItem('guestMode', 'true');
+            store.setActiveUser({
+              id: 'guest',
+              name: 'Invitado UPDS',
+              email: 'invitado@upds.net',
+              role: 'guest',
+            });
+          }
+          store.setView(view);
+        }
         const navBar = container.querySelector('#app-nav-bar');
         if (navBar) navBar.classList.remove('open');
       });
     });
 
-    // Logout / Salir
+    // Logout / Salir (Unificado para Escritorio y Móvil)
+    const doLogout = () => {
+      safeStorage.removeItem('token');
+      safeStorage.removeItem('authUser');
+      safeStorage.removeItem('guestMode');
+      safeSession.removeItem('guestMode');
+      store.setActiveUser(null);
+      store.setView('welcome');
+      Toast.info('Has cerrado sesión exitosamente.');
+    };
+
     const logoutBtn = container.querySelector('#logout-btn');
     if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('authUser');
-        localStorage.removeItem('guestMode');
-        store.setActiveUser(null);
-        store.setView('welcome');
-        Toast.info('Has vuelto a la pantalla de inicio.');
+      logoutBtn.addEventListener('click', doLogout);
+    }
+
+    const mobileLogoutBtn = container.querySelector('#mobile-logout-btn');
+    if (mobileLogoutBtn) {
+      mobileLogoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const navBar = container.querySelector('#app-nav-bar');
+        if (navBar) navBar.classList.remove('open');
+        doLogout();
       });
     }
 
@@ -162,7 +233,8 @@ export const Navbar = {
     const headbarGuestBtn = container.querySelector('#headbar-guest-btn');
     if (headbarGuestBtn) {
       headbarGuestBtn.addEventListener('click', () => {
-        localStorage.setItem('guestMode', 'true');
+        safeSession.setItem('guestMode', 'true');
+        safeStorage.removeItem('guestMode');
         store.setActiveUser({
           id: 'guest',
           name: 'Invitado UPDS',
@@ -182,11 +254,19 @@ export const Navbar = {
       });
     }
 
+    const headbarLoginTopBtn = container.querySelector('#headbar-login-top-btn');
+    if (headbarLoginTopBtn) {
+      headbarLoginTopBtn.addEventListener('click', () => {
+        store.setView('welcome');
+      });
+    }
+
     // Regresar al Inicio desde el headbar (Modo Invitado)
     const headbarHomeBtn = container.querySelector('#headbar-home-btn');
     if (headbarHomeBtn) {
       headbarHomeBtn.addEventListener('click', () => {
-        localStorage.removeItem('guestMode');
+        safeStorage.removeItem('guestMode');
+        safeSession.removeItem('guestMode');
         store.setActiveUser(null);
         store.setView('welcome');
       });
@@ -203,7 +283,9 @@ export const Navbar = {
     const mobileToggle = container.querySelector('#mobile-menu-toggle');
     if (mobileToggle) {
       const navBar = container.querySelector('#app-nav-bar');
-      mobileToggle.addEventListener('click', () => {
+      mobileToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (navBar) navBar.classList.toggle('open');
       });
     }
@@ -254,15 +336,29 @@ export const Navbar = {
         try {
           const res = await api.auth.login({ email, password });
           if (res.token && res.user) {
-            localStorage.setItem('token', res.token);
-            localStorage.setItem('authUser', JSON.stringify(res.user));
-            localStorage.removeItem('guestMode');
+            safeStorage.setItem('token', res.token);
+            safeStorage.setItem('authUser', JSON.stringify(res.user));
+            safeStorage.removeItem('guestMode');
+            safeSession.removeItem('guestMode');
             store.setActiveUser(res.user);
             store.setView(targetView || 'dashboard');
             Toast.success(`Bienvenido/a ${res.user.name} (${res.user.role})`);
-            // Recargar datos protegidos
-            api.users.getAll().then((list) => store.setUsers(list)).catch(() => {});
-            api.notifications.getAll().then((list) => store.setNotifications(list)).catch(() => {});
+            // Recargar datos protegidos y actualizar estado completo
+            Promise.all([
+              api.users.getAll().catch(() => []),
+              api.bookings.getAll().catch(() => []),
+              api.notifications.getAll(res.user.id).catch(() => []),
+              api.courses.getAll().catch(() => []),
+              api.tutorias.getAll().catch(() => []),
+            ]).then(([users, bookings, notifications, courses, tutorias]) => {
+              store.setState({
+                users: users || [],
+                bookings: bookings || [],
+                notifications: notifications || [],
+                courses: (courses && courses.length > 0) ? courses : store.getState().courses,
+                tutorias: (tutorias && tutorias.length > 0) ? tutorias : store.getState().tutorias,
+              });
+            }).catch(() => {});
           }
         } catch (err) {
           Toast.error(err.message || 'Error al autenticar.');

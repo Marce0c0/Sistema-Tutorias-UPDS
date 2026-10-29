@@ -1,172 +1,230 @@
-# Sistema de Tutorías y Cursos Universitarios (UPDS)
+# Sistema de Gestión de Cursos, Talleres & Hackathons (UPDS Cochabamba)
 
-Plataforma universitaria full stack para la gestión académica de tutorías, cursos extracurriculares, reservas de sesiones y recursos educativos.
+Plataforma universitaria full stack moderna para la gestión académica de tutorías, talleres prácticos, convocatorias a hackathons, reservas de sesiones con código QR y recursos educativos.
 
-Repositorio oficial: [github.com/Marce0c0/Sistema-Tutorias-UPDS](https://github.com/Marce0c0/Sistema-Tutorias-UPDS)
+[![CloudFront CDN](https://img.shields.io/badge/AWS%20CloudFront-d3i4klrqeo94p9.cloudfront.net-FF9900?logo=amazon-aws&logoColor=white)](https://d3i4klrqeo94p9.cloudfront.net/)
+[![Database](https://img.shields.io/badge/Supabase-PostgreSQL%2017-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com)
+[![Docker](https://img.shields.io/badge/Docker-Compose%20Multi--Stage-2496ED?logo=docker&logoColor=white)](https://docker.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Express%205%20%2B%20Prisma%206-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Frontend](https://img.shields.io/badge/Frontend-Vanilla%20JS%20SPA%20(No%20Framework)-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/)
+
+- **Despliegue Global en Producción:** [https://d3i4klrqeo94p9.cloudfront.net/](https://d3i4klrqeo94p9.cloudfront.net/)
+- **Repositorio Oficial:** [github.com/Marce0c0/Sistema-Tutorias-UPDS](https://github.com/Marce0c0/Sistema-Tutorias-UPDS)
+- **Desarrollador:** Sammy Marcelo Sivila Sanchez ([@Marce0c0](https://github.com/Marce0c0)) — Universidad Privada Domingo Savio (UPDS) Sede Cochabamba.
 
 ---
 
 ## 1. Descripción del Proyecto
 
-El **Sistema de Tutorías y Cursos UPDS** es una solución integral orientada a optimizar el acompañamiento académico entre estudiantes, docentes tutores y coordinadores universitarios. La plataforma unifica el agendamiento de clases de reforzamiento, el catálogo de cursos extracurriculares y talleres prácticos, la gestión de foros de consulta por materia y la evaluación de la calidad de tutoría mediante reseñas estudiantiles.
+El **Sistema de Tutorías y Cursos UPDS** es una solución web integral diseñada bajo estándares institucionales de la **Universidad Privada Domingo Savio**. Conecta a estudiantes, tutores y administradores en un entorno ágil y reactivo, facilitando el agendamiento de reforzamiento académico, la inscripción a cursos técnicos con emisión inmediata de credenciales QR, y la colaboración continua mediante foros de debate y notificaciones en tiempo real.
 
-### Capacidades Principales
-- **Catálogo de Cursos y Talleres:** Exploración, filtrado y búsqueda en tiempo real de programas académicos con búsqueda insensible a mayúsculas y control de disponibilidad.
-- **Gestión y Reserva de Tutorías:** Programación de sesiones presenciales o virtuales (con enlace a Google Meet), control estricto de cupos máximos y prevención de solapamiento de horarios.
-- **Autenticación y Control de Acceso (RBAC):** Sesiones seguras mediante tokens JWT con tres niveles de privilegios: Administrador, Tutor y Estudiante, más navegación en modo invitado para consulta pública.
-- **Foros Académicos por Curso:** Espacio colaborativo de preguntas y respuestas entre alumnos y tutores para resolución de dudas.
-- **Calificaciones y Reseñas:** Sistema de feedback estudiantil de 1 a 5 estrellas con comentarios para evaluar el desempeño docente.
-- **Materiales de Estudio:** Enlaces y recursos académicos centralizados y protegidos en la nube.
-- **Notificaciones del Sistema:** Bandeja interactiva de avisos sobre reservas confirmadas, actualizaciones de sesiones y respuestas en foros.
+### ✨ Capacidades Principales
+
+1. **Catálogo de Cursos, Talleres & Hackathons:**
+   - Exploración y filtrado en tiempo real por modalidad (presencial, virtual, híbrida), categoría y precio (gratuitos o con arancel).
+   - Búsqueda instantánea insensible a mayúsculas y acentos.
+2. **Gestión Autónoma para Docentes/Tutores (RBAC Extendido):**
+   - Los docentes pueden **crear, editar y eliminar sus propios cursos y talleres**.
+   - Acceso exclusivo al detalle del curso para visualizar el **listado de estudiantes inscritos en tiempo real** con información de contacto y fecha de inscripción.
+3. **Pase Digital y Entrada con Código QR:**
+   - Emisión instantánea de credencial de asistencia con código QR único tras confirmar una inscripción.
+   - Compatible con simulador de exportación a **Google Wallet** y **Apple Wallet**, más descarga en alta resolución.
+4. **Directorio Universitario Segmentado por Pestañas:**
+   - Visualización por roles institucionales con conteo en vivo: **Todos**, **Estudiantes**, **Docentes/Tutores** y **Administradores**.
+   - Búsqueda reactiva por nombre, carrera o correo institucional.
+5. **Comunidad Académica y Foros de Consulta:**
+   - Espacio colaborativo estructurado por temas: Consultas académicas, formación técnica y convocatorias de Hackathons municipales.
+   - Filtros dinámicos por categoría y contador interactivo de respuestas.
+6. **Centro de Notificaciones Interactivo:**
+   - Pestañas de filtrado (Todas, No Leídas, Sistema), marcación masiva y navegación contextual hacia la sesión o curso asociado.
+7. **Diseño Institucional UPDS & Distintivos Cloud:**
+   - Paleta corporativa UPDS: Azul Marino (`#002855`), Rojo Carmesí (`#d9272e`) y Verde Bosque (`#006837`).
+   - Sello oficial **"Powered by AWS"** en pantalla de carga (Splash), módulo de Login y pie de página.
+   - Pie de página institucional con tarjeta de estado de nube activa y perfil del desarrollador.
 
 ---
 
-## 2. Stack Tecnológico
+## 2. Arquitectura de Nube & Despliegue en AWS
 
-| Capa | Tecnología | Propósito |
+El sistema está optimizado para una arquitectura desacoplada y de **costo cero ($0.00 USD)** bajo la capa gratuita (Free Tier) de AWS y Supabase:
+
+```
+[ Usuarios / Navegadores ]
+            │ (HTTPS Global)
+            ▼
+┌───────────────────────────────────────────────┐
+│       Amazon CloudFront CDN (Edge SSL)        │
+│       d3i4klrqeo94p9.cloudfront.net           │
+└───────────────────────┬───────────────────────┘
+                        │ (Proxy Reverso / Origen)
+                        ▼
+┌───────────────────────────────────────────────┐
+│        Amazon EC2 (Ubuntu 24.04 LTS)          │
+│        Docker Compose Multi-Container         │
+│  ┌──────────────────┐   ┌──────────────────┐  │
+│  │ Frontend (Nginx) │   │ Backend (Node20) │  │
+│  │ Puerto 80        │   │ Puerto 3001      │  │
+│  └─────────┬────────┘   └────────┬─────────┘  │
+└────────────┼─────────────────────┼────────────┘
+             │                     │ (Conexión SSL Pooler IPv4)
+             ▼                     ▼
+┌───────────────────────────────────────────────┐
+│          Amazon S3 / Supabase DB              │
+│  - Assets S3: sistema-tutorias-upds           │
+│  - PostgreSQL 17: Supabase sa-east-1          │
+└───────────────────────────────────────────────┘
+```
+
+### Automatización de Despliegues:
+El repositorio incluye un script para desplegar a producción en un solo comando:
+```powershell
+# Empaqueta, transfiere vía SSH, reconstruye Docker en EC2 e invalida la caché de CloudFront
+.\scripts\deploy-ec2.ps1
+```
+
+Y para apagar o encender el servidor de prueba sin incurrir en consumo de cómputo:
+```powershell
+.\scripts\aws-control.ps1 -Action status   # Consulta el estado del servidor
+.\scripts\aws-control.ps1 -Action stop     # Pausa la instancia (Costo $0.00 compute)
+.\scripts\aws-control.ps1 -Action start    # Reanuda la instancia
+```
+
+---
+
+## 3. Stack Tecnológico
+
+| Capa | Tecnología | Rol en el Sistema |
 | :--- | :--- | :--- |
-| **Frontend** | HTML5, CSS3, JavaScript (ES6+ Modules) | Single Page Application (SPA) modular, reactiva sin dependencias de frameworks pesados |
-| **Backend API** | Node.js 20 LTS, Express 5, TypeScript | API REST tipada bajo arquitectura por capas (Rutas, Controladores, Middlewares, ORM) |
-| **ORM & Modelado** | Prisma ORM 6 | Mapeo objeto-relacional, validación de esquemas y generación de tipos TypeScript |
-| **Base de Datos** | PostgreSQL 17 (Supabase Cloud) | Persistencia relacional con SSL forzado, índices y restricciones de integridad |
-| **Seguridad** | JSON Web Tokens (JWT), Bcrypt | Autenticación basada en tokens, hashing seguro de contraseñas y autorización por roles |
-| **Contenedores** | Docker & Docker Compose | Entorno reproducible multi-etapa para desarrollo y producción |
-| **Hosting Cloud** | Amazon Web Services (AWS S3) | Alojamiento y despliegue del frontend estático bajo el Free Tier ($0.00 USD) |
+| **Frontend Web** | Vanilla JavaScript (ES6+), HTML5, CSS3 | Single Page Application (SPA) reactiva sin dependencias pesadas de frameworks |
+| **Servidor Web Edge** | Nginx 1.27 Alpine | Servidor web con compresión Gzip, cabeceras de seguridad HTTP y soporte SPA |
+| **Backend API** | Node.js 20 LTS, Express 5, TypeScript | API REST con arquitectura en capas, validación estricta y tipado estático |
+| **ORM & Modelado** | Prisma ORM 6.19 | Mapeo objeto-relacional, migraciones DDL automáticas y cliente tipado |
+| **Base de Datos** | PostgreSQL 17 (Supabase Cloud) | Persistencia relacional conectada mediante Session Pooler IPv4 y SSL forzado |
+| **Autenticación** | JWT (JSON Web Tokens) & Bcrypt | Control de acceso basado en roles (RBAC: Admin, Tutor, Student, Guest) |
+| **CDN & Caching** | AWS CloudFront | Distribución global de contenido con certificado SSL wildcard gratuito |
+| **Contenedores** | Docker & Docker Compose | Ambientes reproducibles multi-etapa con imágenes ultraligeras Alpine |
 
 ---
 
-## 3. Modelo de Datos Relacional
-
-El sistema opera sobre **8 entidades normalizadas** en PostgreSQL:
+## 4. Estructura del Proyecto
 
 ```
-users (estudiantes, tutores, admins)
-  ├── courses (cursos y talleres) ─────────────── tutorias (sesiones presenciales / virtuales)
-  │     ├── forum_messages (foros de dudas)        ├── bookings (reservas de cupo)
-  │     └── materials (guías y recursos S3)        └── reviews (calificaciones 1-5 ⭐)
-  └── notifications (avisos y recordatorios)
+sistema-tutoriales-UPDS/
+├── backend/
+│   ├── prisma/
+│   │   ├── migrations/             # Migraciones DDL versionadas en SQL
+│   │   ├── schema.prisma           # Esquema relacional Prisma (8 modelos)
+│   │   └── seed.ts                 # Script de población de datos iniciales
+│   ├── src/
+│   │   ├── controllers/            # Controladores REST (Users, Courses, Bookings, Forums, etc.)
+│   │   ├── middlewares/            # Validadores de esquemas y manejador global de errores
+│   │   ├── routes/                 # Enrutadores Express tipados
+│   │   ├── lib/prisma.ts           # Singleton del cliente Prisma
+│   │   └── server.ts               # Servidor Express principal
+│   ├── Dockerfile                  # Construcción multi-stage de producción
+│   └── package.json
+│
+├── frontend/
+│   ├── css/
+│   │   └── styles.css              # Sistema de diseño corporativo UPDS y responsive layout
+│   ├── img/
+│   │   ├── upds-logo.png           # Isotipo oficial UPDS
+│   │   └── powered-by-aws.png      # Logo oficial de infraestructura AWS Cloud
+│   ├── js/
+│   │   ├── components/             # Navbar, Modal, TicketModal (QR), Toast, Badge, Pagination
+│   │   ├── config/env.js           # Variables de entorno y almacenamiento seguro
+│   │   ├── services/api.js         # Cliente HTTP modular con interceptor JWT
+│   │   ├── state/store.js          # Gestor de estado reactivo global (Observer Pattern)
+│   │   ├── utils/                  # Generador QR (qrcode.js), permisos RBAC, datos de foros
+│   │   └── views/                  # Vistas SPA: Dashboard, Courses, Tutorias, Bookings, Forums, Users, Welcome
+│   ├── index.html                  # Punto de entrada SPA y Splash Screen
+│   ├── nginx.conf                  # Configuración optimizada de Nginx
+│   └── Dockerfile                  # Contenedor frontend
+│
+└── scripts/
+    ├── deploy-ec2.ps1              # Despliegue automatizado a EC2 + Invalidation CloudFront
+    ├── aws-control.ps1             # Gestor de ciclo de vida EC2 (start/stop/status)
+    └── test_forum_post.js          # Script de prueba rápida para la API de foros
 ```
 
-### Resumen de Entidades:
-1. **users:** Cuentas institucionales con roles (`student`, `tutor`, `admin`), correo verificado y contraseña hasheada.
-2. **courses:** Catálogo de cursos con título único normalizado, descripción, tutor asignado y estado `activo` (booleano).
-3. **tutorias:** Clases extra y sesiones con fecha/hora, cupo límite, modalidad (`presencial`, `virtual`, `hibrida`) y enlace de reunión.
-4. **bookings:** Inscripción de estudiantes a tutorías con estados (`pending`, `confirmed`, `cancelled`).
-5. **forum_messages:** Hilos de discusión académica asociados a cada curso.
-6. **reviews:** Evaluaciones estudiantiles únicas por sesión con puntaje y reseña cualitativa.
-7. **materials:** Recursos bibliográficos y enlaces de descarga organizados por curso.
-8. **notifications:** Bandeja de eventos y alertas automáticas por usuario.
+---
+
+## 5. Endpoints de la API REST
+
+| Método | Endpoint | Acceso Requerido | Descripción |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/login` | Público | Autenticación con correo y clave. Retorna token JWT y perfil. |
+| `POST` | `/api/auth/register` | Público | Registro institucional de nuevos estudiantes. |
+| `GET` | `/api/courses` | Público / Invitado | Listado de cursos activos. Admite `?buscar=termino`. |
+| `POST` | `/api/courses` | Admin / Tutor | Creación de curso. Asigna automáticamente el tutor en sesión. |
+| `PUT` | `/api/courses/:id` | Admin / Tutor (dueño)| Edición de curso propio o gestión global por Admin. |
+| `DELETE` | `/api/courses/:id` | Admin / Tutor (dueño)| Eliminación controlada de curso. |
+| `GET` | `/api/courses/:id/attendees`| Admin / Tutor (dueño)| Listado en tiempo real de inscritos en el curso. |
+| `GET` | `/api/tutorias` | Público / Invitado | Catálogo de sesiones de tutoría y cupos disponibles. |
+| `POST` | `/api/tutorias` | Admin / Tutor | Programación de nueva sesión académica presencial o virtual. |
+| `GET` | `/api/bookings` | Estudiante / Admin | Reservas e inscripciones del usuario autenticado. |
+| `POST` | `/api/bookings` | Estudiante | Reserva de cupo con validación de capacidad. |
+| `PATCH` | `/api/bookings/:id/cancel` | Estudiante / Admin | Cancelación de reserva con motivo y auditoría. |
+| `GET` | `/api/forums` | Público / Estudiante | Hilos y discusiones por materia o hackathon. |
+| `POST` | `/api/forums` | Estudiante / Docente | Publicación de nueva consulta académica. |
+| `GET` | `/api/users` | Público (Sanitizado) | Directorio universitario (excluye contraseñas por seguridad). |
 
 ---
 
-## 4. Endpoints de la API REST
-
-Todos los endpoints retornan respuestas estándar en formato JSON:
-
-### Autenticación (`/api/auth`)
-- `POST /api/auth/register` - Registro de nuevos estudiantes.
-- `POST /api/auth/login` - Inicio de sesión y generación de token JWT.
-- `GET /api/auth/me` - Perfil del usuario autenticado.
-
-### Cursos y Talleres (`/api/courses`)
-- `GET /api/courses` - Listado general de cursos. Soporta búsqueda parametrizada opcional: `?buscar=nombre`.
-- `GET /api/courses/:id` - Detalle de un curso específico por UUID.
-- `POST /api/courses` - Creación de curso (Solo Admin). Valida título obligatorio, previene duplicados (`409 Conflict`) y asigna estado `activo: true` por defecto.
-- `PUT /api/courses/:id` - Actualización de título, descripción o estado `activo` (Solo Admin).
-- `DELETE /api/courses/:id` - Eliminación de curso y desvinculación de dependencias (Solo Admin).
-
-### Tutorías y Sesiones (`/api/tutorias`)
-- `GET /api/tutorias` - Listado de tutorías activas con filtrado por fecha, curso o modalidad.
-- `GET /api/tutorias/:id` - Detalle de sesión y cupos disponibles en tiempo real.
-- `POST /api/tutorias` - Programación de nueva tutoría (Admin y Tutor).
-- `PUT /api/tutorias/:id` - Edición de horario o modalidad.
-- `DELETE /api/tutorias/:id` - Cancelación de sesión.
-
-### Reservas (`/api/bookings`)
-- `GET /api/bookings` - Listado de reservas del usuario en sesión.
-- `POST /api/bookings` - Solicitud de cupo para una tutoría con validación de capacidad.
-- `PATCH /api/bookings/:id/status` - Cambio de estado de la reserva (`confirmed` / `cancelled`).
-
-### Foros y Consultas (`/api/forums`)
-- `GET /api/forums/course/:courseId` - Mensajes del foro de un curso específico.
-- `POST /api/forums` - Publicación de nueva consulta académica.
-- `DELETE /api/forums/:id` - Moderación de mensajes (Admin y autor).
-
----
-
-## 5. Arquitectura y Seguridad
-
-- **Consultas Parametrizadas:** Toda la interacción con PostgreSQL se ejecuta mediante el motor de Prisma ORM con sentencias preparadas nativas (`$1`, `$2`), eliminando cualquier riesgo de inyección SQL.
-- **Normalización de Datos:** Limpieza estricta de cadenas mediante `.trim()` y comparaciones insensibles a mayúsculas (`mode: 'insensitive'`) para evitar registros duplicados redundantes.
-- **Validación de Tipos en Tiempo de Ejecución:** Validación estricta de tipos de datos JSON (como booleanos nativos para estados) rechazando valores ambiguos con códigos HTTP apropiados (`400 Bad Request`).
-- **Variables de Entorno Aisladas:** Secretos de infraestructura (`DATABASE_URL`, `JWT_SECRET`) protegidos localmente en `.env` y excluidos del repositorio mediante `.gitignore`.
-
----
-
-## 6. Instalación y Ejecución Local
+## 6. Guía de Ejecución Local
 
 ### Prerrequisitos
 - Node.js 20 LTS o superior
-- npm 10+
 - Git
+- Docker & Docker Compose (opcional para ejecución contenerizada)
 
-### 1. Clonar el repositorio
+### 1. Clonar el Repositorio
 ```bash
 git clone https://github.com/Marce0c0/Sistema-Tutorias-UPDS.git
 cd Sistema-Tutorias-UPDS
 ```
 
-### 2. Configurar y levantar el Backend
+### 2. Configurar y Levantar Backend
 ```bash
 cd backend
 npm install
 
-# Configurar variables de entorno basadas en la plantilla
+# Crear archivo de entorno basado en la plantilla
 cp .env.example .env
 
-# Generar cliente de Prisma y sincronizar esquema
+# Sincronizar esquema con la base de datos
 npx prisma generate
 npx prisma db push
 
-# Compilar TypeScript e iniciar servidor
-npm run build
+# Iniciar servidor en modo desarrollo
 npm run dev
 ```
-El backend iniciará en `http://localhost:3001`.
+El servidor backend escuchará en `http://localhost:3001`.
 
-### 3. Levantar el Frontend
-En otra terminal dentro de la raíz del proyecto:
+### 3. Levantar Frontend Web
+En otra terminal desde la raíz:
 ```bash
 cd frontend
 npx serve -p 3000 -s
 ```
-Accede a la plataforma web desde tu navegador en `http://localhost:3000`.
+Abre tu navegador en `http://localhost:3000`.
 
 ---
 
-## 7. Despliegue con Docker Compose
+## 7. Cuentas de Demostración Rápida
 
-Para ejecutar toda la infraestructura en contenedores aislados:
-```bash
-# En la raíz del repositorio:
-docker compose up -d --build
-```
-Servicios levantados:
-- **Frontend SPA:** `http://localhost:8080` (Nginx Alpine optimizado).
-- **Backend API:** `http://localhost:3001` (Node.js 20 Alpine en TypeScript).
-- **PostgreSQL Local:** puerto `5432` con volumen persistente para datos locales.
+La base de datos cuenta con perfiles de prueba preconfigurados con la contraseña `Upds2026`:
 
----
-
-## 8. Despliegue Estático en AWS S3
-
-El frontend estático cuenta con un script de sincronización automatizado hacia Amazon S3:
-```powershell
-./frontend/deploy-s3.ps1
-```
-El script sincroniza los archivos HTML, CSS, JS e imágenes hacia el bucket de AWS configurado con políticas de caché optimizadas y costo cero dentro del Free Tier.
+| Rol | Correo Electrónico | Permisos en la Plataforma |
+| :--- | :--- | :--- |
+| **Administrador** | `admin@upds.edu.bo` | Control total: gestión de usuarios, cursos, auditoría y cancelaciones. |
+| **Docente / Tutor** | `maria@tutor.com` | Crear y gestionar sus propios cursos/talleres y ver inscritos. |
+| **Estudiante** | `juan@estudiante.com` | Inscripción a cursos, emisión de pase QR y participación en foros. |
+| **Modo Invitado** | *(Botón en pantalla inicial)* | Navegación de lectura pública sin necesidad de registro ni contraseña. |
 
 ---
 
-## Licencia
-Proyecto desarrollado con fines académicos para la Universidad Privada Domingo Savio (UPDS).
+## 8. Licencia & Créditos
+
+Proyecto desarrollado con fines académicos y de producción para la **Universidad Privada Domingo Savio (UPDS) — Sede Cochabamba**.  
+**Autor:** Sammy Marcelo Sivila Sanchez ([GitHub: Marce0c0](https://github.com/Marce0c0)).

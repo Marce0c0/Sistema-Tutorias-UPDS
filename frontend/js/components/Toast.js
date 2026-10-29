@@ -1,5 +1,6 @@
 // Componente de Notificaciones Toast — Sistema-Tutoriales-UPDS
 // Provee retroalimentación visual no invasiva de éxito, error e información
+import { Icons } from './Icons.js';
 
 class ToastManager {
   constructor() {
@@ -23,14 +24,14 @@ class ToastManager {
     toast.className = `toast toast-${type} animate-slide-in`;
 
     const iconMap = {
-      success: '✓',
-      error: '✕',
-      warning: '⚠',
-      info: 'ℹ',
+      success: Icons.check('toast-svg-icon', 16),
+      error: Icons.x('toast-svg-icon', 16),
+      warning: Icons.alertTriangle('toast-svg-icon', 16),
+      info: Icons.bell('toast-svg-icon', 16),
     };
 
     toast.innerHTML = `
-      <span class="toast-icon">${iconMap[type] || 'ℹ'}</span>
+      <span class="toast-icon">${iconMap[type] || Icons.bell('toast-svg-icon', 16)}</span>
       <div class="toast-message">${this.escapeHtml(message)}</div>
       <button class="toast-close" aria-label="Cerrar">&times;</button>
     `;
